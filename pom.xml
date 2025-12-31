@@ -12,6 +12,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jpackage.type>app-image</jpackage.type>
+        <jpackage.icon></jpackage.icon>
     </properties>
 
     <build>
@@ -45,5 +47,47 @@
             </plugin>
         </plugins>
     </build>
-</project>
 
+    <profiles>
+        <profile>
+            <id>mac</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <version>1.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>jpackage-image</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <configuration>
+                                    <type>${jpackage.type}</type>
+                                    <input>${project.build.directory}</input>
+                                    <dest>${project.build.directory}/dist</dest>
+                                    <name>Tetris</name>
+                                    <mainClass>tetris.ui.TetrisFrame</mainClass>
+                                    <mainJar>${project.build.finalName}.jar</mainJar>
+                                    <appVersion>${project.version}</appVersion>
+                                    <vendor>Tetris</vendor>
+                                    <icon>${jpackage.icon}</icon>
+                                    <jvmArgs>
+                                        <jvmArg>-Xmx512m</jvmArg>
+                                    </jvmArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
