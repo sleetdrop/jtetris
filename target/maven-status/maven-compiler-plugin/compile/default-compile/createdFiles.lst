@@ -1,0 +1,14 @@
+tetris/ui/TetrisFrame.class
+tetris/ui/TetrisFrame$3.class
+tetris/ui/TetrisFrame$2.class
+tetris/ui/GamePanel.class
+tetris/model/Board.class
+tetris/ui/SidePanel$NextPanel.class
+tetris/score/ScoreManager$ScoreEntry.class
+tetris/score/ScoreManager.class
+tetris/model/TetrominoType.class
+tetris/ui/GamePanel$1.class
+tetris/ui/TetrisFrame$1.class
+tetris/ui/SidePanel.class
+tetris/ui/ColorPalette.class
+tetris/model/Tetromino.class
