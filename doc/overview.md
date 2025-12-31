@@ -13,6 +13,61 @@ A concise Swing-based Tetris for learning Java, Swing UI, and basic game loop/al
   - `SidePanel`: stats, next preview, controls cheat-sheet.
 - **Scores**: `tetris.score.ScoreManager`: per-user local high scores stored in `~/.tetris_scores.properties` (best-only per user).
 
+## Architecture at a glance
+```mermaid
+classDiagram
+    class TetrisFrame {
+        -Timer timer
+        -Board board
+        -ScoreManager scoreManager
+        +restart()
+        +pauseToggle()
+        +showLeaderboard()
+    }
+    class GamePanel {
+        +paintComponent(g)
+        +focusGame()
+    }
+    class SidePanel {
+        +setStats(...)
+        +setNext(Tetromino)
+        +setControls(List)
+    }
+    class Board {
+        -Tetromino current
+        -Tetromino next
+        +tick()
+        +move(dx,dy)
+        +rotateCW()
+        +hardDrop()
+        +clearLines()
+    }
+    class Tetromino {
+        +TetrominoType type
+        +int rotation
+        +int x
+        +int y
+    }
+    class TetrominoType {
+        +cells(rotation)
+        +color
+    }
+    class ScoreManager {
+        +load()
+        +save()
+        +updateBest(user,score)
+        +top()
+    }
+    TetrisFrame --> Board
+    TetrisFrame --> ScoreManager
+    TetrisFrame --> GamePanel
+    TetrisFrame --> SidePanel
+    GamePanel --> Board
+    SidePanel --> Board
+    Board --> Tetromino
+    Tetromino --> TetrominoType
+```
+
 ## Game Loop & Timing
 - Swing `Timer` in `TetrisFrame` ticks every ~700 ms (speeds up by level). On each tick: if not paused and not game over, call `Board.tick()` (gravity); repaint board.
 - Movement/rotation/drop invoked via key bindings and applied to the model; rendering pulls from model snapshot.
@@ -42,5 +97,4 @@ A concise Swing-based Tetris for learning Java, Swing UI, and basic game loop/al
 ## Notes for learners
 - Input is handled via key bindings on the root pane (not raw key listeners).
 - Gravity, locking, and line clearing live entirely in `Board`; UI remains thin.
-- Hidden top rows (HEIGHT 22 with 2 hidden) keep spawn/rotation valid without immediate loss.
-
+- Hidden top rows (HEIGHT 22 with 2 hidden) keep spawn safe.

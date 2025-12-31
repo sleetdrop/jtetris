@@ -38,6 +38,22 @@
 - Swing key bindings on root pane (`WHEN_IN_FOCUSED_WINDOW`): move, rotate (CW/CCW), drop, pause, restart, leaderboard, quit.
 - Window focus listener nudges focus back to game panel.
 
+## Mechanics flow
+```mermaid
+flowchart TD
+    A[Timer tick] --> B{Paused or Game Over?}
+    B -- yes --> C[Skip tick]
+    B -- no --> D[Board.tick()]
+    D --> E{Can move down?}
+    E -- yes --> F[Advance piece down]
+    E -- no --> G[Lock piece]
+    G --> H[Clear full lines]
+    H --> I[Spawn next piece]
+    I --> J{Spawn valid?}
+    J -- no --> K[Game Over]
+    J -- yes --> L[Continue]
+```
+
 ## Known simplifications
 - No bag randomizer; uses `Random.nextInt` per piece.
 - No wall kicks; SRS could be added.
@@ -51,4 +67,3 @@
 - Ghost piece and hold piece.
 - Sound effects.
 - UI scaling for high-DPI and resizable layout.
-
