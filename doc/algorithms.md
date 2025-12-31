@@ -41,17 +41,17 @@
 ## Mechanics flow
 ```mermaid
 flowchart TD
-    A[Timer tick] --> B{Paused or Game Over?}
-    B -- yes --> C[Skip tick]
-    B -- no --> D[Board.tick()]
+    A([Timer tick]) --> B{Paused or Game Over?}
+    B -->|Yes| C[Skip tick]
+    B -->|No| D[Board tick]
     D --> E{Can move down?}
-    E -- yes --> F[Advance piece down]
-    E -- no --> G[Lock piece]
+    E -->|Yes| F[Advance piece down]
+    E -->|No| G[Lock piece]
     G --> H[Clear full lines]
     H --> I[Spawn next piece]
     I --> J{Spawn valid?}
-    J -- no --> K[Game Over]
-    J -- yes --> L[Continue]
+    J -->|No| K[Game Over]
+    J -->|Yes| A
 ```
 
 ## Known simplifications
