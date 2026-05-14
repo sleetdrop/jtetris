@@ -3,14 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>tetris</groupId>
-    <artifactId>tetris</artifactId>
+    <groupId>net.vetcafe</groupId>
+    <artifactId>jtetris</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Tetris</name>
-    <description>Simple Java Swing Tetris</description>
+    <name>JTetris</name>
+    <description>Simple Java Swing JTetris</description>
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jpackage.type>app-image</jpackage.type>
         <jpackage.icon></jpackage.icon>
@@ -27,8 +26,6 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src/tetris</sourceDirectory>
-        <testSourceDirectory>src/test/java</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -42,7 +39,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>tetris.ui.TetrisFrame</mainClass>
+                            <mainClass>net.vetcafe.jtetris.ui.TetrisFrame</mainClass>
                             <addClasspath>true</addClasspath>
                         </manifest>
                     </archive>
@@ -53,7 +50,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>tetris.ui.TetrisFrame</mainClass>
+                    <mainClass>net.vetcafe.jtetris.ui.TetrisFrame</mainClass>
                 </configuration>
             </plugin>
         </plugins>
@@ -79,11 +76,11 @@
                                     <type>${jpackage.type}</type>
                                     <input>${project.build.directory}</input>
                                     <dest>${project.build.directory}/dist</dest>
-                                    <name>Tetris</name>
-                                    <mainClass>tetris.ui.TetrisFrame</mainClass>
+                                    <name>JTetris</name>
+                                    <mainClass>net.vetcafe.jtetris.ui.TetrisFrame</mainClass>
                                     <mainJar>${project.build.finalName}.jar</mainJar>
                                     <appVersion>${project.version}</appVersion>
-                                    <vendor>Tetris</vendor>
+                                    <vendor>JTetris</vendor>
                                     <icon>${jpackage.icon}</icon>
                                     <jvmArgs>
                                         <jvmArg>-Xmx512m</jvmArg>

@@ -1,19 +1,19 @@
-# Tetris Project Overview
+# JTetris Project Overview
 
 ## Purpose
-A concise Swing-based Tetris for learning Java, Swing UI, and basic game loop/algorithm patterns.
+A concise Swing-based JTetris for learning Java, Swing UI, and basic game loop/algorithm patterns.
 
 ## Architecture
-- **Model**: `tetris.model.*`
+- **Model**: `net.vetcafe.jtetris.model.*`
   - `Board`: game state (grid, active piece, hold/next piece, ghost projection, scoring, level). Handles gravity (`tick`), movement, rotation, line clearing, spawning, baseline T-Spin lock-state tracking, and seeded replay hooks. Hidden top rows keep spawn safe.
   - `Tetromino` & `TetrominoType`: piece data and rotations.
-- **UI**: `tetris.ui.*`
+- **UI**: `net.vetcafe.jtetris.ui.*`
   - `TetrisFrame`: main window, timer-driven loop, key bindings, menu, pause/restart/leaderboard, score prompt on game over.
   - `InputRepeater`: deterministic horizontal DAS/ARR state machine used by `TetrisFrame`.
   - `SoftDropRepeater`: deterministic soft-drop repeat timing used by `TetrisFrame`.
   - `GamePanel`: renders board, ghost projection, and active piece; focuses itself on show; modern dark palette.
   - `SidePanel`: stats, next preview, controls cheat-sheet.
-- **Scores**: `tetris.score.ScoreManager`: per-user local high scores stored in `~/.tetris_scores.properties` (best-only per user).
+- **Scores**: `net.vetcafe.jtetris.score.ScoreManager`: per-user local high scores stored in `~/.tetris_scores.properties` (best-only per user).
 
 ## Architecture at a glance
 ```mermaid

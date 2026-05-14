@@ -2,6 +2,10 @@
 
 This folder defines the project spec mechanism used to drive changes safely.
 
+## Source path note
+- Current source layout is Maven standard: `src/main/java/net/vetcafe/jtetris` and `src/test/java/net/vetcafe/jtetris`.
+- Older specs may still mention historical paths under `src/tetris`; map them to the current layout when implementing.
+
 ## Goals
 - Keep optimization work incremental and reviewable.
 - Bind every non-trivial change to an explicit spec.
