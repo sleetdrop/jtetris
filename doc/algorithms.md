@@ -3,21 +3,42 @@
 ## Board representation
 - Grid: `TetrominoType[HEIGHT][WIDTH]`, with HEIGHT=22 (top 2 rows hidden for spawn).
 - Active piece: `Tetromino current`; Next: `Tetromino next`.
+- Piece generation uses `PieceBag` (7-bag randomizer) to keep distribution fair.
 
 ## Movement & rotation
 - Movement uses `Board.move(dx, dy)`; validates against bounds and occupied cells.
 - Rotation via `Board.rotateCW/CCW()`; uses `TetrominoType.cells(rotation)` with 4 precomputed rotations.
-- No wall kicks; simple validity check. Hidden rows allow most rotations without kicks.
+- Rotation uses SRS kick retries (separate I-piece table and JLSTZ table).
+- Rotation succeeds on the first valid kick candidate; fails when all candidates are invalid.
 
 ## Gravity & locking
-- `tick()` tries to move current down; if blocked, locks piece, clears lines, then spawns next.
+- `tick()` tries to move current down; if blocked, enters lock-delay countdown and locks only after the delay expires while still grounded.
 - `hardDrop()` repeatedly moves down until blocked, then locks.
+- Successful move/rotation resets lock-delay countdown.
+
+## Hold piece
+- `Board.hold()` supports one hold per active piece lifecycle.
+- First hold stores current and promotes `next`; subsequent hold swaps with stored piece.
+- Hold is reset only after lock/spawn, preserving the per-turn hold guard.
+
+## T-Spin detection (baseline)
+- `Board` computes T-Spin on lock using `TSpinDetector` and stores result in `wasLastLockTSpin()`.
+- Baseline predicate: piece type is `T`, last successful action was rotation, and at least 3 pivot corners are occupied by wall/stack.
+- This step only records detection state; scoring rules are unchanged.
+
+## Ghost piece
+- `Board.getGhost()` computes a non-mutating projection by copying current and descending until the next step collides.
+- Ghost is render-only: it never changes board state and is hidden when game is over.
+- Hard-drop lock destination is equivalent to ghost landing position.
 
 ## Line clearing
 - Scan from bottom up; when a full row is found, shift all above rows down and insert empty row at top; recheck same y after shift.
 
 ## Scoring & levels
-- Per lock, if lines cleared: add 100/300/500/800 * level for 1/2/3/4 lines.
+- Base line-clear score (non-T-Spin): 100/300/500/800 * level for 1/2/3/4 lines.
+- Base T-Spin line-clear score: 800/1200/1600 * level for 1/2/3 lines.
+- Combo bonus: consecutive clears add `50 * comboStreak * level` from streak 1 onward.
+- Back-to-back (B2B): consecutive difficult clears (Tetris or T-Spin clear) apply 1.5x base score.
 - `linesCleared` accumulates; `level = 1 + linesCleared / 10`.
 - Current timer delay is fixed in code (700 ms); future work: derive delay from level.
 
@@ -31,11 +52,14 @@
 - Reads are tolerant of corrupt files (ignored).
 
 ## Rendering
-- `GamePanel`: renders grid, locked blocks, and active piece; antialiased; modern dark palette.
-- `SidePanel`: stats + next preview + controls list.
+- `GamePanel`: renders grid, locked blocks, ghost projection, and active piece; antialiased; modern dark palette.
+- `SidePanel`: stats + score breakdown (event/combo/B2B) + hold/next previews + controls list.
 
 ## Input
-- Swing key bindings on root pane (`WHEN_IN_FOCUSED_WINDOW`): move, rotate (CW/CCW), drop, pause, restart, leaderboard, quit.
+- Swing key bindings on root pane (`WHEN_IN_FOCUSED_WINDOW`): move, rotate (CW/CCW), hard drop, hold (`C`), pause, restart, leaderboard, quit.
+- Horizontal input (`←` / `→`) uses a deterministic DAS/ARR repeater (`InputRepeater`) instead of OS key-repeat cadence.
+- Soft drop (`↓`) uses a deterministic repeat policy (`SoftDropRepeater`) with immediate first step and fixed repeat interval.
+- Modal UI states (score dialogs/leaderboard/new-game prompt) block gameplay input via a guard and clear held repeaters on enter/exit.
 - Window focus listener nudges focus back to game panel.
 
 ## Mechanics flow
@@ -55,15 +79,19 @@ flowchart TD
 ```
 
 ## Known simplifications
-- No bag randomizer; uses `Random.nextInt` per piece.
-- No wall kicks; SRS could be added.
-- Lock delay and DAS/ARR not modeled; movement is immediate per key event.
+- Input repeat timing is deterministic for horizontal movement and soft drop.
 - Timer speed does not yet scale with level.
 
+## Regression gates
+- `BoardRegressionGateTest` enforces core model invariants: boundary/occupied-cell collisions, blocked rotation failure, line-clear state consistency, and blocked-spawn top-out.
+- Existing focused tests (`SrsRotationTest`, `LockDelayTest`, `ScoringRulesTest`, etc.) remain the baseline safety net for mechanics evolution.
+
+## Seeded replay hooks
+- `ReplayAction` defines deterministic model-level action tokens (`LEFT`, `RIGHT`, `SOFT_DROP`, `ROTATE_*`, `HARD_DROP`, `HOLD`, `TICK`).
+- `Board.applyReplayAction(...)` executes and records actions into an ordered replay stream.
+- `Board.replayFromSeed(seed, actions)` rebuilds board state from the same seed and action stream for reproducible debugging.
+
 ## Extension ideas
-- Add 7-bag randomizer.
-- Implement basic wall kicks.
 - Level-based fall speed.
-- Ghost piece and hold piece.
 - Sound effects.
 - UI scaling for high-DPI and resizable layout.

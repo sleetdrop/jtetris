@@ -28,8 +28,15 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
 import javax.swing.BorderFactory;
+import java.util.function.Supplier;
 
 public class TetrisFrame extends JFrame {
+    private static final int GRAVITY_TICK_MS = 700;
+    private static final int INPUT_POLL_MS = 16;
+    private static final int DAS_MS = 130;
+    private static final int ARR_MS = 35;
+    private static final int SOFT_DROP_REPEAT_MS = 40;
+
     static {
         // On macOS this merges the menu bar into the system bar when supported
         System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -40,11 +47,14 @@ public class TetrisFrame extends JFrame {
     private final GamePanel gamePanel = new GamePanel(board);
     private final SidePanel sidePanel = new SidePanel(board);
     private final ScoreManager scoreManager = new ScoreManager();
+    private final InputRepeater horizontalRepeater = new InputRepeater(DAS_MS, ARR_MS);
+    private final SoftDropRepeater softDropRepeater = new SoftDropRepeater(SOFT_DROP_REPEAT_MS);
     // ensure score dialog is shown once per game
     private boolean scorePrompted;
     private boolean lastGameOverProcessed;
     private String userName; // null means not tracking this run
     private boolean paused;
+    private boolean modalActive;
 
     public TetrisFrame() {
         super("Tetris");
@@ -62,12 +72,19 @@ public class TetrisFrame extends JFrame {
             public void windowGainedFocus(WindowEvent e) {
                 focusGame();
             }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                clearHeldInputs();
+            }
         });
 
         installKeyBindings();
 
-        int delay = 700; // ms; will speed up with levels
-        Timer timer = new Timer(delay, e -> {
+        Timer inputTimer = new Timer(INPUT_POLL_MS, e -> processHeldInput());
+        inputTimer.start();
+
+        Timer timer = new Timer(GRAVITY_TICK_MS, e -> {
             if (paused) return;
             boolean over = board.isGameOver();
             if (over) {
@@ -96,10 +113,13 @@ public class TetrisFrame extends JFrame {
         pause.addActionListener(e -> togglePause());
         JMenuItem restart = new JMenuItem("Restart (R)");
         restart.addActionListener(e -> restartGame());
+        JMenuItem hold = new JMenuItem("Hold (C)");
+        hold.addActionListener(e -> holdIfActive());
         JMenuItem exit = new JMenuItem("Quit (Esc)");
         exit.addActionListener(e -> dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
         gameMenu.add(pause);
         gameMenu.add(restart);
+        gameMenu.add(hold);
         gameMenu.add(exit);
 
         JMenu scores = new JMenu("Scores");
@@ -114,11 +134,13 @@ public class TetrisFrame extends JFrame {
 
     private void togglePause() {
         paused = !paused;
+        clearHeldInputs();
         setTitle("Tetris" + (paused ? " (Paused)" : ""));
     }
 
     private void restartGame() {
         paused = false;
+        clearHeldInputs();
         scorePrompted = false;
         lastGameOverProcessed = false;
         setTitle("Tetris");
@@ -140,7 +162,7 @@ public class TetrisFrame extends JFrame {
     }
 
     private void promptNewGame() {
-        int choice = JOptionPane.showConfirmDialog(this, "Start a new game?", "Game Over", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        int choice = showConfirmDialogModal(this, "Start a new game?", "Game Over", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (choice == JOptionPane.YES_OPTION) {
             restartGame();
         }
@@ -168,7 +190,7 @@ public class TetrisFrame extends JFrame {
         gbc.gridx = 0; gbc.gridy = 1; panel.add(lblNew, gbc);
         gbc.gridx = 1; panel.add(newUser, gbc);
 
-        int result = JOptionPane.showConfirmDialog(this, panel, "Record score", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int result = showConfirmDialogModal(this, panel, "Record score", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result != JOptionPane.OK_OPTION) return null;
         String candidate = newUser.getText().trim();
         if (candidate.isEmpty()) {
@@ -184,7 +206,7 @@ public class TetrisFrame extends JFrame {
         JPanel panel = new JPanel();
         panel.setBackground(Color.DARK_GRAY);
         panel.add(label);
-        JOptionPane.showMessageDialog(this, panel, title, JOptionPane.INFORMATION_MESSAGE);
+        showMessageDialogModal(this, panel, title, JOptionPane.INFORMATION_MESSAGE);
         focusGame();
     }
 
@@ -211,8 +233,30 @@ public class TetrisFrame extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.DARK_GRAY);
         panel.add(scroll, BorderLayout.CENTER);
-        JOptionPane.showMessageDialog(this, panel, "Leaderboard", JOptionPane.PLAIN_MESSAGE);
+        showMessageDialogModal(this, panel, "Leaderboard", JOptionPane.PLAIN_MESSAGE);
         focusGame();
+    }
+
+    private int showConfirmDialogModal(java.awt.Component parent, Object message, String title, int optionType, int messageType) {
+        return withModalInputBlocked(() -> JOptionPane.showConfirmDialog(parent, message, title, optionType, messageType));
+    }
+
+    private void showMessageDialogModal(java.awt.Component parent, Object message, String title, int messageType) {
+        withModalInputBlocked(() -> {
+            JOptionPane.showMessageDialog(parent, message, title, messageType);
+            return null;
+        });
+    }
+
+    private <T> T withModalInputBlocked(Supplier<T> dialogAction) {
+        clearHeldInputs();
+        modalActive = true;
+        try {
+            return dialogAction.get();
+        } finally {
+            modalActive = false;
+            clearHeldInputs();
+        }
     }
 
     private void focusGame() {
@@ -226,12 +270,16 @@ public class TetrisFrame extends JFrame {
         var im = root.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
         var am = root.getActionMap();
 
-        registerAction(im, am, "left", KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), () -> moveIfActive(-1, 0));
-        registerAction(im, am, "right", KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), () -> moveIfActive(1, 0));
-        registerAction(im, am, "down", KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), () -> moveIfActive(0, 1));
+        registerAction(im, am, "leftPressed", KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), this::onLeftPressed);
+        registerAction(im, am, "leftReleased", KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), this::onLeftReleased);
+        registerAction(im, am, "rightPressed", KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), this::onRightPressed);
+        registerAction(im, am, "rightReleased", KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), this::onRightReleased);
+        registerAction(im, am, "downPressed", KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false), this::onDownPressed);
+        registerAction(im, am, "downReleased", KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, true), this::onDownReleased);
         registerAction(im, am, "rotateCW", KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), () -> rotateIfActive(true));
         registerAction(im, am, "rotateCCW", KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0), () -> rotateIfActive(false));
         registerAction(im, am, "hardDrop", KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), this::hardDropIfActive);
+        registerAction(im, am, "hold", KeyStroke.getKeyStroke(KeyEvent.VK_C, 0), this::holdIfActive);
         registerAction(im, am, "pause", KeyStroke.getKeyStroke(KeyEvent.VK_P, 0), this::togglePause);
         registerAction(im, am, "restart", KeyStroke.getKeyStroke(KeyEvent.VK_R, 0), this::restartGame);
         registerAction(im, am, "leaderboard", KeyStroke.getKeyStroke(KeyEvent.VK_L, 0), this::showLeaderboard);
@@ -244,26 +292,102 @@ public class TetrisFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 action.run();
-                focusGame();
+                if (!modalActive) {
+                    focusGame();
+                }
             }
         });
     }
 
-    private void moveIfActive(int dx, int dy) {
-        if (paused || board.isGameOver()) return;
-        board.move(dx, dy);
-        gamePanel.repaint();
+    private void onLeftPressed() {
+        applyHorizontalSteps(horizontalRepeater.pressLeft(nowMs()));
+    }
+
+    private void onLeftReleased() {
+        applyHorizontalSteps(horizontalRepeater.releaseLeft(nowMs()));
+    }
+
+    private void onRightPressed() {
+        applyHorizontalSteps(horizontalRepeater.pressRight(nowMs()));
+    }
+
+    private void onRightReleased() {
+        applyHorizontalSteps(horizontalRepeater.releaseRight(nowMs()));
+    }
+
+    private void onDownPressed() {
+        applySoftDropSteps(softDropRepeater.press(nowMs()));
+    }
+
+    private void onDownReleased() {
+        softDropRepeater.release();
+    }
+
+    private void processHeldInput() {
+        if (!isGameplayInputEnabled()) return;
+        long now = nowMs();
+        applyHorizontalSteps(horizontalRepeater.poll(now));
+        applySoftDropSteps(softDropRepeater.poll(now));
+    }
+
+    private boolean isGameplayInputEnabled() {
+        return !paused && !modalActive && !board.isGameOver();
+    }
+
+    private long nowMs() {
+        return System.currentTimeMillis();
+    }
+
+    private void clearHeldInputs() {
+        horizontalRepeater.reset();
+        softDropRepeater.reset();
+    }
+
+    private void applyHorizontalSteps(int signedSteps) {
+        if (signedSteps == 0 || !isGameplayInputEnabled()) return;
+        int direction = signedSteps > 0 ? 1 : -1;
+        int steps = Math.abs(signedSteps);
+        boolean moved = false;
+        for (int i = 0; i < steps; i++) {
+            if (!board.move(direction, 0)) {
+                break;
+            }
+            moved = true;
+        }
+        if (moved) {
+            gamePanel.repaint();
+        }
+    }
+
+    private void applySoftDropSteps(int steps) {
+        if (steps <= 0 || !isGameplayInputEnabled()) return;
+        boolean moved = false;
+        for (int i = 0; i < steps; i++) {
+            if (!board.move(0, 1)) {
+                break;
+            }
+            moved = true;
+        }
+        if (moved) {
+            gamePanel.repaint();
+        }
     }
 
     private void rotateIfActive(boolean cw) {
-        if (paused || board.isGameOver()) return;
+        if (!isGameplayInputEnabled()) return;
         if (cw) board.rotateCW(); else board.rotateCCW();
         gamePanel.repaint();
     }
 
     private void hardDropIfActive() {
-        if (paused || board.isGameOver()) return;
+        if (!isGameplayInputEnabled()) return;
         board.hardDrop();
+        gamePanel.repaint();
+    }
+
+    private void holdIfActive() {
+        if (!isGameplayInputEnabled()) return;
+        board.hold();
         gamePanel.repaint();
     }
 

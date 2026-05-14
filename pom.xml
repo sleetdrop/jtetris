@@ -14,10 +14,21 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jpackage.type>app-image</jpackage.type>
         <jpackage.icon></jpackage.icon>
+        <junit.jupiter.version>5.10.2</junit.jupiter.version>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
-        <sourceDirectory>src</sourceDirectory>
+        <sourceDirectory>src/tetris</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -51,17 +62,12 @@
     <profiles>
         <profile>
             <id>mac</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.panteleyev</groupId>
                         <artifactId>jpackage-maven-plugin</artifactId>
-                        <version>1.9.1</version>
+                        <version>1.7.4</version>
                         <executions>
                             <execution>
                                 <id>jpackage-image</id>

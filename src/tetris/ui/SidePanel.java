@@ -23,6 +23,9 @@ public class SidePanel extends JPanel {
     private JLabel scoreLabel;
     private JLabel levelLabel;
     private JLabel linesLabel;
+    private JLabel eventLabel;
+    private JLabel comboLabel;
+    private JLabel b2bLabel;
     private final JPanel statsPanel;
     private final NextPanel nextPanel;
 
@@ -46,14 +49,20 @@ public class SidePanel extends JPanel {
     }
 
     private JPanel createStatsPanel() {
-        JPanel panel = new JPanel(new GridLayout(3, 1, 0, 8));
+        JPanel panel = new JPanel(new GridLayout(6, 1, 0, 6));
         panel.setOpaque(false);
         scoreLabel = createLabel("Score: 0");
         levelLabel = createLabel("Level: 1");
         linesLabel = createLabel("Lines: 0");
+        eventLabel = createLabel("Event: -");
+        comboLabel = createLabel("Combo: 0");
+        b2bLabel = createLabel("B2B: Off");
         panel.add(scoreLabel);
         panel.add(levelLabel);
         panel.add(linesLabel);
+        panel.add(eventLabel);
+        panel.add(comboLabel);
+        panel.add(b2bLabel);
         return panel;
     }
 
@@ -68,8 +77,19 @@ public class SidePanel extends JPanel {
         scoreLabel.setText("Score: " + board.getScore());
         levelLabel.setText("Level: " + board.getLevel());
         linesLabel.setText("Lines: " + board.getLinesCleared());
+        eventLabel.setText("Event: " + formatEvent(board.getLastScoreEvent()));
+        comboLabel.setText("Combo: " + board.getComboStreak());
+        b2bLabel.setText("B2B: " + (board.isBackToBackActive() ? "On" : "Off"));
         nextPanel.repaint();
         repaint();
+    }
+
+    private String formatEvent(String raw) {
+        if (raw == null || raw.isBlank() || "NONE".equals(raw) || "NO_CLEAR".equals(raw)) {
+            return "-";
+        }
+        String pretty = raw.replace('_', ' ');
+        return pretty.length() <= 16 ? pretty : pretty.substring(0, 16);
     }
 
     private JPanel createControlsPanel() {
@@ -86,6 +106,7 @@ public class SidePanel extends JPanel {
                 "↓       soft drop\n" +
                 "↑ or Z  rotate\n" +
                 "␣       hard drop\n" +
+                "C       hold\n" +
                 "P       pause/resume\n" +
                 "R       restart\n" +
                 "Esc     quit");
@@ -109,21 +130,21 @@ public class SidePanel extends JPanel {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            drawNext(g2d);
+            drawPreview(g2d, "Hold", board.getHold(), 16);
+            drawPreview(g2d, "Next", board.getNext(), 116);
             g2d.dispose();
         }
 
-        private void drawNext(Graphics2D g2d) {
+        private void drawPreview(Graphics2D g2d, String title, Tetromino piece, int top) {
             g2d.setColor(new Color(220, 220, 230));
-            g2d.drawString("Next", 16, 16);
+            g2d.drawString(title, 16, top);
 
-            Tetromino next = board.getNext();
-            if (next == null) return;
-            TetrominoType type = next.getType();
+            if (piece == null) return;
+            TetrominoType type = piece.getType();
             Color color = ColorPalette.colorFor(type);
             int cell = 18;
             int offsetX = 20;
-            int offsetY = 28;
+            int offsetY = top + 12;
             for (var cellPos : type.cells(0)) {
                 int x = offsetX + (cellPos.x * cell);
                 int y = offsetY + (cellPos.y * cell);

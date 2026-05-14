@@ -16,6 +16,9 @@ java -jar target/tetris-1.0-SNAPSHOT.jar
 ## 文档
 - [概览](doc/overview_zh.md)
 - [算法](doc/algorithms_zh.md)
+- [Spec 工作流](doc/specs/README_zh.md)
+- [优化路线图](doc/specs/roadmap_zh.md)
+- [M1 核心规则 Spec](doc/specs/m1-core-rules_zh.md)
 
 ## 控制键
 - 移动：← / →

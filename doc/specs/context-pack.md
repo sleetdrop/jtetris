@@ -1,0 +1,343 @@
+# Context Pack
+
+Compact implementation handoff notes for sequential spec delivery.
+
+> Keep this file append-only and concise. One entry per finished sub-spec.
+
+## 2026-05-11 - M2.1-7BAG-RANDOMIZER
+- Decision summary (3 bullets max):
+  - Switched piece generation to dedicated `PieceBag` with strict 7-bag refill.
+  - Added seeded `Board(long seed)` hook for deterministic test/replay groundwork.
+  - Added model tests before continuing to M2.2.
+- Files changed (exact paths):
+  - `src/tetris/model/Board.java`
+  - `src/tetris/model/PieceBag.java`
+  - `src/test/java/tetris/model/PieceBagTest.java`
+  - `pom.xml`
+  - `doc/algorithms.md`
+  - `doc/specs/m2.1-7bag-randomizer.md`
+- Public behavior changes:
+  - Piece order is now fair-distributed per 7 pieces; `next` pipeline unchanged.
+- Acceptance evidence:
+  - Manual: pending GUI smoke check for spawn/next flow.
+  - Automated: `mvn test` passes `PieceBagTest`.
+- Regressions checked:
+  - Build/test pass after bag integration.
+- Known risks left:
+  - SRS/wall kick and lock-delay are still not implemented.
+- Next spec input (what the next task needs to know):
+  - Rotation code path in `Board.rotate(...)` remains baseline and is ready for M2.2.
+
+## 2026-05-12 - M2.2-SRS-ROTATION-KICKS
+- Decision summary (3 bullets max):
+  - Added SRS kick tables in model layer with dedicated I-piece offsets.
+  - Reworked `Board.rotate(...)` to try kick candidates in deterministic order.
+  - Added model tests for kick table selection and right-wall I-piece rotation.
+- Files changed (exact paths):
+  - `src/tetris/model/Board.java`
+  - `src/tetris/model/SrsKickTable.java`
+  - `src/test/java/tetris/model/SrsRotationTest.java`
+  - `doc/algorithms.md`
+  - `doc/specs/m2.2-srs-rotation-kicks.md`
+- Public behavior changes:
+  - Rotations near walls now succeed in more valid SRS kick cases.
+- Acceptance evidence:
+  - Manual: pending GUI smoke check.
+  - Automated: `mvn clean test` passed.
+- Regressions checked:
+  - Existing piece bag tests and board movement flow still pass.
+- Known risks left:
+  - Hold/ghost/lock-delay specs are not implemented yet.
+- Next spec input (what the next task needs to know):
+  - `SrsKickTable` is ready to be reused by lock-delay and future T-spin detection logic.
+
+## 2026-05-12 - M2.3-HOLD-PIECE
+- Decision summary (3 bullets max):
+  - Added hold slot to `Board` with one-hold-per-turn guard (`holdUsedThisTurn`).
+  - Hold first-use promotes `next`; subsequent uses swap hold/current at spawn orientation.
+  - Added hold preview in side panel and bound hold action to key `C`.
+- Files changed (exact paths):
+  - `src/tetris/model/Board.java`
+  - `src/tetris/ui/SidePanel.java`
+  - `src/tetris/ui/TetrisFrame.java`
+  - `src/test/java/tetris/model/HoldPieceTest.java`
+  - `doc/algorithms.md`
+  - `doc/specs/m2.3-hold-piece.md`
+- Public behavior changes:
+  - Players can hold once per piece lifecycle and see hold/next previews.
+- Acceptance evidence:
+  - Manual: pending GUI smoke check.
+  - Automated: `mvn clean test` passed.
+- Regressions checked:
+  - Existing SRS and piece bag tests still pass.
+- Known risks left:
+  - Ghost and lock-delay specs are not implemented yet.
+- Next spec input (what the next task needs to know):
+  - Keep hold reset semantics in mind when adding lock-delay state transitions.
+
+## 2026-05-14 - M2.4-GHOST-PIECE
+- Decision summary (3 bullets max):
+  - Added `Board.getGhost()` projection using non-mutating simulated descent.
+  - Rendered ghost in `GamePanel` before active piece with translucent fill and soft outline.
+  - Added deterministic tests proving ghost query has no state mutation and matches hard-drop lock.
+- Files changed (exact paths):
+  - `src/tetris/model/Board.java`
+  - `src/tetris/ui/GamePanel.java`
+  - `src/test/java/tetris/model/GhostPieceTest.java`
+  - `doc/overview.md`
+  - `doc/algorithms.md`
+  - `doc/specs/m2.4-ghost-piece.md`
+- Public behavior changes:
+  - Active piece now shows a landing projection that tracks move/rotate state in real time.
+- Acceptance evidence:
+  - Manual: pending GUI smoke check for readability on different piece colors.
+  - Automated: `mvn clean test` passed with new `GhostPieceTest`.
+- Regressions checked:
+  - Existing 7-bag/SRS/hold tests still pass.
+- Known risks left:
+  - Lock delay (M2.5) remains unimplemented.
+- Next spec input (what the next task needs to know):
+  - `getGhost()` can be reused by lock-delay UX (e.g., floor contact feedback) without model mutation.
+
+## 2026-05-14 - M2.5-LOCK-DELAY
+- Decision summary (3 bullets max):
+  - Added grounded-tick tracking in `Board` with a fixed baseline lock-delay window.
+  - Grounded lock-delay is reset on successful move/rotation and after spawn/hold transitions.
+  - Kept hard drop path as immediate lock, independent from lock-delay countdown.
+- Files changed (exact paths):
+  - `src/tetris/model/Board.java`
+  - `src/test/java/tetris/model/LockDelayTest.java`
+  - `doc/algorithms.md`
+  - `doc/specs/m2.5-lock-delay.md`
+- Public behavior changes:
+  - Pieces touching floor no longer lock instantly; there is a short adjustment window.
+- Acceptance evidence:
+  - Manual: pending GUI smoke check for delay feel and pause cadence.
+  - Automated: `mvn clean test` passed with new `LockDelayTest`.
+- Regressions checked:
+  - Existing 7-bag/SRS/hold/ghost tests still pass.
+- Known risks left:
+  - No lock-reset cap yet, so repeated floor adjustments can still extend lock duration.
+- Next spec input (what the next task needs to know):
+  - If competitive tuning is needed, add move-reset cap and level-based lock-delay scaling.
+
+## 2026-05-14 - M3.1-DAS-ARR-INPUT
+- Decision summary (3 bullets max):
+  - Added `InputRepeater` to model deterministic horizontal DAS/ARR independent from OS repeat settings.
+  - Switched left/right from one-shot key actions to press/release bindings plus 16ms poll timer.
+  - Added held-input reset on pause/restart/window-focus-loss to avoid stuck movement state.
+- Files changed (exact paths):
+  - `src/tetris/ui/InputRepeater.java`
+  - `src/tetris/ui/TetrisFrame.java`
+  - `src/test/java/tetris/ui/InputRepeaterTest.java`
+  - `doc/algorithms.md`
+  - `doc/specs/roadmap.md`
+  - `doc/specs/m3.1-das-arr-input.md`
+- Public behavior changes:
+  - Holding `←`/`→` now follows configured DAS/ARR cadence with deterministic both-key priority.
+- Acceptance evidence:
+  - Manual: pending local feel check for DAS/ARR tuning values.
+  - Automated: `mvn clean test` passed with new `InputRepeaterTest`.
+- Regressions checked:
+  - Existing model tests still pass after input-handling changes.
+- Known risks left:
+  - Soft-drop repeat policy still depends on one-shot key actions (to be addressed in M3.2).
+- Next spec input (what the next task needs to know):
+  - Reuse the same poll-timer pathway for soft-drop cadence and input-buffer consistency.
+
+## 2026-05-14 - M3.2-SOFT-HARD-DROP-CONSISTENCY
+- Decision summary (3 bullets max):
+  - Added `SoftDropRepeater` for deterministic Down-key repeat independent from OS key-repeat settings.
+  - Switched `↓` handling to press/release bindings integrated into the existing input poll loop.
+  - Preserved immediate hard-drop lock behavior while soft-drop repeat remains active.
+- Files changed (exact paths):
+  - `src/tetris/ui/SoftDropRepeater.java`
+  - `src/tetris/ui/TetrisFrame.java`
+  - `src/test/java/tetris/ui/SoftDropRepeaterTest.java`
+  - `doc/algorithms.md`
+  - `doc/overview.md`
+  - `doc/specs/roadmap.md`
+  - `doc/specs/m3.2-soft-hard-drop-consistency.md`
+- Public behavior changes:
+  - Holding `↓` now has stable repeat cadence with immediate first step.
+- Acceptance evidence:
+  - Manual: pending local feel check for soft-drop speed.
+  - Automated: `mvn clean test` passed with new `SoftDropRepeaterTest`.
+- Regressions checked:
+  - Existing model and input repeater tests still pass.
+- Known risks left:
+  - M3.3 (input-state transitions) still pending for broader buffer semantics.
+- Next spec input (what the next task needs to know):
+  - Consolidate repeaters/reset policy in M3.3 for full state-transition hardening.
+
+## 2026-05-14 - M3.3-INPUT-STATE-TRANSITIONS
+- Decision summary (3 bullets max):
+  - Added `modalActive` guard in `TetrisFrame` and centralized gameplay eligibility via `isGameplayInputEnabled()`.
+  - Wrapped `JOptionPane` usage with modal helpers that clear held repeaters before/after dialogs.
+  - Prevented forced focus recovery while modal dialogs are active to avoid input/focus contention.
+- Files changed (exact paths):
+  - `src/tetris/ui/TetrisFrame.java`
+  - `doc/algorithms.md`
+  - `doc/overview.md`
+  - `doc/specs/roadmap.md`
+  - `doc/specs/m3.3-input-state-transitions.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - Gameplay input is consistently blocked during modal dialogs and resumes cleanly after close.
+- Acceptance evidence:
+  - Manual: pending targeted check for no post-dialog movement drift.
+  - Automated: `mvn clean test` passed.
+- Regressions checked:
+  - Existing model/input repeater test suite still passes.
+- Known risks left:
+  - Timer-speed scaling and advanced input buffering remain out of scope.
+- Next spec input (what the next task needs to know):
+  - M4 can build on stable input state transitions for scoring-feature UX.
+
+## 2026-05-14 - M4.1-TSPIN-DETECTION
+- Decision summary (3 bullets max):
+  - Added `TSpinDetector` with baseline 3-corner rule bound to last successful rotation action.
+  - Integrated lock-time detection into `Board.lockCurrent()` and exposed state via `wasLastLockTSpin()`.
+  - Kept scoring unchanged in this step to isolate detection from scoring-policy rollout.
+- Files changed (exact paths):
+  - `src/tetris/model/TSpinDetector.java`
+  - `src/tetris/model/Board.java`
+  - `src/test/java/tetris/model/TSpinDetectorTest.java`
+  - `doc/algorithms.md`
+  - `doc/overview.md`
+  - `doc/specs/roadmap.md`
+  - `doc/specs/m4.1-tspin-detection.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - Model now records whether the most recent lock qualifies as a baseline T-Spin.
+- Acceptance evidence:
+  - Manual: pending UI/score indicator work in later M4 specs.
+  - Automated: `mvn clean test` passed with new `TSpinDetectorTest`.
+- Regressions checked:
+  - Existing mechanics/input tests still pass.
+- Known risks left:
+  - No T-Spin Mini or scoring integration yet.
+- Next spec input (what the next task needs to know):
+  - M4.2 should consume `wasLastLockTSpin()` for combo/B2B scoring behavior.
+
+## 2026-05-14 - M4.2-COMBO-B2B
+- Decision summary (3 bullets max):
+  - Extended `Board` scoring pipeline with combo streak, B2B chain, and baseline T-Spin line-clear base scores.
+  - Added scoring state getters (`getComboStreak`, `isBackToBackActive`, `getLastScoreEvent`) for upcoming panel semantics work.
+  - Kept scope model-only and deferred score breakdown UI to M4.3.
+- Files changed (exact paths):
+  - `src/tetris/model/Board.java`
+  - `src/test/java/tetris/model/ScoringRulesTest.java`
+  - `doc/algorithms.md`
+  - `doc/overview.md`
+  - `doc/specs/roadmap.md`
+  - `doc/specs/m4.2-combo-b2b.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - Score now reflects combo and B2B policies, including T-Spin clear base scoring.
+- Acceptance evidence:
+  - Manual: pending score breakdown visibility in later UI spec.
+  - Automated: `mvn clean test` passed with new `ScoringRulesTest`.
+- Regressions checked:
+  - Existing mechanics/input/t-spin tests still pass.
+- Known risks left:
+  - Current scoring constants are a practical baseline, not full guideline parity.
+- Next spec input (what the next task needs to know):
+  - M4.3 should present `lastScoreEvent`, combo, and B2B status in side panel without changing model rules.
+
+## 2026-05-14 - M4.3-SCORE-BREAKDOWN-PANEL
+- Decision summary (3 bullets max):
+  - Added side-panel score breakdown labels for last event, combo streak, and B2B state.
+  - Wired panel refresh to `Board` scoring getters from M4.2.
+  - Kept display compact with placeholder handling for non-scoring locks.
+- Files changed (exact paths):
+  - `src/tetris/ui/SidePanel.java`
+  - `doc/algorithms.md`
+  - `doc/overview.md`
+  - `doc/specs/roadmap.md`
+  - `doc/specs/m4.3-score-breakdown-panel.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - Right panel now shows score breakdown context (Event/Combo/B2B) alongside existing stats.
+- Acceptance evidence:
+  - Manual: pending in-game validation of event transitions during clears.
+  - Automated: `mvn clean test` passed.
+- Regressions checked:
+  - Existing model/input tests remain green.
+- Known risks left:
+  - Event text is compact/truncated; no expanded detail/animation yet.
+- Next spec input (what the next task needs to know):
+  - M5 can add regression gates around score-event string semantics.
+
+## 2026-05-14 - M5.1-MODEL-REGRESSION-GATES
+- Decision summary (3 bullets max):
+  - Added `BoardRegressionGateTest` to lock core model invariants that are easy to regress.
+  - Covered boundary/occupied collisions, blocked-rotation failure, line-clear consistency, and spawn-blocked top-out.
+  - Kept production logic unchanged; this step is test-gate hardening only.
+- Files changed (exact paths):
+  - `src/test/java/tetris/model/BoardRegressionGateTest.java`
+  - `doc/algorithms.md`
+  - `doc/specs/roadmap.md`
+  - `doc/specs/m5.1-model-regression-gates.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - No direct runtime behavior change; regression detection breadth increased.
+- Acceptance evidence:
+  - Manual: N/A (test gate milestone).
+  - Automated: `mvn clean test` passed including new regression gate tests.
+- Regressions checked:
+  - Existing mechanics/input/scoring tests still pass.
+- Known risks left:
+  - Replay hooks and CI quality-gate documentation remain for M5.2/M5.3.
+- Next spec input (what the next task needs to know):
+  - M5.2 should add deterministic replay hooks without weakening new gate coverage.
+
+## 2026-05-14 - M5.2-SEEDED-REPLAY-HOOKS
+- Decision summary (3 bullets max):
+  - Added `ReplayAction` enum and model-level replay API (`applyReplayAction`, `replayFromSeed`).
+  - `Board` now exposes replay seed metadata and recorded action stream for seeded runs.
+  - Reset now clears replay action history to avoid cross-run pollution.
+- Files changed (exact paths):
+  - `src/tetris/model/ReplayAction.java`
+  - `src/tetris/model/Board.java`
+  - `src/test/java/tetris/model/ReplayHooksTest.java`
+  - `doc/algorithms.md`
+  - `doc/overview.md`
+  - `doc/specs/roadmap.md`
+  - `doc/specs/m5.2-seeded-replay-hooks.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - Deterministic replay reconstruction is now available in model layer.
+- Acceptance evidence:
+  - Manual: N/A (model API feature).
+  - Automated: `mvn clean test` passed with new `ReplayHooksTest`.
+- Regressions checked:
+  - Existing model/input/scoring regression tests still pass.
+- Known risks left:
+  - Replay persistence/export tooling is not implemented yet.
+- Next spec input (what the next task needs to know):
+  - M5.3 can define quality-gate docs and suggested CI steps that run replay/regression suites.
+
+## 2026-05-14 - M5.3-QUALITY-GATES-DOCS
+- Decision summary (3 bullets max):
+  - Added `doc/quality-gates.md` with Gate 0/1/2 workflow, pass criteria, and replay triage guidance.
+  - Added `m5.3-quality-gates-docs.md` to formalize documentation requirements for behavior-changing PRs.
+  - Linked quality gates from `README.md` and marked roadmap M5 split as fully implemented.
+- Files changed (exact paths):
+  - `doc/quality-gates.md`
+  - `doc/specs/m5.3-quality-gates-docs.md`
+  - `doc/specs/roadmap.md`
+  - `README.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - No runtime gameplay change; project quality process is now explicit and repeatable.
+- Acceptance evidence:
+  - Manual: reviewed command clarity and docs checklist consistency.
+  - Automated: `mvn clean test` passed.
+- Regressions checked:
+  - Existing regression/replay/scoring suites still pass.
+- Known risks left:
+  - CI workflow file generation is still manual (not automated in-repo yet).
+- Next spec input (what the next task needs to know):
+  - Roadmap milestones M1-M5 are now fully specified and implemented; next work can start from new milestone definition.
+

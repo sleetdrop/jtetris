@@ -16,6 +16,10 @@ java -jar target/tetris-1.0-SNAPSHOT.jar
 ## Docs
 - [Overview](doc/overview.md)
 - [Algorithms](doc/algorithms.md)
+- [Quality Gates](doc/quality-gates.md)
+- [Spec Workflow](doc/specs/README.md)
+- [Optimization Roadmap](doc/specs/roadmap.md)
+- [M1 Core Rules Spec](doc/specs/m1-core-rules.md)
 
 ## Controls
 - Move: ← / →

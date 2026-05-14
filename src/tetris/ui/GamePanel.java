@@ -45,6 +45,7 @@ public class GamePanel extends JPanel {
 
         drawGrid(g2d);
         drawLockedBlocks(g2d);
+        drawGhostPiece(g2d);
         drawCurrentPiece(g2d);
         g2d.dispose();
     }
@@ -81,6 +82,31 @@ public class GamePanel extends JPanel {
             if (py + cellSize <= 0) continue; // skip hidden rows
             fillCell(g2d, px / cellSize, py / cellSize, color);
         }
+    }
+
+    private void drawGhostPiece(Graphics2D g2d) {
+        Tetromino ghost = board.getGhost();
+        Tetromino current = board.getCurrent();
+        if (ghost == null || current == null) return;
+
+        Color base = ColorPalette.colorFor(current.getType());
+        Color fill = new Color(base.getRed(), base.getGreen(), base.getBlue(), 55);
+        Color stroke = new Color(base.getRed(), base.getGreen(), base.getBlue(), 140);
+        for (var cell : ghost.getCells()) {
+            int gx = ghost.getX() + cell.x;
+            int gy = ghost.getY() + cell.y - 2;
+            if (gy < 0) continue; // skip hidden rows
+            drawGhostCell(g2d, gx, gy, fill, stroke);
+        }
+    }
+
+    private void drawGhostCell(Graphics2D g2d, int gridX, int gridY, Color fill, Color stroke) {
+        int x = gridX * cellSize;
+        int y = gridY * cellSize;
+        g2d.setColor(fill);
+        g2d.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
+        g2d.setColor(stroke);
+        g2d.drawRect(x + 1, y + 1, cellSize - 3, cellSize - 3);
     }
 
     private void fillCell(Graphics2D g2d, int gridX, int gridY, Color color) {
