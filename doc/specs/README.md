@@ -29,7 +29,7 @@ This matches option **C** from the decision set.
 We use **strict gate acceptance**:
 - Manual verification notes are required.
 - Automated checks are required when practical (`mvn clean test` at minimum once tests exist).
-- PRs without acceptance evidence cannot be merged.
+- Changes are not considered complete without acceptance evidence.
 
 This matches option **C** from the decision set.
 
@@ -49,10 +49,14 @@ This matches option **C** from the decision set.
 9. `Rollback plan`
 
 ## Working routine
-1. Create or update a spec in this folder.
-2. Open a GitHub issue and reference the `Spec ID`.
-3. Implement one small checklist item per PR when possible.
-4. Fill verification results directly in the spec and PR.
-5. Mark spec status as `Done` only after merge + verification.
-6. Run context compression using `m2-context-compression.md` and append one entry to `context-pack.md`.
+1. Create or update a spec in this folder (start from `doc/specs/_feature-spec-template.md` when applicable).
+2. Define an implementation file allowlist in the spec before coding.
+3. Implement one small checklist item per session/commit when possible.
+4. Fill verification results directly in the spec.
+5. Before context handoff, fill `doc/specs/_session-handoff-template.md` and append one entry to `context-pack.md`.
+6. Mark spec status as `Done` only after verification is complete.
+
+## Solo-dev phase note
+- During early development, GitHub issue/PR linkage is optional.
+- Once collaboration starts, add issue/PR references back as required metadata.
 

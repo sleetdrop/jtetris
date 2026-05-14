@@ -22,6 +22,7 @@ mvn clean test
 
 ## Docs
 - [Agent Instructions](AGENTS.md)
+- [Copilot Usage (Project-local)](doc/copilot-agent-usage.md)
 - [Overview](doc/overview.md)
 - [Algorithms](doc/algorithms.md)
 - [Quality Gates](doc/quality-gates.md)
@@ -30,6 +31,11 @@ mvn clean test
 - [M1 Core Rules Spec](doc/specs/m1-core-rules.md)
 - [Contributing](CONTRIBUTING.md)
 - [License](LICENSE)
+
+## Copilot prompts
+- `.github/prompts/session-start.prompt.md`
+- `.github/prompts/feature-task.prompt.md`
+- `.github/prompts/session-handoff.prompt.md`
 
 ## Controls
 - Move: ← / →
