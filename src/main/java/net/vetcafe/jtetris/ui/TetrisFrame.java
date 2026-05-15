@@ -65,7 +65,7 @@ public class TetrisFrame extends JFrame {
     public TetrisFrame() {
         super(APP_NAME);
         UiTheme.refreshFromSystem();
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLayout(new BorderLayout());
         getContentPane().setBackground(UiTheme.active().frameBackground());
         add(gamePanel, BorderLayout.CENTER);
@@ -84,6 +84,13 @@ public class TetrisFrame extends JFrame {
             @Override
             public void windowLostFocus(WindowEvent e) {
                 clearHeldInputs();
+            }
+        });
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                requestExit();
             }
         });
 
@@ -133,7 +140,7 @@ public class TetrisFrame extends JFrame {
         hold.addActionListener(e -> holdIfActive());
         JMenuItem exit = new JMenuItem("Quit (Esc)");
         exit.setFont(UiFonts.regular(13f));
-        exit.addActionListener(e -> dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
+        exit.addActionListener(e -> requestExit());
         gameMenu.add(pause);
         gameMenu.add(restart);
         gameMenu.add(hold);
@@ -397,7 +404,17 @@ public class TetrisFrame extends JFrame {
         registerAction(im, am, "pause", KeyStroke.getKeyStroke(KeyEvent.VK_P, 0), this::togglePause);
         registerAction(im, am, "restart", KeyStroke.getKeyStroke(KeyEvent.VK_R, 0), this::restartGame);
         registerAction(im, am, "leaderboard", KeyStroke.getKeyStroke(KeyEvent.VK_L, 0), this::showLeaderboard);
-        registerAction(im, am, "quit", KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), () -> dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
+        registerAction(im, am, "quit", KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), this::requestExit);
+    }
+
+    private void requestExit() {
+        int choice = showConfirmDialogModal(this, "Exit JTetris?", "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (choice == JOptionPane.YES_OPTION) {
+            dispose();
+            System.exit(0);
+        } else {
+            focusGame();
+        }
     }
 
     private void registerAction(javax.swing.InputMap im, javax.swing.ActionMap am, String name, KeyStroke key, Runnable action) {
