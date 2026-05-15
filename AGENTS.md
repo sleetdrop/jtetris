@@ -13,10 +13,12 @@
 
 ## Source Map
 - Main source: `src/main/java/net/vetcafe/jtetris`
-  - Model: `model/` (`Board`, `Tetromino`, `TetrominoType`, `PieceBag`, `SrsKickTable`, `TSpinDetector`)
-  - UI: `ui/` (`TetrisFrame`, `GamePanel`, `SidePanel`, `InputRepeater`, `SoftDropRepeater`)
+  - Model: `model/` (`Board`, `Tetromino`, `TetrominoType`, `PieceBag`, `ReplayAction`, `SrsKickTable`, `TSpinDetector`)
+  - UI: `ui/` (`TetrisFrame`, `GamePanel`, `SidePanel`, `InputRepeater`, `SoftDropRepeater`, `UiTheme`, `UiFonts`)
   - Score storage: `score/ScoreManager`
 - Tests: `src/test/java/net/vetcafe/jtetris`
+- Resources: `src/main/resources/fonts` (bundled Inter regular/semibold fonts + license text)
+- Legacy spec path note: older specs may still mention `src/tetris`; map those references to the Maven layout above when implementing.
 - Design docs: `doc/overview.md`, `doc/algorithms.md`, `doc/quality-gates.md`
 - Spec workflow: `doc/specs/README.md`
 - Copilot usage: `doc/copilot-agent-usage.md`
@@ -32,11 +34,17 @@ mvn clean test
 mvn clean package
 java -jar target/jtetris-1.0-SNAPSHOT.jar
 ```
+- macOS app-image packaging profile:
+```bash
+mvn -Pmac clean package
+```
 
 ## Editing Rules For Agents
 - Keep UI text English-only unless explicitly requested.
-- Preserve keyboard behavior and focus semantics in `TetrisFrame` (`focusGame()`, key bindings, repeaters).
+- Preserve keyboard behavior and focus semantics in `TetrisFrame` (`focusGame()`, key bindings, repeaters, modal-dialog input clearing, and the `C` hold action).
+- Keep the theme/font pipeline intact (`UiTheme`, `UiFonts`, and the bundled Inter fonts under `src/main/resources/fonts`) unless the task explicitly changes the UI system.
 - Keep score file compatibility at `~/.tetris_scores.properties` unless a migration is explicitly requested.
+- Keep replay hooks (`Board.applyReplayAction(...)`, `Board.replayFromSeed(...)`) aligned with any model-behavior change.
 - Prefer small, localized changes over broad rewrites.
 - When gameplay timing changes, validate model and UI together (gravity timer, DAS/ARR, soft-drop repeaters).
 
