@@ -25,9 +25,13 @@ import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
+import java.awt.Dimension;
 import javax.swing.BorderFactory;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class TetrisFrame extends JFrame {
@@ -42,6 +46,7 @@ public class TetrisFrame extends JFrame {
         // On macOS this merges the menu bar into the system bar when supported
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", APP_NAME);
+        UiTheme.refreshFromSystem();
     }
 
     private final Board board = new Board();
@@ -59,8 +64,10 @@ public class TetrisFrame extends JFrame {
 
     public TetrisFrame() {
         super(APP_NAME);
+        UiTheme.refreshFromSystem();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        getContentPane().setBackground(UiTheme.active().frameBackground());
         add(gamePanel, BorderLayout.CENTER);
         add(sidePanel, BorderLayout.EAST);
         setJMenuBar(createMenuBar());
@@ -108,15 +115,24 @@ public class TetrisFrame extends JFrame {
     }
 
     private JMenuBar createMenuBar() {
+        UiTheme theme = UiTheme.active();
         JMenuBar bar = new JMenuBar();
+        bar.setFont(UiFonts.regular(13f));
+        bar.setBackground(theme.frameBackground());
+        bar.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
         JMenu gameMenu = new JMenu("Game");
+        gameMenu.setFont(UiFonts.regular(13f));
         JMenuItem pause = new JMenuItem("Pause/Resume (P)");
+        pause.setFont(UiFonts.regular(13f));
         pause.addActionListener(e -> togglePause());
         JMenuItem restart = new JMenuItem("Restart (R)");
+        restart.setFont(UiFonts.regular(13f));
         restart.addActionListener(e -> restartGame());
         JMenuItem hold = new JMenuItem("Hold (C)");
+        hold.setFont(UiFonts.regular(13f));
         hold.addActionListener(e -> holdIfActive());
         JMenuItem exit = new JMenuItem("Quit (Esc)");
+        exit.setFont(UiFonts.regular(13f));
         exit.addActionListener(e -> dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
         gameMenu.add(pause);
         gameMenu.add(restart);
@@ -124,7 +140,9 @@ public class TetrisFrame extends JFrame {
         gameMenu.add(exit);
 
         JMenu scores = new JMenu("Scores");
+        scores.setFont(UiFonts.regular(13f));
         JMenuItem viewBoard = new JMenuItem("Leaderboard (L)");
+        viewBoard.setFont(UiFonts.regular(13f));
         viewBoard.addActionListener(e -> showLeaderboard());
         scores.add(viewBoard);
 
@@ -170,21 +188,39 @@ public class TetrisFrame extends JFrame {
     }
 
     private String chooseOrCreateUser() {
+        UiTheme theme = UiTheme.active();
         var users = scoreManager.getUsers();
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.DARK_GRAY);
+        panel.setBackground(theme.dialogSurface());
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(theme.dialogBorder(), 1),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(6, 6, 6, 6);
+        gbc.insets = new Insets(4, 4, 4, 4);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JComboBox<String> existing = new JComboBox<>(users.toArray(String[]::new));
         existing.setEditable(false);
+        existing.setFont(UiFonts.regular(16f));
+        existing.setBackground(theme.dialogBackground());
+        existing.setForeground(theme.textPrimary());
         JTextField newUser = new JTextField();
+        newUser.setFont(UiFonts.regular(16f));
+        newUser.setBackground(theme.dialogBackground());
+        newUser.setForeground(theme.textPrimary());
+        newUser.setCaretColor(theme.textPrimary());
+        newUser.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(theme.dialogBorder(), 1),
+                BorderFactory.createEmptyBorder(4, 8, 4, 8)
+        ));
 
         JLabel lblExisting = new JLabel("Choose existing:");
-        lblExisting.setForeground(Color.WHITE);
+        lblExisting.setForeground(theme.textPrimary());
+        lblExisting.setFont(UiFonts.regular(16f));
         JLabel lblNew = new JLabel("Or enter new:");
-        lblNew.setForeground(Color.WHITE);
+        lblNew.setForeground(theme.textPrimary());
+        lblNew.setFont(UiFonts.regular(16f));
 
         gbc.gridx = 0; gbc.gridy = 0; panel.add(lblExisting, gbc);
         gbc.gridx = 1; panel.add(existing, gbc);
@@ -202,16 +238,24 @@ public class TetrisFrame extends JFrame {
     }
 
     private void showStyledMessage(String msg, String title) {
+        UiTheme theme = UiTheme.active();
         JLabel label = new JLabel("<html>" + msg.replace("\n", "<br>") + "</html>");
-        label.setForeground(Color.WHITE);
+        label.setForeground(theme.textPrimary());
+        label.setFont(UiFonts.regular(18f));
+        label.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
         JPanel panel = new JPanel();
-        panel.setBackground(Color.DARK_GRAY);
+        panel.setBackground(theme.dialogSurface());
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(theme.dialogBorder(), 1),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
         panel.add(label);
         showMessageDialogModal(this, panel, title, JOptionPane.INFORMATION_MESSAGE);
         focusGame();
     }
 
     private void showLeaderboard() {
+        UiTheme theme = UiTheme.active();
         var entries = scoreManager.getLeaderboard();
         if (entries.isEmpty()) {
             showStyledMessage("No scores yet", "Leaderboard");
@@ -224,29 +268,98 @@ public class TetrisFrame extends JFrame {
             model.addRow(new Object[]{e.user(), e.score()});
         }
         JTable table = new JTable(model);
-        table.setBackground(Color.DARK_GRAY);
-        table.setForeground(Color.WHITE);
+        table.setBackground(theme.dialogBackground());
+        table.setForeground(theme.textPrimary());
+        table.setGridColor(theme.tableGrid());
+        table.setRowHeight(28);
+        table.setIntercellSpacing(new Dimension(1, 1));
+        table.setFont(UiFonts.regular(16f));
+        table.getTableHeader().setBackground(theme.tableHeaderBackground());
+        table.getTableHeader().setForeground(theme.tableHeaderText());
+        table.getTableHeader().setFont(UiFonts.semibold(16f));
+        table.getTableHeader().setBorder(BorderFactory.createLineBorder(theme.dialogBorder(), 1));
+        table.getTableHeader().setReorderingAllowed(false);
         table.setFillsViewportHeight(true);
         table.setEnabled(false);
+        int visibleRows = Math.max(1, Math.min(entries.size(), 8));
+        int preferredHeight = (visibleRows * table.getRowHeight()) + table.getTableHeader().getPreferredSize().height + 8;
+        table.setPreferredScrollableViewportSize(new Dimension(520, preferredHeight));
         JScrollPane scroll = new JScrollPane(table);
-        scroll.getViewport().setBackground(Color.DARK_GRAY);
-        scroll.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        scroll.getViewport().setBackground(theme.dialogBackground());
+        scroll.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.DARK_GRAY);
+        panel.setBackground(theme.dialogSurface());
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(theme.dialogBorder(), 1),
+                BorderFactory.createEmptyBorder(6, 6, 6, 6)
+        ));
         panel.add(scroll, BorderLayout.CENTER);
         showMessageDialogModal(this, panel, "Leaderboard", JOptionPane.PLAIN_MESSAGE);
         focusGame();
     }
 
     private int showConfirmDialogModal(java.awt.Component parent, Object message, String title, int optionType, int messageType) {
-        return withModalInputBlocked(() -> JOptionPane.showConfirmDialog(parent, message, title, optionType, messageType));
+        return withModalInputBlocked(() -> withDialogUiDefaults(() ->
+                JOptionPane.showConfirmDialog(parent, message, title, optionType, messageType)
+        ));
     }
 
     private void showMessageDialogModal(java.awt.Component parent, Object message, String title, int messageType) {
         withModalInputBlocked(() -> {
-            JOptionPane.showMessageDialog(parent, message, title, messageType);
+            withDialogUiDefaults(() -> {
+                JOptionPane.showMessageDialog(parent, message, title, messageType);
+                return null;
+            });
             return null;
         });
+    }
+
+    private <T> T withDialogUiDefaults(Supplier<T> action) {
+        Map<String, Object> backup = installDialogUiDefaults();
+        try {
+            return action.get();
+        } finally {
+            restoreUiDefaults(backup);
+        }
+    }
+
+    private Map<String, Object> installDialogUiDefaults() {
+        UiTheme theme = UiTheme.active();
+        Map<String, Object> previous = new HashMap<>();
+        putUiDefault(previous, "OptionPane.background", theme.dialogSurface());
+        putUiDefault(previous, "Panel.background", theme.dialogSurface());
+        putUiDefault(previous, "OptionPane.messageForeground", theme.textPrimary());
+        putUiDefault(previous, "OptionPane.messageFont", UiFonts.regular(17f));
+        putUiDefault(previous, "Label.foreground", theme.textPrimary());
+        putUiDefault(previous, "Label.font", UiFonts.regular(15f));
+        putUiDefault(previous, "Button.font", UiFonts.regular(15f));
+        putUiDefault(previous, "Button.background", theme.accent());
+        putUiDefault(previous, "Button.foreground", theme.textPrimary());
+        putUiDefault(previous, "Button.select", theme.accent().darker());
+        putUiDefault(previous, "OptionPane.minimumSize", new Dimension(420, 180));
+        putUiDefault(previous, "OptionPane.buttonPadding", 8);
+        putUiDefault(previous, "TextField.font", UiFonts.regular(16f));
+        putUiDefault(previous, "TextField.background", theme.dialogBackground());
+        putUiDefault(previous, "TextField.foreground", theme.textPrimary());
+        putUiDefault(previous, "ComboBox.font", UiFonts.regular(16f));
+        putUiDefault(previous, "ComboBox.background", theme.dialogBackground());
+        putUiDefault(previous, "ComboBox.foreground", theme.textPrimary());
+        putUiDefault(previous, "Table.font", UiFonts.regular(15f));
+        putUiDefault(previous, "Table.foreground", theme.textPrimary());
+        putUiDefault(previous, "Table.background", theme.dialogBackground());
+        putUiDefault(previous, "TableHeader.font", UiFonts.semibold(15f));
+        return previous;
+    }
+
+    private void putUiDefault(Map<String, Object> previous, String key, Object value) {
+        previous.put(key, UIManager.get(key));
+        UIManager.put(key, value);
+    }
+
+    private void restoreUiDefaults(Map<String, Object> previous) {
+        for (var entry : previous.entrySet()) {
+            UIManager.put(entry.getKey(), entry.getValue());
+        }
     }
 
     private <T> T withModalInputBlocked(Supplier<T> dialogAction) {

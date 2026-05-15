@@ -341,3 +341,57 @@ Compact implementation handoff notes for sequential spec delivery.
 - Next spec input (what the next task needs to know):
   - Roadmap milestones M1-M5 are now fully specified and implemented; next work can start from new milestone definition.
 
+## 2026-05-15 - M6.1-UI-THEME-AND-TYPOGRAPHY
+- Decision summary (3 bullets max):
+  - Added `UiTheme` tokens with light/dark palettes and auto-detection (plus `-Djtetris.theme=light|dark|auto` override).
+  - Added bundled Inter font loader (`UiFonts`) with fallback to logical fonts when resource loading fails.
+  - Restyled board/side panel/dialog surfaces and leaderboard table to remove ad-hoc defaults and align with a consistent classic visual language.
+- Files changed (exact paths):
+  - `src/main/java/net/vetcafe/jtetris/ui/UiTheme.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/UiFonts.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/ColorPalette.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/GamePanel.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/SidePanel.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/TetrisFrame.java`
+  - `src/main/resources/fonts/Inter-Regular.ttf`
+  - `src/main/resources/fonts/Inter-SemiBold.ttf`
+  - `src/main/resources/fonts/OFL-Inter.txt`
+  - `README.md`
+  - `doc/specs/m6.1-ui-theme-and-typography.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - UI now uses cohesive theme colors and typography across gameplay surface and modal dialogs, with system-aware light/dark startup behavior.
+- Acceptance evidence:
+  - Manual: visual checks pending from user screenshots/run-through for spacing and readability.
+  - Automated: `mvn clean test` passed (38 tests).
+- Regressions checked:
+  - Existing model/input/scoring/replay tests all pass after UI-layer changes.
+- Known risks left:
+  - Runtime OS-theme change is not observed after app launch; restart is required for auto mode to re-evaluate.
+- Next spec input (what the next task needs to know):
+  - If runtime theme switching is desired, add an explicit menu/settings action and repaint pipeline in a follow-up spec.
+
+## 2026-05-15 - M6.2-UI-VISUAL-POLISH
+- Decision summary (3 bullets max):
+  - Fixed dialog button readability by removing light-theme white-on-light button text and tightening modal typography defaults.
+  - Switched leaderboard viewport sizing to content-aware dimensions so low-row lists no longer render a very tall empty panel.
+  - Increased light-theme board contrast (grid, tetromino palette, ghost alpha, piece edge strokes) while keeping warm classic styling.
+- Files changed (exact paths):
+  - `src/main/java/net/vetcafe/jtetris/ui/TetrisFrame.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/GamePanel.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/ColorPalette.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/UiTheme.java`
+  - `doc/specs/m6.2-ui-visual-polish.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - Light-theme dialogs and board visuals are denser and more legible, with less oversized whitespace in leaderboard modal.
+- Acceptance evidence:
+  - Manual: awaiting user screenshot validation for final spacing/contrast preference.
+  - Automated: `mvn clean test` passed (38 tests).
+- Regressions checked:
+  - Existing model/input/scoring/replay test suite remains green.
+- Known risks left:
+  - Native platform look-and-feel may still override some dialog button color hints on specific OS themes.
+- Next spec input (what the next task needs to know):
+  - If per-button semantic styling (primary/secondary) is required, replace `JOptionPane` standard buttons with a custom dialog panel.
+

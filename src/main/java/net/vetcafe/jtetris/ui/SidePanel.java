@@ -12,7 +12,6 @@ import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -32,7 +31,7 @@ public class SidePanel extends JPanel {
     public SidePanel(Board board) {
         this.board = board;
         setPreferredSize(new Dimension(200, 520));
-        setBackground(new Color(24, 24, 32));
+        setBackground(UiTheme.active().sidePanelBackground());
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new BorderLayout(0, 10));
 
@@ -68,8 +67,8 @@ public class SidePanel extends JPanel {
 
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setForeground(new Color(230, 230, 240));
-        label.setFont(new Font(Font.MONOSPACED, Font.BOLD, 14));
+        label.setForeground(UiTheme.active().textPrimary());
+        label.setFont(UiFonts.semibold(15f));
         return label;
     }
 
@@ -99,8 +98,8 @@ public class SidePanel extends JPanel {
         JTextArea area = new JTextArea();
         area.setEditable(false);
         area.setOpaque(false);
-        area.setForeground(new Color(220, 220, 230));
-        area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        area.setForeground(UiTheme.active().textMuted());
+        area.setFont(UiFonts.mono(12f));
         area.setText("Controls:\n" +
                 "← / →  move\n" +
                 "↓       soft drop\n" +
@@ -136,7 +135,8 @@ public class SidePanel extends JPanel {
         }
 
         private void drawPreview(Graphics2D g2d, String title, Tetromino piece, int top) {
-            g2d.setColor(new Color(220, 220, 230));
+            g2d.setColor(UiTheme.active().textPrimary());
+            g2d.setFont(UiFonts.regular(17f));
             g2d.drawString(title, 16, top);
 
             if (piece == null) return;

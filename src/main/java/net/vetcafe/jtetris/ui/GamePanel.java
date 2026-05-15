@@ -21,7 +21,7 @@ public class GamePanel extends JPanel {
     public GamePanel(Board board) {
         this.board = board;
         setPreferredSize(new Dimension(Board.WIDTH * cellSize, (Board.HEIGHT - 2) * cellSize));
-        setBackground(new Color(18, 18, 24));
+        setBackground(UiTheme.active().boardBackground());
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         addHierarchyListener(e -> {
@@ -51,7 +51,7 @@ public class GamePanel extends JPanel {
     }
 
     private void drawGrid(Graphics2D g2d) {
-        g2d.setColor(new Color(50, 50, 60));
+        g2d.setColor(UiTheme.active().boardGrid());
         for (int x = 0; x <= Board.WIDTH; x++) {
             g2d.drawLine(x * cellSize, 0, x * cellSize, (Board.HEIGHT - 2) * cellSize);
         }
@@ -89,9 +89,12 @@ public class GamePanel extends JPanel {
         Tetromino current = board.getCurrent();
         if (ghost == null || current == null) return;
 
+        UiTheme theme = UiTheme.active();
         Color base = ColorPalette.colorFor(current.getType());
-        Color fill = new Color(base.getRed(), base.getGreen(), base.getBlue(), 55);
-        Color stroke = new Color(base.getRed(), base.getGreen(), base.getBlue(), 140);
+        int fillAlpha = theme.isDark() ? 58 : 84;
+        int strokeAlpha = theme.isDark() ? 145 : 178;
+        Color fill = new Color(base.getRed(), base.getGreen(), base.getBlue(), fillAlpha);
+        Color stroke = new Color(base.getRed(), base.getGreen(), base.getBlue(), strokeAlpha);
         for (var cell : ghost.getCells()) {
             int gx = ghost.getX() + cell.x;
             int gy = ghost.getY() + cell.y - 2;
@@ -114,7 +117,8 @@ public class GamePanel extends JPanel {
         int y = gridY * cellSize;
         g2d.setColor(color);
         g2d.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
-        g2d.setColor(color.darker());
+        Color edge = UiTheme.active().isDark() ? color.darker() : color.darker().darker();
+        g2d.setColor(edge);
         g2d.drawRect(x, y, cellSize, cellSize);
     }
 }

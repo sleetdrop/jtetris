@@ -6,22 +6,32 @@ import java.util.Map;
 import net.vetcafe.jtetris.model.TetrominoType;
 
 public final class ColorPalette {
-    private static final Map<TetrominoType, Color> COLORS = new EnumMap<>(TetrominoType.class);
+    private static final Map<TetrominoType, Color> DARK_COLORS = new EnumMap<>(TetrominoType.class);
+    private static final Map<TetrominoType, Color> LIGHT_COLORS = new EnumMap<>(TetrominoType.class);
 
     static {
-        COLORS.put(TetrominoType.I, new Color(77, 208, 225));      // cyan teal
-        COLORS.put(TetrominoType.O, new Color(255, 209, 102));     // warm amber
-        COLORS.put(TetrominoType.T, new Color(199, 146, 234));     // soft purple
-        COLORS.put(TetrominoType.S, new Color(127, 209, 185));     // mint green
-        COLORS.put(TetrominoType.Z, new Color(239, 83, 80));       // modern red
-        COLORS.put(TetrominoType.J, new Color(92, 107, 192));      // indigo
-        COLORS.put(TetrominoType.L, new Color(255, 138, 101));     // coral
+        DARK_COLORS.put(TetrominoType.I, new Color(107, 206, 216));
+        DARK_COLORS.put(TetrominoType.O, new Color(236, 196, 109));
+        DARK_COLORS.put(TetrominoType.T, new Color(178, 146, 213));
+        DARK_COLORS.put(TetrominoType.S, new Color(126, 191, 150));
+        DARK_COLORS.put(TetrominoType.Z, new Color(212, 117, 116));
+        DARK_COLORS.put(TetrominoType.J, new Color(121, 142, 210));
+        DARK_COLORS.put(TetrominoType.L, new Color(228, 155, 107));
+
+        LIGHT_COLORS.put(TetrominoType.I, new Color(71, 148, 165));
+        LIGHT_COLORS.put(TetrominoType.O, new Color(182, 144, 60));
+        LIGHT_COLORS.put(TetrominoType.T, new Color(121, 94, 165));
+        LIGHT_COLORS.put(TetrominoType.S, new Color(80, 137, 95));
+        LIGHT_COLORS.put(TetrominoType.Z, new Color(161, 84, 82));
+        LIGHT_COLORS.put(TetrominoType.J, new Color(78, 96, 152));
+        LIGHT_COLORS.put(TetrominoType.L, new Color(169, 108, 71));
     }
 
     private ColorPalette() {}
 
     public static Color colorFor(TetrominoType type) {
-        return COLORS.getOrDefault(type, Color.GRAY);
+        Map<TetrominoType, Color> palette = UiTheme.active().isDark() ? DARK_COLORS : LIGHT_COLORS;
+        return palette.getOrDefault(type, Color.GRAY);
     }
 }
 

@@ -20,6 +20,15 @@ java -jar target/jtetris-1.0-SNAPSHOT.jar
 mvn clean test
 ```
 
+## UI theme and fonts
+- JTetris now ships with a dual palette (light/dark) and chooses a default theme from system/LAF appearance.
+- You can override theme selection with a JVM flag:
+  - `-Djtetris.theme=auto` (default)
+  - `-Djtetris.theme=light`
+  - `-Djtetris.theme=dark`
+- Bundled UI font: Inter (`src/main/resources/fonts`). If loading fails, Swing logical fonts are used as fallback.
+- Font license text is included at `src/main/resources/fonts/OFL-Inter.txt` (SIL Open Font License 1.1).
+
 ## Docs
 - [Agent Instructions](AGENTS.md)
 - [Copilot Usage (Project-local)](doc/copilot-agent-usage.md)
