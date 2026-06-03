@@ -77,6 +77,17 @@
   - `m7.4-quality-gates-ci-automation.md`
   - `m7.5-competitive-timing-tuning.md`
 
+### M8 (`P1`) Cross-platform UI modernization and in-stage prompts
+- Adopt FlatLaf for consistent native Swing component appearance across platforms.
+- Replace primary `JOptionPane` gameplay prompts with in-stage overlay panels.
+- Keep keyboard-first interaction and current score persistence semantics.
+- Planned split specs:
+  - `m8.1-flatlaf-bootstrap-and-theme-bridge.md`
+  - `m8.2-stage-overlay-foundation.md`
+  - `m8.3-stage-gameover-and-score-entry.md`
+  - `m8.4-stage-leaderboard-and-exit-confirm.md`
+  - `m8.5-dialog-retirement-and-polish.md`
+
 ## Definition of done (per milestone)
 - All child specs are `Done`.
 - Acceptance checks pass.

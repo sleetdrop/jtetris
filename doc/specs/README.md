@@ -53,8 +53,9 @@ This matches option **C** from the decision set.
 2. Define an implementation file allowlist in the spec before coding.
 3. Implement one small checklist item per session/commit when possible.
 4. Fill verification results directly in the spec.
-5. Before context handoff, fill `doc/specs/_session-handoff-template.md` and append one entry to `context-pack.md`.
-6. Mark spec status as `Done` only after verification is complete.
+5. End each step by preparing/updating a handoff note for the next step (from `doc/specs/_session-handoff-template.md`), saved near the active spec (for example `doc/specs/m8.1-handoff.md`).
+6. Before context handoff, append one entry to `context-pack.md` when a sub-spec is completed.
+7. Mark spec status as `Done` only after verification is complete.
 
 ## Solo-dev phase note
 - During early development, GitHub issue/PR linkage is optional.
