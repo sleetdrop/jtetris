@@ -466,3 +466,49 @@ Compact implementation handoff notes for sequential spec delivery.
 - Next spec input (what the next task needs to know):
   - M7.3 can proceed independently; no model-level dependencies were introduced by flash tuning.
 
+## 2026-06-03 - M7.3-REPLAY-PERSISTENCE
+- Decision summary (3 bullets max):
+  - Added `ReplayPersistence` as a model-layer utility to save/load deterministic replay payloads without changing gameplay flow.
+  - Standardized a small text replay format (`JTETRIS_REPLAY_V1`, `seed=...`, `actions=...`) for easy inspection and diffing.
+  - Added round-trip tests including deterministic state reconstruction through `Board.replayFromSeed(...)` and malformed-file rejection.
+- Files changed (exact paths):
+  - `src/main/java/net/vetcafe/jtetris/model/ReplayPersistence.java`
+  - `src/test/java/net/vetcafe/jtetris/model/ReplayPersistenceTest.java`
+  - `doc/algorithms.md`
+  - `doc/overview.md`
+  - `doc/specs/m7.3-replay-persistence.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - Model layer now supports replay export/import payload persistence; no gameplay loop/UI behavior changed yet.
+- Acceptance evidence:
+  - Manual: N/A (model + docs step).
+  - Automated: `mvn clean test` passed (42 tests).
+- Regressions checked:
+  - Existing mechanics/input/scoring/replay suites remain green with added persistence tests.
+- Known risks left:
+  - Replay persistence is not yet wired to menu or key-driven UX.
+- Next spec input (what the next task needs to know):
+  - Proceed to `M8.1` (FlatLaf bootstrap/theme bridge) as the active UI modernization path.
+
+## 2026-06-03 - M8.1-FLATLAF-BOOTSTRAP-AND-THEME-BRIDGE
+- Decision summary (3 bullets max):
+  - Added FlatLaf dependency and bootstrapped Swing LAF before frame construction while preserving existing `UiTheme` tokens for custom board rendering.
+  - Synced runtime `Theme` menu switching to update both `UiTheme` mode and Swing LAF, then refresh active UI components.
+  - Added reflective FlatLaf loading fallback so direct `target/classes` launch no longer fails with `NoClassDefFoundError` when dependency jars are not on classpath.
+- Files changed (exact paths):
+  - `pom.xml`
+  - `src/main/java/net/vetcafe/jtetris/ui/TetrisFrame.java`
+  - `doc/specs/m8.1-flatlaf-bootstrap-and-theme-bridge.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - Swing-native controls now use FlatLaf baseline styling, and theme mode switches (`Auto/Light/Dark`) apply at runtime without restart.
+- Acceptance evidence:
+  - Manual: user reported basic theme-switch checks passed with no obvious menu/dialog/table issues.
+  - Automated: `mvn clean test` passed (42 tests).
+- Regressions checked:
+  - Existing model/input/scoring/replay tests remain green after LAF integration.
+- Known risks left:
+  - `Auto` still re-evaluates on explicit menu selection; live OS theme-change event subscription is not implemented.
+- Next spec input (what the next task needs to know):
+  - Proceed to `M8.2` to build reusable in-stage overlay foundation and begin dialog replacement path.
+

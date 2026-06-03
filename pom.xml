@@ -14,9 +14,15 @@
         <jpackage.type>app-image</jpackage.type>
         <jpackage.icon></jpackage.icon>
         <junit.jupiter.version>5.10.2</junit.jupiter.version>
+        <flatlaf.version>3.4.1</flatlaf.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>${flatlaf.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

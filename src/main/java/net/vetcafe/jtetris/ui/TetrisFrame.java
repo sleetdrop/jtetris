@@ -29,7 +29,6 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.ButtonGroup;
 import javax.swing.table.DefaultTableModel;
-import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import java.util.HashMap;
@@ -38,6 +37,9 @@ import java.util.function.Supplier;
 
 public class TetrisFrame extends JFrame {
     private static final String APP_NAME = "JTetris";
+    private static final String FLATLAF_LIGHT = "com.formdev.flatlaf.FlatLightLaf";
+    private static final String FLATLAF_DARK = "com.formdev.flatlaf.FlatDarkLaf";
+    private static final String FLATLAF_BASE = "com.formdev.flatlaf.FlatLaf";
     private static final int GRAVITY_TICK_MS = 700;
     private static final int INPUT_POLL_MS = 16;
     private static final int DAS_MS = 130;
@@ -48,7 +50,50 @@ public class TetrisFrame extends JFrame {
         // On macOS this merges the menu bar into the system bar when supported
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", APP_NAME);
+        installInitialLookAndFeel();
         UiTheme.refreshFromSystem();
+    }
+
+    private static void installInitialLookAndFeel() {
+        UiTheme.setActiveMode(UiTheme.modeOverride());
+        UiTheme.refreshFromSystem();
+        applyFlatLafForActiveTheme(false);
+    }
+
+    private static void applyFlatLafForActiveTheme(boolean updateUi) {
+        try {
+            if (!isClassPresent(FLATLAF_LIGHT) || !isClassPresent(FLATLAF_DARK)) {
+                return;
+            }
+            String lafClassName = UiTheme.active().isDark() ? FLATLAF_DARK : FLATLAF_LIGHT;
+            UIManager.setLookAndFeel(lafClassName);
+            if (updateUi) {
+                if (!invokeStaticNoArg(FLATLAF_BASE, "updateUI")) {
+                    UIManager.getLookAndFeelDefaults().put("ClassLoader", TetrisFrame.class.getClassLoader());
+                }
+            }
+        } catch (Exception ignored) {
+            // Keep current/default LAF if FlatLaf setup fails unexpectedly.
+        }
+    }
+
+    private static boolean isClassPresent(String className) {
+        try {
+            Class.forName(className, false, TetrisFrame.class.getClassLoader());
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    private static boolean invokeStaticNoArg(String className, String methodName) {
+        try {
+            Class<?> type = Class.forName(className, false, TetrisFrame.class.getClassLoader());
+            type.getMethod(methodName).invoke(null);
+            return true;
+        } catch (ReflectiveOperationException e) {
+            return false;
+        }
     }
 
     private final Board board = new Board();
@@ -190,6 +235,7 @@ public class TetrisFrame extends JFrame {
     private void applyThemeMode(UiTheme.Mode mode) {
         UiTheme.setActiveMode(mode);
         UiTheme.refreshFromSystem();
+        applyFlatLafForActiveTheme(true);
         UiTheme theme = UiTheme.active();
         getContentPane().setBackground(theme.frameBackground());
         gamePanel.applyTheme();
@@ -570,5 +616,3 @@ public class TetrisFrame extends JFrame {
         javax.swing.SwingUtilities.invokeLater(() -> new TetrisFrame().setVisible(true));
     }
 }
-
-
