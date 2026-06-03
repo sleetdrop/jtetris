@@ -6,6 +6,7 @@ import net.vetcafe.jtetris.score.ScoreManager;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -26,6 +27,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
+import javax.swing.ButtonGroup;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -153,9 +155,51 @@ public class TetrisFrame extends JFrame {
         viewBoard.addActionListener(e -> showLeaderboard());
         scores.add(viewBoard);
 
+        JMenu themeMenu = createThemeMenu();
+
         bar.add(gameMenu);
         bar.add(scores);
+        bar.add(themeMenu);
         return bar;
+    }
+
+    private JMenu createThemeMenu() {
+        JMenu themeMenu = new JMenu("Theme");
+        themeMenu.setFont(UiFonts.regular(13f));
+        ButtonGroup group = new ButtonGroup();
+
+        JCheckBoxMenuItem auto = createThemeMenuItem("Auto", UiTheme.Mode.AUTO, group);
+        JCheckBoxMenuItem light = createThemeMenuItem("Light", UiTheme.Mode.LIGHT, group);
+        JCheckBoxMenuItem dark = createThemeMenuItem("Dark", UiTheme.Mode.DARK, group);
+
+        themeMenu.add(auto);
+        themeMenu.add(light);
+        themeMenu.add(dark);
+        return themeMenu;
+    }
+
+    private JCheckBoxMenuItem createThemeMenuItem(String label, UiTheme.Mode mode, ButtonGroup group) {
+        JCheckBoxMenuItem item = new JCheckBoxMenuItem(label);
+        item.setFont(UiFonts.regular(13f));
+        item.setSelected(UiTheme.activeMode() == mode);
+        item.addActionListener(e -> applyThemeMode(mode));
+        group.add(item);
+        return item;
+    }
+
+    private void applyThemeMode(UiTheme.Mode mode) {
+        UiTheme.setActiveMode(mode);
+        UiTheme.refreshFromSystem();
+        UiTheme theme = UiTheme.active();
+        getContentPane().setBackground(theme.frameBackground());
+        gamePanel.applyTheme();
+        sidePanel.applyTheme();
+        setJMenuBar(createMenuBar());
+        revalidate();
+        repaint();
+        if (!modalActive) {
+            focusGame();
+        }
     }
 
     private void togglePause() {

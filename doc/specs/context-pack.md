@@ -418,3 +418,29 @@ Compact implementation handoff notes for sequential spec delivery.
   - On very small cell sizes, flash edge lines may appear subtler than intended.
 - Next spec input (what the next task needs to know):
   - If user wants stronger retro feel, tune only flash alpha/duration constants in `GamePanel` without changing model APIs.
+
+## 2026-06-03 - M7.1-RUNTIME-THEME-SWITCHING
+- Decision summary (3 bullets max):
+  - Added runtime theme mode state in `UiTheme` (`activeMode`, `setActiveMode`) while preserving startup `-Djtetris.theme=auto|light|dark` contract via `modeOverride()`.
+  - Added `Theme` menu in `TetrisFrame` with `Auto/Light/Dark` actions and a centralized `applyThemeMode(...)` refresh path.
+  - Added panel-level `applyTheme()` hooks in `GamePanel` and `SidePanel` so theme changes repaint immediately without restarting or touching gameplay state.
+- Files changed (exact paths):
+  - `src/main/java/net/vetcafe/jtetris/ui/UiTheme.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/TetrisFrame.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/GamePanel.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/SidePanel.java`
+  - `doc/overview.md`
+  - `doc/specs/m7.1-runtime-theme-switching.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - Users can now switch theme mode from the menu at runtime and see immediate UI updates.
+- Acceptance evidence:
+  - Manual: pending quick UX pass for menu discoverability and palette preference.
+  - Automated: `mvn clean test` passed (39 tests).
+- Regressions checked:
+  - Existing model/input/scoring/replay suites remain green after UI-only theme refresh changes.
+- Known risks left:
+  - `Auto` mode re-evaluates when selected but does not subscribe to OS theme-change events while app is already open.
+- Next spec input (what the next task needs to know):
+  - If live OS-theme tracking is desired, add a periodic/system event hook and call `applyThemeMode(UiTheme.Mode.AUTO)` when system appearance flips.
+

@@ -25,6 +25,7 @@ public class SidePanel extends JPanel {
     private JLabel eventLabel;
     private JLabel comboLabel;
     private JLabel b2bLabel;
+    private JTextArea controlsArea;
     private final JPanel statsPanel;
     private final NextPanel nextPanel;
 
@@ -95,12 +96,12 @@ public class SidePanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
 
-        JTextArea area = new JTextArea();
-        area.setEditable(false);
-        area.setOpaque(false);
-        area.setForeground(UiTheme.active().textMuted());
-        area.setFont(UiFonts.mono(12f));
-        area.setText("Controls:\n" +
+        controlsArea = new JTextArea();
+        controlsArea.setEditable(false);
+        controlsArea.setOpaque(false);
+        controlsArea.setForeground(UiTheme.active().textMuted());
+        controlsArea.setFont(UiFonts.mono(12f));
+        controlsArea.setText("Controls:\n" +
                 "← / →  move\n" +
                 "↓       soft drop\n" +
                 "↑ or Z  rotate\n" +
@@ -109,10 +110,24 @@ public class SidePanel extends JPanel {
                 "P       pause/resume\n" +
                 "R       restart\n" +
                 "Esc     quit");
-        area.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
+        controlsArea.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
 
-        panel.add(area, BorderLayout.CENTER);
+        panel.add(controlsArea, BorderLayout.CENTER);
         return panel;
+    }
+
+    public void applyTheme() {
+        setBackground(UiTheme.active().sidePanelBackground());
+        scoreLabel.setForeground(UiTheme.active().textPrimary());
+        levelLabel.setForeground(UiTheme.active().textPrimary());
+        linesLabel.setForeground(UiTheme.active().textPrimary());
+        eventLabel.setForeground(UiTheme.active().textPrimary());
+        comboLabel.setForeground(UiTheme.active().textPrimary());
+        b2bLabel.setForeground(UiTheme.active().textPrimary());
+        if (controlsArea != null) {
+            controlsArea.setForeground(UiTheme.active().textMuted());
+        }
+        repaint();
     }
 
     private static class NextPanel extends JPanel {

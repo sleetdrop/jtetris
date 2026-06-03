@@ -54,6 +54,11 @@ public class GamePanel extends JPanel {
         });
     }
 
+    public void applyTheme() {
+        setBackground(UiTheme.active().boardBackground());
+        repaint();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

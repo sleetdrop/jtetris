@@ -90,9 +90,11 @@ classDiagram
 - Restart: R
 - Leaderboard: L (also via menu)
 - Quit: Esc (also via menu)
+- Theme: choose `Theme -> Auto/Light/Dark` from the menu bar (applies immediately)
 
 ## UI Layout & Styling
 - `GamePanel` center; `SidePanel` on the right with Stats (Score/Level/Lines), score breakdown (Event/Combo/B2B), Next piece, Controls list.
+- UI theme supports startup override (`-Djtetris.theme=auto|light|dark`) and runtime switching via menu without restart.
 - Ghost piece uses a subtle, unified neutral shadow color (instead of piece-matched colors) to indicate hard-drop landing.
 - When a line clear happens, the cleared row area briefly flashes in a simple LCD-style overlay.
 - Modern colors: deep charcoal background with teal/amber/lavender/mint/red/indigo/coral pieces.

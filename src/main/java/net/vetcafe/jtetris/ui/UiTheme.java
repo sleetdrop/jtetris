@@ -47,6 +47,7 @@ public final class UiTheme {
             new Color(50, 56, 80)
     );
 
+    private static volatile Mode activeMode = modeOverride();
     private static volatile UiTheme active = detectInitialTheme();
 
     private final Mode mode;
@@ -103,8 +104,17 @@ public final class UiTheme {
         return active;
     }
 
+    public static Mode activeMode() {
+        return activeMode;
+    }
+
+    public static void setActiveMode(Mode mode) {
+        activeMode = mode == null ? Mode.AUTO : mode;
+        active = themeFor(activeMode);
+    }
+
     public static void refreshFromSystem() {
-        active = themeFor(modeOverride());
+        active = themeFor(activeMode);
     }
 
     public static Mode modeOverride() {
@@ -117,7 +127,7 @@ public final class UiTheme {
     }
 
     private static UiTheme detectInitialTheme() {
-        return themeFor(modeOverride());
+        return themeFor(activeMode);
     }
 
     private static UiTheme themeFor(Mode mode) {
