@@ -102,6 +102,12 @@ classDiagram
 
 ## Data & Persistence
 - Scores stored at `~/.tetris_scores.properties`. Keys are lowercase usernames; values are best scores. File is best-effort read/write; corrupt file is ignored and treated as empty.
+- Replay persistence is model-layer only in `M7.3` via `ReplayPersistence`:
+  - File header: `JTETRIS_REPLAY_V1`
+  - Seed line: `seed=<long>`
+  - Action line: `actions=<comma-separated ReplayAction names>`
+- Loaded replay payloads can be reconstructed deterministically with `Board.replayFromSeed(...)`.
+- Menu-level replay export/import UX is planned for a later UI-focused step.
 
 ## Notes for learners
 - Input is handled via key bindings on the root pane (not raw key listeners).

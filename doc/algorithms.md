@@ -91,6 +91,15 @@ flowchart TD
 - `Board.applyReplayAction(...)` executes and records actions into an ordered replay stream.
 - `Board.replayFromSeed(seed, actions)` rebuilds board state from the same seed and action stream for reproducible debugging.
 
+## Replay persistence format (`M7.3`)
+- `ReplayPersistence.save(path, seed, actions)` writes UTF-8 text with three lines:
+  - `JTETRIS_REPLAY_V1`
+  - `seed=<long>`
+  - `actions=<comma-separated ReplayAction names>`
+- `ReplayPersistence.load(path)` validates each required line and fails fast on malformed payloads.
+- Loaded payload (`LoadedReplay`) can be passed directly into `Board.replayFromSeed(...)` for deterministic reconstruction.
+- UI export/import wiring is intentionally deferred; when added, UI should only call this model utility and keep action execution semantics in `Board`.
+
 ## Extension ideas
 - Level-based fall speed.
 - Sound effects.
