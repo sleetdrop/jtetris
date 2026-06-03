@@ -97,6 +97,7 @@ classDiagram
 - UI theme supports startup override (`-Djtetris.theme=auto|light|dark`) and runtime switching via menu without restart.
 - Ghost piece uses a subtle, unified neutral shadow color (instead of piece-matched colors) to indicate hard-drop landing.
 - When a line clear happens, the cleared row area briefly flashes in a simple LCD-style overlay.
+- Flash tuning supports JVM properties: `-Djtetris.flash.duration.ms=180`, `-Djtetris.flash.step.ms=45`, `-Djtetris.flash.dark.fill.alpha=132`, `-Djtetris.flash.light.fill.alpha=154`, `-Djtetris.flash.dark.edge.alpha=178`, `-Djtetris.flash.light.edge.alpha=196`.
 - Modern colors: deep charcoal background with teal/amber/lavender/mint/red/indigo/coral pieces.
 
 ## Data & Persistence

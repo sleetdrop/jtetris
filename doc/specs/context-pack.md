@@ -444,3 +444,25 @@ Compact implementation handoff notes for sequential spec delivery.
 - Next spec input (what the next task needs to know):
   - If live OS-theme tracking is desired, add a periodic/system event hook and call `applyThemeMode(UiTheme.Mode.AUTO)` when system appearance flips.
 
+## 2026-06-03 - M7.2-LINE-CLEAR-FLASH-TUNING
+- Decision summary (3 bullets max):
+  - Replaced fixed line-clear flash constants with bounded JVM properties in `GamePanel` for duration/step/alpha tuning.
+  - Added fallback-safe parsing (`boundedIntProperty`) so invalid values automatically revert to defaults.
+  - Added small-cell alpha boost to keep flash visible when board cells are compact.
+- Files changed (exact paths):
+  - `src/main/java/net/vetcafe/jtetris/ui/GamePanel.java`
+  - `doc/overview.md`
+  - `doc/specs/m7.2-line-clear-flash-tuning.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - Line-clear flash timing and opacity can now be tuned with JVM args while preserving previous defaults.
+- Acceptance evidence:
+  - Manual: pending preference check for flash intensity on small windows.
+  - Automated: `mvn clean test` passed (39 tests).
+- Regressions checked:
+  - Existing model/input/scoring/replay suites remain green; no gameplay-state APIs were changed.
+- Known risks left:
+  - There is still no in-game settings UI; tuning currently requires restart with JVM properties.
+- Next spec input (what the next task needs to know):
+  - M7.3 can proceed independently; no model-level dependencies were introduced by flash tuning.
+

@@ -17,8 +17,49 @@ import java.awt.event.HierarchyEvent;
 import java.util.Arrays;
 
 public class GamePanel extends JPanel {
-    private static final int CLEAR_FLASH_TOTAL_MS = 180;
-    private static final int CLEAR_FLASH_STEP_MS = 45;
+    private static final int DEFAULT_CLEAR_FLASH_TOTAL_MS = 180;
+    private static final int DEFAULT_CLEAR_FLASH_STEP_MS = 45;
+    private static final int DEFAULT_CLEAR_FLASH_DARK_FILL_ALPHA = 132;
+    private static final int DEFAULT_CLEAR_FLASH_LIGHT_FILL_ALPHA = 154;
+    private static final int DEFAULT_CLEAR_FLASH_DARK_EDGE_ALPHA = 178;
+    private static final int DEFAULT_CLEAR_FLASH_LIGHT_EDGE_ALPHA = 196;
+
+    private static final int clearFlashTotalMs = boundedIntProperty(
+            "jtetris.flash.duration.ms",
+            DEFAULT_CLEAR_FLASH_TOTAL_MS,
+            60,
+            1000
+    );
+    private static final int clearFlashStepMs = boundedIntProperty(
+            "jtetris.flash.step.ms",
+            DEFAULT_CLEAR_FLASH_STEP_MS,
+            15,
+            250
+    );
+    private static final int clearFlashDarkFillAlpha = boundedIntProperty(
+            "jtetris.flash.dark.fill.alpha",
+            DEFAULT_CLEAR_FLASH_DARK_FILL_ALPHA,
+            20,
+            255
+    );
+    private static final int clearFlashLightFillAlpha = boundedIntProperty(
+            "jtetris.flash.light.fill.alpha",
+            DEFAULT_CLEAR_FLASH_LIGHT_FILL_ALPHA,
+            20,
+            255
+    );
+    private static final int clearFlashDarkEdgeAlpha = boundedIntProperty(
+            "jtetris.flash.dark.edge.alpha",
+            DEFAULT_CLEAR_FLASH_DARK_EDGE_ALPHA,
+            20,
+            255
+    );
+    private static final int clearFlashLightEdgeAlpha = boundedIntProperty(
+            "jtetris.flash.light.edge.alpha",
+            DEFAULT_CLEAR_FLASH_LIGHT_EDGE_ALPHA,
+            20,
+            255
+    );
 
     private final Board board;
     private final Timer clearFlashTimer;
@@ -30,7 +71,7 @@ public class GamePanel extends JPanel {
 
     public GamePanel(Board board) {
         this.board = board;
-        this.clearFlashTimer = new Timer(CLEAR_FLASH_STEP_MS, e -> {
+        this.clearFlashTimer = new Timer(clearFlashStepMs, e -> {
             if (isLineClearFlashActive()) {
                 repaint();
             } else {
@@ -151,7 +192,7 @@ public class GamePanel extends JPanel {
         }
         flashingRows = visibleRows;
         flashStartAtMs = System.currentTimeMillis();
-        flashEndAtMs = flashStartAtMs + CLEAR_FLASH_TOTAL_MS;
+        flashEndAtMs = flashStartAtMs + clearFlashTotalMs;
         if (!clearFlashTimer.isRunning()) {
             clearFlashTimer.start();
         }
@@ -168,16 +209,17 @@ public class GamePanel extends JPanel {
             flashingRows = new int[0];
             return;
         }
-        long phase = (now - flashStartAtMs) / CLEAR_FLASH_STEP_MS;
+        long phase = (now - flashStartAtMs) / clearFlashStepMs;
         if ((phase & 1L) == 1L) return;
 
         UiTheme theme = UiTheme.active();
+        int boost = cellSize <= 16 ? 28 : (cellSize <= 20 ? 14 : 0);
         Color fill = theme.isDark()
-                ? new Color(246, 248, 255, 132)
-                : new Color(255, 255, 255, 154);
+                ? new Color(246, 248, 255, boostedAlpha(clearFlashDarkFillAlpha, boost))
+                : new Color(255, 255, 255, boostedAlpha(clearFlashLightFillAlpha, boost));
         Color edge = theme.isDark()
-                ? new Color(255, 255, 255, 178)
-                : new Color(255, 255, 255, 196);
+                ? new Color(255, 255, 255, boostedAlpha(clearFlashDarkEdgeAlpha, boost / 2))
+                : new Color(255, 255, 255, boostedAlpha(clearFlashLightEdgeAlpha, boost / 2));
         int width = Board.WIDTH * cellSize;
 
         for (int row : flashingRows) {
@@ -198,5 +240,25 @@ public class GamePanel extends JPanel {
         Color edge = UiTheme.active().isDark() ? color.darker() : color.darker().darker();
         g2d.setColor(edge);
         g2d.drawRect(x, y, cellSize, cellSize);
+    }
+
+    private static int boostedAlpha(int base, int boost) {
+        return Math.min(255, Math.max(0, base + boost));
+    }
+
+    private static int boundedIntProperty(String key, int fallback, int min, int max) {
+        String raw = System.getProperty(key);
+        if (raw == null || raw.isBlank()) {
+            return fallback;
+        }
+        try {
+            int parsed = Integer.parseInt(raw.trim());
+            if (parsed < min || parsed > max) {
+                return fallback;
+            }
+            return parsed;
+        } catch (NumberFormatException ignored) {
+            return fallback;
+        }
     }
 }
