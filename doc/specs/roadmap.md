@@ -55,6 +55,28 @@
   - `m5.2-seeded-replay-hooks.md`
   - `m5.3-quality-gates-docs.md`
 
+### M6 (`P1`) UI cohesion and feedback polish
+- Theme + typography unification (light/dark + bundled Inter)
+- Contrast/readability polish for board and dialogs
+- LCD-style line-clear flash feedback (non-blocking)
+- Split specs:
+  - `m6.1-ui-theme-and-typography.md`
+  - `m6.2-ui-visual-polish.md`
+  - `m6.3-line-clear-flash.md`
+
+### M7 (`P1-P2`) UX hardening and tooling automation
+- Runtime theme switching without app restart
+- Flash effect tuning knobs for readability across cell sizes
+- Replay persistence (export/import) on top of seeded replay hooks
+- CI automation for quality-gate checks documented in `doc/quality-gates.md`
+- Optional competitive timing tuning (lock-reset cap, level-linked lock delay)
+- Planned split specs:
+  - `m7.1-runtime-theme-switching.md`
+  - `m7.2-line-clear-flash-tuning.md`
+  - `m7.3-replay-persistence.md`
+  - `m7.4-quality-gates-ci-automation.md`
+  - `m7.5-competitive-timing-tuning.md`
+
 ## Definition of done (per milestone)
 - All child specs are `Done`.
 - Acceptance checks pass.
