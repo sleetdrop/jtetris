@@ -5,6 +5,7 @@ import net.vetcafe.jtetris.model.Tetromino;
 import net.vetcafe.jtetris.model.TetrominoType;
 
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -13,13 +14,29 @@ import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.HierarchyEvent;
+import java.util.Arrays;
 
 public class GamePanel extends JPanel {
+    private static final int CLEAR_FLASH_TOTAL_MS = 180;
+    private static final int CLEAR_FLASH_STEP_MS = 45;
+
     private final Board board;
+    private final Timer clearFlashTimer;
     private int cellSize = 24;
+    private int lastSeenLineClearEffectVersion = -1;
+    private int[] flashingRows = new int[0];
+    private long flashStartAtMs;
+    private long flashEndAtMs;
 
     public GamePanel(Board board) {
         this.board = board;
+        this.clearFlashTimer = new Timer(CLEAR_FLASH_STEP_MS, e -> {
+            if (isLineClearFlashActive()) {
+                repaint();
+            } else {
+                ((Timer) e.getSource()).stop();
+            }
+        });
         setPreferredSize(new Dimension(Board.WIDTH * cellSize, (Board.HEIGHT - 2) * cellSize));
         setBackground(UiTheme.active().boardBackground());
         setFocusable(true);
@@ -43,8 +60,10 @@ public class GamePanel extends JPanel {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        syncLineClearFlash();
         drawGrid(g2d);
         drawLockedBlocks(g2d);
+        drawLineClearFlash(g2d);
         drawGhostPiece(g2d);
         drawCurrentPiece(g2d);
         g2d.dispose();
@@ -86,15 +105,14 @@ public class GamePanel extends JPanel {
 
     private void drawGhostPiece(Graphics2D g2d) {
         Tetromino ghost = board.getGhost();
-        Tetromino current = board.getCurrent();
-        if (ghost == null || current == null) return;
+        if (ghost == null) return;
 
         UiTheme theme = UiTheme.active();
-        Color base = ColorPalette.colorFor(current.getType());
-        int fillAlpha = theme.isDark() ? 58 : 84;
-        int strokeAlpha = theme.isDark() ? 145 : 178;
-        Color fill = new Color(base.getRed(), base.getGreen(), base.getBlue(), fillAlpha);
-        Color stroke = new Color(base.getRed(), base.getGreen(), base.getBlue(), strokeAlpha);
+        Color shadowBase = theme.isDark() ? new Color(203, 210, 230) : new Color(92, 99, 118);
+        int fillAlpha = theme.isDark() ? 38 : 34;
+        int strokeAlpha = theme.isDark() ? 88 : 80;
+        Color fill = new Color(shadowBase.getRed(), shadowBase.getGreen(), shadowBase.getBlue(), fillAlpha);
+        Color stroke = new Color(shadowBase.getRed(), shadowBase.getGreen(), shadowBase.getBlue(), strokeAlpha);
         for (var cell : ghost.getCells()) {
             int gx = ghost.getX() + cell.x;
             int gy = ghost.getY() + cell.y - 2;
@@ -112,6 +130,61 @@ public class GamePanel extends JPanel {
         g2d.drawRect(x + 1, y + 1, cellSize - 3, cellSize - 3);
     }
 
+    private void syncLineClearFlash() {
+        int version = board.getLineClearEffectVersion();
+        if (version == lastSeenLineClearEffectVersion) {
+            return;
+        }
+        lastSeenLineClearEffectVersion = version;
+        int[] visibleRows = Arrays.stream(board.getLastClearedRows())
+                .map(row -> row - 2)
+                .filter(row -> row >= 0 && row < (Board.HEIGHT - 2))
+                .toArray();
+        if (visibleRows.length == 0) {
+            flashingRows = new int[0];
+            return;
+        }
+        flashingRows = visibleRows;
+        flashStartAtMs = System.currentTimeMillis();
+        flashEndAtMs = flashStartAtMs + CLEAR_FLASH_TOTAL_MS;
+        if (!clearFlashTimer.isRunning()) {
+            clearFlashTimer.start();
+        }
+    }
+
+    private boolean isLineClearFlashActive() {
+        return flashingRows.length > 0 && System.currentTimeMillis() < flashEndAtMs;
+    }
+
+    private void drawLineClearFlash(Graphics2D g2d) {
+        if (flashingRows.length == 0) return;
+        long now = System.currentTimeMillis();
+        if (now >= flashEndAtMs) {
+            flashingRows = new int[0];
+            return;
+        }
+        long phase = (now - flashStartAtMs) / CLEAR_FLASH_STEP_MS;
+        if ((phase & 1L) == 1L) return;
+
+        UiTheme theme = UiTheme.active();
+        Color fill = theme.isDark()
+                ? new Color(246, 248, 255, 132)
+                : new Color(255, 255, 255, 154);
+        Color edge = theme.isDark()
+                ? new Color(255, 255, 255, 178)
+                : new Color(255, 255, 255, 196);
+        int width = Board.WIDTH * cellSize;
+
+        for (int row : flashingRows) {
+            int y = row * cellSize;
+            g2d.setColor(fill);
+            g2d.fillRect(0, y, width, cellSize);
+            g2d.setColor(edge);
+            g2d.drawLine(0, y, width, y);
+            g2d.drawLine(0, y + cellSize - 1, width, y + cellSize - 1);
+        }
+    }
+
     private void fillCell(Graphics2D g2d, int gridX, int gridY, Color color) {
         int x = gridX * cellSize;
         int y = gridY * cellSize;
@@ -122,5 +195,3 @@ public class GamePanel extends JPanel {
         g2d.drawRect(x, y, cellSize, cellSize);
     }
 }
-
-

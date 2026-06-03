@@ -1,5 +1,6 @@
 package net.vetcafe.jtetris.model;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -76,6 +77,24 @@ class BoardRegressionGateTest {
     }
 
     @Test
+    void clearLinesPublishesRowsForUiFlashEffect() throws Exception {
+        Board board = new Board(7L);
+        TetrominoType[][] grid = getGrid(board);
+        fillRow(grid, Board.HEIGHT - 1, TetrominoType.I);
+        fillRow(grid, Board.HEIGHT - 2, TetrominoType.J);
+
+        invokeClearLines(board);
+
+        assertArrayEquals(new int[]{Board.HEIGHT - 1, Board.HEIGHT - 2}, board.getLastClearedRows());
+        assertEquals(1, board.getLineClearEffectVersion());
+
+        invokeClearLines(board);
+
+        assertArrayEquals(new int[0], board.getLastClearedRows());
+        assertEquals(1, board.getLineClearEffectVersion());
+    }
+
+    @Test
     void topOutWhenSpawnAreaIsBlocked() throws Exception {
         Board board = new Board(7L);
         TetrominoType[][] grid = getGrid(board);
@@ -127,5 +146,4 @@ class BoardRegressionGateTest {
         method.invoke(board);
     }
 }
-
 

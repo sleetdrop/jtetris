@@ -395,3 +395,26 @@ Compact implementation handoff notes for sequential spec delivery.
 - Next spec input (what the next task needs to know):
   - If per-button semantic styling (primary/secondary) is required, replace `JOptionPane` standard buttons with a custom dialog panel.
 
+## 2026-05-15 - M6.3-LINE-CLEAR-FLASH
+- Decision summary (3 bullets max):
+  - Added model-side cleared-row metadata (`getLastClearedRows`) with a monotonic effect version (`getLineClearEffectVersion`) so UI can trigger effects without mutating gameplay state.
+  - Reworked line-compaction implementation in `clearLines()` to a stable write-pointer pass, preserving scoring/level/combo semantics while exposing row indices for rendering.
+  - Added a short Swing-timer row overlay flash in `GamePanel` (LCD-style blink) that runs asynchronously and does not pause gravity/input.
+- Files changed (exact paths):
+  - `src/main/java/net/vetcafe/jtetris/model/Board.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/GamePanel.java`
+  - `src/test/java/net/vetcafe/jtetris/model/BoardRegressionGateTest.java`
+  - `doc/overview.md`
+  - `doc/specs/m6.3-line-clear-flash.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - Clearing lines now briefly flashes the cleared row area with a simple alternating translucent overlay.
+- Acceptance evidence:
+  - Manual: pending in-game visual tune based on player preference for blink intensity/duration.
+  - Automated: `mvn clean test` passed (39 tests).
+- Regressions checked:
+  - Existing model/input/scoring/replay suites remained passing; added regression assertion for line-clear flash metadata publication.
+- Known risks left:
+  - On very small cell sizes, flash edge lines may appear subtler than intended.
+- Next spec input (what the next task needs to know):
+  - If user wants stronger retro feel, tune only flash alpha/duration constants in `GamePanel` without changing model APIs.

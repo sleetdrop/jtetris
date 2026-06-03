@@ -28,6 +28,8 @@ public class Board {
     private int linesCleared;
     private int level = 1;
     private String lastScoreEvent = "NONE";
+    private int lineClearEffectVersion;
+    private int[] lastClearedRows = new int[0];
 
     public Board() {
         this(new Random(), null);
@@ -66,6 +68,8 @@ public class Board {
         linesCleared = 0;
         level = 1;
         lastScoreEvent = "NONE";
+        lineClearEffectVersion = 0;
+        lastClearedRows = new int[0];
         replayActions.clear();
         spawnInitial();
     }
@@ -136,6 +140,14 @@ public class Board {
 
     public String getLastScoreEvent() {
         return lastScoreEvent;
+    }
+
+    public int getLineClearEffectVersion() {
+        return lineClearEffectVersion;
+    }
+
+    public int[] getLastClearedRows() {
+        return Arrays.copyOf(lastClearedRows, lastClearedRows.length);
     }
 
     public TetrominoType[][] snapshot() {
@@ -305,30 +317,34 @@ public class Board {
     }
 
     private void clearLines() {
-        int cleared = 0;
+        List<Integer> clearedRows = new ArrayList<>();
         for (int y = HEIGHT - 1; y >= 0; y--) {
-            boolean full = true;
-            for (int x = 0; x < WIDTH; x++) {
-                if (grid[y][x] == null) {
-                    full = false;
-                    break;
-                }
-            }
-            if (full) {
-                cleared++;
-                for (int ty = y; ty > 0; ty--) {
-                    grid[ty] = Arrays.copyOf(grid[ty - 1], WIDTH);
-                }
-                grid[0] = new TetrominoType[WIDTH];
-                y++; // recheck this row after shift
+            if (isRowFull(y)) {
+                clearedRows.add(y);
             }
         }
+        int cleared = clearedRows.size();
         if (cleared == 0) {
+            lastClearedRows = new int[0];
             comboStreak = -1;
             lastScoreEvent = "NO_CLEAR";
             return;
         }
 
+        int writeRow = HEIGHT - 1;
+        for (int y = HEIGHT - 1; y >= 0; y--) {
+            if (!isRowFull(y)) {
+                grid[writeRow] = Arrays.copyOf(grid[y], WIDTH);
+                writeRow--;
+            }
+        }
+        while (writeRow >= 0) {
+            grid[writeRow] = new TetrominoType[WIDTH];
+            writeRow--;
+        }
+
+        lastClearedRows = clearedRows.stream().mapToInt(Integer::intValue).toArray();
+        lineClearEffectVersion++;
         linesCleared += cleared;
         int baseScore = baseScoreFor(cleared, lastLockWasTSpin);
         boolean difficult = isBackToBackEligible(cleared, lastLockWasTSpin);
@@ -349,6 +365,15 @@ public class Board {
 
         lastScoreEvent = buildScoreEvent(cleared, lastLockWasTSpin, b2bBonusApplied, comboStreak);
         level = 1 + linesCleared / 10;
+    }
+
+    private boolean isRowFull(int y) {
+        for (int x = 0; x < WIDTH; x++) {
+            if (grid[y][x] == null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private int baseScoreFor(int cleared, boolean tspin) {
@@ -402,5 +427,4 @@ public class Board {
         return true;
     }
 }
-
 

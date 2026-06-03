@@ -14,7 +14,7 @@
 ## Source Map
 - Main source: `src/main/java/net/vetcafe/jtetris`
   - Model: `model/` (`Board`, `Tetromino`, `TetrominoType`, `PieceBag`, `ReplayAction`, `SrsKickTable`, `TSpinDetector`)
-  - UI: `ui/` (`TetrisFrame`, `GamePanel`, `SidePanel`, `InputRepeater`, `SoftDropRepeater`, `UiTheme`, `UiFonts`)
+  - UI: `ui/` (`TetrisFrame`, `GamePanel`, `SidePanel`, `InputRepeater`, `SoftDropRepeater`, `UiTheme`, `UiFonts`, `ColorPalette`)
   - Score storage: `score/ScoreManager`
 - Tests: `src/test/java/net/vetcafe/jtetris`
 - Resources: `src/main/resources/fonts` (bundled Inter regular/semibold fonts + license text)
@@ -43,6 +43,7 @@ mvn -Pmac clean package
 - Keep UI text English-only unless explicitly requested.
 - Preserve keyboard behavior and focus semantics in `TetrisFrame` (`focusGame()`, key bindings, repeaters, modal-dialog input clearing, and the `C` hold action).
 - Keep the theme/font pipeline intact (`UiTheme`, `UiFonts`, and the bundled Inter fonts under `src/main/resources/fonts`) unless the task explicitly changes the UI system.
+- Preserve the theme-selection contract in `UiTheme.modeOverride()` (`-Djtetris.theme=auto|light|dark`) and keep piece-color routing through `ui/ColorPalette`.
 - Keep score file compatibility at `~/.tetris_scores.properties` unless a migration is explicitly requested.
 - Keep replay hooks (`Board.applyReplayAction(...)`, `Board.replayFromSeed(...)`) aligned with any model-behavior change.
 - Prefer small, localized changes over broad rewrites.
