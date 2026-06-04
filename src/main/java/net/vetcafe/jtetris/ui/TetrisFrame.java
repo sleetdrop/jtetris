@@ -158,7 +158,7 @@ public class TetrisFrame extends JFrame {
                     scorePrompted = true;
                     lastGameOverProcessed = true;
                     maybeRecordScore();
-                    promptNewGame();
+                    showGameOverOverlay();
                 }
                 return;
             } else {
@@ -286,11 +286,51 @@ public class TetrisFrame extends JFrame {
         showStyledMessage(userName + " score: " + current + "\nBest: " + best, "Game Over");
     }
 
-    private void promptNewGame() {
-        int choice = showConfirmDialogModal(this, "Start a new game?", "Game Over", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (choice == JOptionPane.YES_OPTION) {
-            restartGame();
+    private void showGameOverOverlay() {
+        StageOverlayHost.OverlaySpec active = overlayHost.activeOverlay();
+        if (active != null && "game-over-restart".equals(active.id())) {
+            return;
         }
+
+        UiTheme theme = UiTheme.active();
+        JPanel content = new JPanel(new BorderLayout(0, 12));
+        content.setOpaque(false);
+
+        JLabel message = new JLabel("<html>Game over.<br>Start a new game?</html>");
+        message.setFont(UiFonts.regular(16f));
+        message.setForeground(theme.textPrimary());
+
+        JPanel actions = new JPanel();
+        actions.setOpaque(false);
+        JButton restart = new JButton("Restart");
+        restart.setFont(UiFonts.regular(14f));
+        restart.addActionListener(e -> confirmOverlayIfVisible());
+        JButton cancel = new JButton("Stay");
+        cancel.setFont(UiFonts.regular(14f));
+        cancel.addActionListener(e -> cancelOverlayIfVisible());
+        actions.add(restart);
+        actions.add(cancel);
+
+        content.add(message, BorderLayout.CENTER);
+        content.add(actions, BorderLayout.SOUTH);
+
+        overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
+                "game-over-restart",
+                "Game Over",
+                content,
+                new StageOverlayHost.OverlayLifecycle() {
+                    @Override
+                    public void onOpened() {
+                        clearHeldInputs();
+                    }
+
+                    @Override
+                    public void onClosed() {
+                        clearHeldInputs();
+                        focusGame();
+                    }
+                }
+        ));
     }
 
     private String chooseOrCreateUser() {
@@ -553,22 +593,40 @@ public class TetrisFrame extends JFrame {
 
     private void onSpacePressed() {
         if (overlayHost.isOverlayVisible()) {
-            dismissOverlayIfVisible();
+            confirmOverlayIfVisible();
             return;
         }
         hardDropIfActive();
     }
 
     private void onEnterPressed() {
-        dismissOverlayIfVisible();
+        confirmOverlayIfVisible();
     }
 
     private void onEscapePressed() {
         if (overlayHost.isOverlayVisible()) {
-            dismissOverlayIfVisible();
+            cancelOverlayIfVisible();
             return;
         }
         requestExit();
+    }
+
+    private void confirmOverlayIfVisible() {
+        if (!overlayHost.isOverlayVisible() || overlayHost.state() == StageOverlayHost.State.EXITING) {
+            return;
+        }
+        StageOverlayHost.OverlaySpec active = overlayHost.activeOverlay();
+        if (active != null && "game-over-restart".equals(active.id())) {
+            restartGame();
+        }
+        dismissOverlayIfVisible();
+    }
+
+    private void cancelOverlayIfVisible() {
+        if (!overlayHost.isOverlayVisible() || overlayHost.state() == StageOverlayHost.State.EXITING) {
+            return;
+        }
+        dismissOverlayIfVisible();
     }
 
     private void dismissOverlayIfVisible() {
