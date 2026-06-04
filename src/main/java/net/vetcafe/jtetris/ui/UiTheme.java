@@ -197,8 +197,24 @@ public final class UiTheme {
         return dialogSurface;
     }
 
+    public Color overlaySurface() {
+        return dialogSurface;
+    }
+
     public Color dialogBorder() {
         return dialogBorder;
+    }
+
+    public Color overlayBorder() {
+        return dialogBorder;
+    }
+
+    public Color overlayText() {
+        return textPrimary;
+    }
+
+    public Color overlayAccent() {
+        return accent;
     }
 
     public Color tableHeaderBackground() {

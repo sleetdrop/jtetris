@@ -22,6 +22,18 @@ public final class StageOverlayHost extends JPanel {
     private static final int MAX_HEIGHT = 320;
     private static final int ANIMATION_MS = 140;
     private static final int TICK_MS = 16;
+    private static final int SURFACE_PADDING_X = 14;
+    private static final int SURFACE_PADDING_Y = 12;
+    private static final int HEADER_BOTTOM_GAP = 4;
+    private static final int TITLE_INSET_X = 2;
+    private static final int TITLE_INSET_TOP = 2;
+    private static final int TITLE_INSET_BOTTOM = 8;
+    private static final int BODY_PADDING = 10;
+    private static final float TITLE_FONT_SIZE = 18f;
+    private static final float ENTER_ALPHA_BASE = 0.35f;
+    private static final float ENTER_ALPHA_RANGE = 0.65f;
+    private static final int ENTER_SLIDE_PX = 12;
+    private static final int EXIT_SLIDE_PX = 10;
 
     public enum State {
         HIDDEN,
@@ -71,14 +83,14 @@ public final class StageOverlayHost extends JPanel {
         setLayout(null);
         add(surface);
 
-        titleLabel.setFont(UiFonts.semibold(18f));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 8, 2));
+        titleLabel.setFont(UiFonts.semibold(TITLE_FONT_SIZE));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(TITLE_INSET_TOP, TITLE_INSET_X, TITLE_INSET_BOTTOM, TITLE_INSET_X));
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
         header.add(titleLabel, BorderLayout.WEST);
 
-        surface.setLayout(new BorderLayout(0, 4));
-        surface.setBorder(BorderFactory.createEmptyBorder(12, 14, 12, 14));
+        surface.setLayout(new BorderLayout(0, HEADER_BOTTOM_GAP));
+        surface.setBorder(BorderFactory.createEmptyBorder(SURFACE_PADDING_Y, SURFACE_PADDING_X, SURFACE_PADDING_Y, SURFACE_PADDING_X));
         surface.add(header, BorderLayout.NORTH);
 
         animationTimer = new Timer(TICK_MS, e -> advanceAnimation());
@@ -119,8 +131,8 @@ public final class StageOverlayHost extends JPanel {
 
     public void applyTheme() {
         UiTheme theme = UiTheme.active();
-        titleLabel.setForeground(theme.textPrimary());
-        surface.setPanelColors(theme.dialogSurface(), theme.dialogBorder());
+        titleLabel.setForeground(theme.overlayText());
+        surface.setPanelColors(theme.overlaySurface(), theme.overlayBorder());
         repaint();
     }
 
@@ -148,7 +160,7 @@ public final class StageOverlayHost extends JPanel {
         float progress = Math.max(0f, Math.min(1f, elapsed));
 
         if (state == State.ENTERING) {
-            surface.setVisual(0.35f + (0.65f * progress), (int) ((1f - progress) * 12));
+            surface.setVisual(ENTER_ALPHA_BASE + (ENTER_ALPHA_RANGE * progress), (int) ((1f - progress) * ENTER_SLIDE_PX));
             if (progress >= 1f) {
                 state = State.VISIBLE;
                 surface.setVisual(1f, 0);
@@ -158,7 +170,7 @@ public final class StageOverlayHost extends JPanel {
                 animationTimer.stop();
             }
         } else if (state == State.EXITING) {
-            surface.setVisual(1f - (0.65f * progress), (int) (progress * 10));
+            surface.setVisual(1f - (ENTER_ALPHA_RANGE * progress), (int) (progress * EXIT_SLIDE_PX));
             if (progress >= 1f) {
                 OverlaySpec closing = activeOverlay;
                 activeOverlay = null;
@@ -211,7 +223,7 @@ public final class StageOverlayHost extends JPanel {
             setBackground(background);
             setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(border, 1),
-                    BorderFactory.createEmptyBorder(10, 10, 10, 10)
+                    BorderFactory.createEmptyBorder(BODY_PADDING, BODY_PADDING, BODY_PADDING, BODY_PADDING)
             ));
         }
 
