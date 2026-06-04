@@ -8,7 +8,7 @@ A concise Swing-based JTetris for learning Java, Swing UI, and basic game loop/a
   - `Board`: game state (grid, active piece, hold/next piece, ghost projection, scoring, level). Handles gravity (`tick`), movement, rotation, line clearing, spawning, baseline T-Spin lock-state tracking, and seeded replay hooks. Hidden top rows keep spawn safe.
   - `Tetromino` & `TetrominoType`: piece data and rotations.
 - **UI**: `net.vetcafe.jtetris.ui.*`
-  - `TetrisFrame`: main window, timer-driven loop, key bindings, menu, pause/restart/leaderboard, score prompt on game over.
+  - `TetrisFrame`: main window, timer-driven loop, key bindings, menu, pause/restart/leaderboard, and in-stage prompt overlays for game-over, score entry, leaderboard, and exit confirmation.
   - `InputRepeater`: deterministic horizontal DAS/ARR state machine used by `TetrisFrame`.
   - `SoftDropRepeater`: deterministic soft-drop repeat timing used by `TetrisFrame`.
   - `GamePanel`: renders board, ghost projection, and active piece; focuses itself on show; modern dark palette.
@@ -73,7 +73,7 @@ classDiagram
 ## Game Loop & Timing
 - Swing `Timer` in `TetrisFrame` ticks every ~700 ms (speeds up by level). On each tick: if not paused and not game over, call `Board.tick()` (gravity); repaint board.
 - A second short-interval timer polls held horizontal and soft-drop input via repeaters; movement/rotation/drop actions apply to model and rendering pulls from model snapshot.
-- Modal dialogs (score entry/leaderboard/new game prompt) temporarily block gameplay input and clear held repeaters to prevent post-dialog drift.
+- In-stage overlays (score entry/leaderboard/new game prompt/exit confirmation) temporarily block gameplay input and clear held repeaters to prevent post-overlay drift.
 
 ## Scoring & Levels
 - Line clear scores (per classic Tetris style): 1/2/3/4 lines = 100/300/500/800 * level.

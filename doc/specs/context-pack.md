@@ -575,3 +575,27 @@ Compact implementation handoff notes for sequential spec delivery.
 - Next spec input (what the next task needs to know):
   - Start M8.5 by retiring unused dialog helpers and polishing overlay lifecycle consistency.
 
+## 2026-06-04 - M8.5-DIALOG-RETIREMENT-AND-STAGE-UX-POLISH
+- Decision summary (3 bullets max):
+  - Retired legacy dialog helper/default-tuning code paths from `TetrisFrame` and simplified modal gating to rely on overlay visibility only.
+  - Centralized overlay style tokens and helper rules in `UiTheme`/`StageOverlayHost`, then applied them across stage prompt overlays for better readability and focus behavior.
+  - Updated `doc/overview.md` to describe the stage-overlay prompt model instead of modal dialogs in primary flows.
+- Files changed (exact paths):
+  - `src/main/java/net/vetcafe/jtetris/ui/TetrisFrame.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/UiTheme.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/StageOverlayHost.java`
+  - `doc/overview.md`
+  - `doc/specs/m8.5-dialog-retirement-and-polish.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - Primary prompt flows are now documented and rendered as stage overlays with more consistent spacing, contrast, and focus cues.
+- Acceptance evidence:
+  - Manual: pending quick visual confirmation of spacing/focus ring preference in both themes.
+  - Automated: `mvn clean test` passed (42 tests).
+- Regressions checked:
+  - Existing model/input/scoring/replay tests remained green throughout overlay polish.
+- Known risks left:
+  - Remaining visual preferences may still need minor tweaking after in-game screenshot review.
+- Next spec input (what the next task needs to know):
+  - M8.5 is complete; future work can proceed from the stabilized stage-overlay prompt foundation.
+
