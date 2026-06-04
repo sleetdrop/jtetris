@@ -590,6 +590,55 @@ public class TetrisFrame extends JFrame {
         ));
     }
 
+    private void showExitConfirmOverlay() {
+        StageOverlayHost.OverlaySpec active = overlayHost.activeOverlay();
+        if (active != null && "exit-confirm".equals(active.id())) {
+            return;
+        }
+
+        UiTheme theme = UiTheme.active();
+        JPanel content = new JPanel(new BorderLayout(0, 12));
+        content.setOpaque(false);
+
+        JLabel message = new JLabel("Exit JTetris?");
+        message.setFont(UiFonts.regular(16f));
+        message.setForeground(theme.textPrimary());
+
+        JButton quit = new JButton("Quit");
+        quit.setFont(UiFonts.regular(14f));
+        quit.addActionListener(e -> confirmOverlayIfVisible());
+
+        JButton stay = new JButton("Stay");
+        stay.setFont(UiFonts.regular(14f));
+        stay.addActionListener(e -> cancelOverlayIfVisible());
+
+        JPanel actions = new JPanel();
+        actions.setOpaque(false);
+        actions.add(quit);
+        actions.add(stay);
+
+        content.add(message, BorderLayout.CENTER);
+        content.add(actions, BorderLayout.SOUTH);
+
+        overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
+                "exit-confirm",
+                "Confirm Exit",
+                content,
+                new StageOverlayHost.OverlayLifecycle() {
+                    @Override
+                    public void onOpened() {
+                        clearHeldInputs();
+                    }
+
+                    @Override
+                    public void onClosed() {
+                        clearHeldInputs();
+                        focusGame();
+                    }
+                }
+        ));
+    }
+
     private int showConfirmDialogModal(java.awt.Component parent, Object message, String title, int optionType, int messageType) {
         return withModalInputBlocked(() -> withDialogUiDefaults(() ->
                 JOptionPane.showConfirmDialog(parent, message, title, optionType, messageType)
@@ -768,6 +817,9 @@ public class TetrisFrame extends JFrame {
             finalizeScoreEntryFromOverlay(true);
         } else if (active != null && "game-over-info".equals(active.id())) {
             // Continue to restart/cancel prompt via lifecycle close hook.
+        } else if (active != null && "exit-confirm".equals(active.id())) {
+            dispose();
+            System.exit(0);
         }
         dismissOverlayIfVisible();
     }
