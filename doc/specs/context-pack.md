@@ -512,3 +512,24 @@ Compact implementation handoff notes for sequential spec delivery.
 - Next spec input (what the next task needs to know):
   - Proceed to `M8.2` to build reusable in-stage overlay foundation and begin dialog replacement path.
 
+## 2026-06-04 - M8.2-STAGE-OVERLAY-FOUNDATION
+- Decision summary (3 bullets max):
+  - Added reusable `StageOverlayHost` with explicit overlay state (`HIDDEN/ENTERING/VISIBLE/EXITING`), lifecycle callbacks, bounded sizing, and lightweight HUD animation.
+  - Integrated overlay host into `TetrisFrame` stage so overlay visibility participates in gameplay input gating (`isModalLayerActive`) without migrating business dialogs yet.
+  - Added non-critical demo overlay entry points (`Game > Overlay Demo (F1)`) and wired default overlay key contract (`Enter`/`Space` dismiss-confirm, `Esc` dismiss-cancel) with close-time input reset and focus recovery.
+- Files changed (exact paths):
+  - `src/main/java/net/vetcafe/jtetris/ui/StageOverlayHost.java`
+  - `src/main/java/net/vetcafe/jtetris/ui/TetrisFrame.java`
+  - `doc/specs/m8.2-stage-overlay-foundation.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - New in-stage overlay foundation is available and can be previewed with `F1` (or menu) without spawning an OS dialog.
+- Acceptance evidence:
+  - Manual: overlay demo can be opened/closed from menu and keyboard contract path is implemented (`Enter`/`Space`/`Esc`).
+  - Automated: `mvn clean test` passed (42 tests).
+- Regressions checked:
+  - Existing model/input/scoring/replay tests remain green after UI-layer overlay integration.
+- Known risks left:
+  - Gameplay prompts are still backed by `JOptionPane`; migration is deferred to M8.3/M8.4/M8.5.
+- Next spec input (what the next task needs to know):
+  - Start M8.3 by replacing game-over + score-entry flows with overlay panels on top of `StageOverlayHost` lifecycle APIs.

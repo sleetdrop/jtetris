@@ -6,6 +6,7 @@ import net.vetcafe.jtetris.score.ScoreManager;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -98,6 +99,7 @@ public class TetrisFrame extends JFrame {
 
     private final Board board = new Board();
     private final GamePanel gamePanel = new GamePanel(board);
+    private final StageOverlayHost overlayHost = new StageOverlayHost();
     private final SidePanel sidePanel = new SidePanel(board);
     private final ScoreManager scoreManager = new ScoreManager();
     private final InputRepeater horizontalRepeater = new InputRepeater(DAS_MS, ARR_MS);
@@ -115,6 +117,8 @@ public class TetrisFrame extends JFrame {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLayout(new BorderLayout());
         getContentPane().setBackground(UiTheme.active().frameBackground());
+        gamePanel.setLayout(new BorderLayout());
+        gamePanel.add(overlayHost, BorderLayout.CENTER);
         add(gamePanel, BorderLayout.CENTER);
         add(sidePanel, BorderLayout.EAST);
         setJMenuBar(createMenuBar());
@@ -185,12 +189,16 @@ public class TetrisFrame extends JFrame {
         JMenuItem hold = new JMenuItem("Hold (C)");
         hold.setFont(UiFonts.regular(13f));
         hold.addActionListener(e -> holdIfActive());
+        JMenuItem overlayDemo = new JMenuItem("Overlay Demo (F1)");
+        overlayDemo.setFont(UiFonts.regular(13f));
+        overlayDemo.addActionListener(e -> toggleOverlayDemo());
         JMenuItem exit = new JMenuItem("Quit (Esc)");
         exit.setFont(UiFonts.regular(13f));
         exit.addActionListener(e -> requestExit());
         gameMenu.add(pause);
         gameMenu.add(restart);
         gameMenu.add(hold);
+        gameMenu.add(overlayDemo);
         gameMenu.add(exit);
 
         JMenu scores = new JMenu("Scores");
@@ -239,11 +247,12 @@ public class TetrisFrame extends JFrame {
         UiTheme theme = UiTheme.active();
         getContentPane().setBackground(theme.frameBackground());
         gamePanel.applyTheme();
+        overlayHost.applyTheme();
         sidePanel.applyTheme();
         setJMenuBar(createMenuBar());
         revalidate();
         repaint();
-        if (!modalActive) {
+        if (!isModalLayerActive()) {
             focusGame();
         }
     }
@@ -470,6 +479,10 @@ public class TetrisFrame extends JFrame {
         }
     }
 
+    private boolean isModalLayerActive() {
+        return modalActive || overlayHost.isOverlayVisible();
+    }
+
     private void focusGame() {
         gamePanel.setFocusable(true);
         gamePanel.requestFocusInWindow();
@@ -489,12 +502,81 @@ public class TetrisFrame extends JFrame {
         registerAction(im, am, "downReleased", KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, true), this::onDownReleased);
         registerAction(im, am, "rotateCW", KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), () -> rotateIfActive(true));
         registerAction(im, am, "rotateCCW", KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0), () -> rotateIfActive(false));
-        registerAction(im, am, "hardDrop", KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), this::hardDropIfActive);
+        registerAction(im, am, "hardDropOrOverlayConfirm", KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), this::onSpacePressed);
+        registerAction(im, am, "overlayConfirm", KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), this::onEnterPressed);
         registerAction(im, am, "hold", KeyStroke.getKeyStroke(KeyEvent.VK_C, 0), this::holdIfActive);
         registerAction(im, am, "pause", KeyStroke.getKeyStroke(KeyEvent.VK_P, 0), this::togglePause);
         registerAction(im, am, "restart", KeyStroke.getKeyStroke(KeyEvent.VK_R, 0), this::restartGame);
         registerAction(im, am, "leaderboard", KeyStroke.getKeyStroke(KeyEvent.VK_L, 0), this::showLeaderboard);
-        registerAction(im, am, "quit", KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), this::requestExit);
+        registerAction(im, am, "overlayDemo", KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), this::toggleOverlayDemo);
+        registerAction(im, am, "quitOrOverlayCancel", KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), this::onEscapePressed);
+    }
+
+    private void toggleOverlayDemo() {
+        StageOverlayHost.OverlaySpec active = overlayHost.activeOverlay();
+        if (active != null && "demo-info".equals(active.id())) {
+            overlayHost.dismissOverlay();
+            return;
+        }
+
+        JPanel content = new JPanel(new BorderLayout(0, 12));
+        content.setOpaque(false);
+        JLabel message = new JLabel("<html>Stage overlay foundation demo.<br>Gameplay input is blocked while this panel is visible.</html>");
+        message.setFont(UiFonts.regular(15f));
+        message.setForeground(UiTheme.active().textPrimary());
+
+        JButton close = new JButton("Close");
+        close.setFont(UiFonts.regular(14f));
+        close.addActionListener(e -> dismissOverlayIfVisible());
+
+        content.add(message, BorderLayout.CENTER);
+        content.add(close, BorderLayout.SOUTH);
+
+        overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
+                "demo-info",
+                "Overlay Demo",
+                content,
+                new StageOverlayHost.OverlayLifecycle() {
+                    @Override
+                    public void onOpened() {
+                        clearHeldInputs();
+                    }
+
+                    @Override
+                    public void onClosed() {
+                        clearHeldInputs();
+                        focusGame();
+                    }
+                }
+        ));
+    }
+
+    private void onSpacePressed() {
+        if (overlayHost.isOverlayVisible()) {
+            dismissOverlayIfVisible();
+            return;
+        }
+        hardDropIfActive();
+    }
+
+    private void onEnterPressed() {
+        dismissOverlayIfVisible();
+    }
+
+    private void onEscapePressed() {
+        if (overlayHost.isOverlayVisible()) {
+            dismissOverlayIfVisible();
+            return;
+        }
+        requestExit();
+    }
+
+    private void dismissOverlayIfVisible() {
+        if (!overlayHost.isOverlayVisible()) {
+            return;
+        }
+        clearHeldInputs();
+        overlayHost.dismissOverlay();
     }
 
     private void requestExit() {
@@ -513,7 +595,7 @@ public class TetrisFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 action.run();
-                if (!modalActive) {
+                if (!isModalLayerActive()) {
                     focusGame();
                 }
             }
@@ -552,7 +634,7 @@ public class TetrisFrame extends JFrame {
     }
 
     private boolean isGameplayInputEnabled() {
-        return !paused && !modalActive && !board.isGameOver();
+        return !paused && !isModalLayerActive() && !board.isGameOver();
     }
 
     private long nowMs() {
