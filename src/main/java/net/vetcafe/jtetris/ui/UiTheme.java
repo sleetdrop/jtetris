@@ -24,7 +24,7 @@ public final class UiTheme {
             new Color(236, 229, 217),
             new Color(230, 221, 206),
             new Color(142, 126, 99),
-            new Color(230, 224, 216),
+            new Color(233, 228, 221),
             new Color(78, 71, 58),
             new Color(204, 193, 174)
     );
@@ -198,7 +198,7 @@ public final class UiTheme {
     }
 
     public Color overlaySurface() {
-        return dialogSurface;
+        return dark ? mix(dialogSurface, frameBackground, 0.35) : mix(dialogSurface, frameBackground, 0.25);
     }
 
     public Color dialogBorder() {
@@ -206,7 +206,11 @@ public final class UiTheme {
     }
 
     public Color overlayBorder() {
-        return dialogBorder;
+        return dark ? mix(dialogBorder, accent, 0.45) : mix(dialogBorder, accent, 0.28);
+    }
+
+    public Color overlayBackground() {
+        return dark ? mix(frameBackground, boardBackground, 0.25) : mix(frameBackground, boardBackground, 0.30);
     }
 
     public Color overlayText() {
@@ -214,7 +218,7 @@ public final class UiTheme {
     }
 
     public Color overlayAccent() {
-        return accent;
+        return dark ? mix(accent, textPrimary, 0.18) : mix(accent, textPrimary, 0.10);
     }
 
     public Color tableHeaderBackground() {
@@ -227,6 +231,18 @@ public final class UiTheme {
 
     public Color tableGrid() {
         return tableGrid;
+    }
+
+    private static Color mix(Color a, Color b, double bWeight) {
+        double aWeight = 1.0 - bWeight;
+        int red = clamp((int) Math.round((a.getRed() * aWeight) + (b.getRed() * bWeight)));
+        int green = clamp((int) Math.round((a.getGreen() * aWeight) + (b.getGreen() * bWeight)));
+        int blue = clamp((int) Math.round((a.getBlue() * aWeight) + (b.getBlue() * bWeight)));
+        return new Color(red, green, blue);
+    }
+
+    private static int clamp(int value) {
+        return Math.max(0, Math.min(255, value));
     }
 }
 

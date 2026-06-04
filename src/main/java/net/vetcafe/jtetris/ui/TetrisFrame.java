@@ -117,9 +117,10 @@ public class TetrisFrame extends JFrame {
         setLayout(new BorderLayout());
         getContentPane().setBackground(UiTheme.active().frameBackground());
         gamePanel.setLayout(new BorderLayout());
-        gamePanel.add(overlayHost, BorderLayout.CENTER);
         add(gamePanel, BorderLayout.CENTER);
         add(sidePanel, BorderLayout.EAST);
+        setGlassPane(overlayHost);
+        overlayHost.setVisible(false);
         setJMenuBar(createMenuBar());
         pack();
         setResizable(false);
@@ -303,6 +304,7 @@ public class TetrisFrame extends JFrame {
 
         JLabel info = new JLabel("<html>" + message.replace("\n", "<br>") + "</html>");
         StageOverlayHost.styleOverlayBodyLabel(info);
+        info.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
 
         JButton next = new JButton("Continue");
         StageOverlayHost.styleOverlayActionButton(next);
@@ -346,6 +348,7 @@ public class TetrisFrame extends JFrame {
 
         JLabel message = new JLabel("<html>Game over.<br>Start a new game?</html>");
         StageOverlayHost.styleOverlayBodyLabel(message);
+        message.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
 
         JButton restart = new JButton("Restart");
         StageOverlayHost.styleOverlayActionButton(restart);
@@ -392,7 +395,8 @@ public class TetrisFrame extends JFrame {
 
         JLabel scoreInfo = new JLabel("Score: " + pendingGameOverScore);
         StageOverlayHost.styleOverlayBodyLabel(scoreInfo);
-        scoreInfo.setFont(UiFonts.semibold(16f));
+        scoreInfo.setFont(UiFonts.semibold(14f));
+        scoreInfo.setBorder(BorderFactory.createEmptyBorder(1, 4, 4, 4));
 
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setOpaque(false);
@@ -420,8 +424,10 @@ public class TetrisFrame extends JFrame {
         StageOverlayHost.styleOverlayBodyLabel(lblExisting);
         JLabel lblNew = new JLabel("Or enter new:");
         StageOverlayHost.styleOverlayBodyLabel(lblNew);
+        lblExisting.setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 0));
+        lblNew.setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 0));
 
-        gbc.gridx = 0; gbc.gridy = 0; formPanel.add(lblExisting, gbc);
+        gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.WEST; formPanel.add(lblExisting, gbc);
         gbc.gridx = 1; formPanel.add(scoreEntryExistingUsers, gbc);
         gbc.gridx = 0; gbc.gridy = 1; formPanel.add(lblNew, gbc);
         gbc.gridx = 1; formPanel.add(scoreEntryNewUserField, gbc);
@@ -501,6 +507,7 @@ public class TetrisFrame extends JFrame {
         if (entries.isEmpty()) {
             JLabel empty = new JLabel("No scores yet");
             StageOverlayHost.styleOverlayBodyLabel(empty);
+            empty.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
             panel.add(empty, BorderLayout.CENTER);
         } else {
             DefaultTableModel model = new DefaultTableModel(new Object[]{"User", "Best"}, 0) {
@@ -571,6 +578,7 @@ public class TetrisFrame extends JFrame {
 
         JLabel message = new JLabel("Exit JTetris?");
         StageOverlayHost.styleOverlayBodyLabel(message);
+        message.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
 
         JButton quit = new JButton("Quit");
         StageOverlayHost.styleOverlayActionButton(quit);
@@ -650,6 +658,7 @@ public class TetrisFrame extends JFrame {
         content.setOpaque(false);
         JLabel message = new JLabel("<html>Stage overlay foundation demo.<br>Gameplay input is blocked while this panel is visible.</html>");
         StageOverlayHost.styleOverlayBodyLabel(message);
+        message.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
 
         JButton close = new JButton("Close");
         StageOverlayHost.styleOverlayActionButton(close);

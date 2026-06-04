@@ -19,22 +19,22 @@ import java.awt.Insets;
  * In-stage overlay host that manages HUD-style panel lifecycle and basic enter/exit motion.
  */
 public final class StageOverlayHost extends JPanel {
-    private static final int MIN_WIDTH = 300;
-    private static final int MAX_WIDTH = 520;
-    private static final int MIN_HEIGHT = 140;
-    private static final int MAX_HEIGHT = 320;
+    private static final int MIN_WIDTH = 250;
+    private static final int MAX_WIDTH = 460;
+    private static final int MIN_HEIGHT = 120;
+    private static final int MAX_HEIGHT = 270;
     private static final int ANIMATION_MS = 140;
     private static final int TICK_MS = 16;
-    private static final int SURFACE_PADDING_X = 14;
-    private static final int SURFACE_PADDING_Y = 12;
-    private static final int HEADER_BOTTOM_GAP = 4;
-    private static final int TITLE_INSET_X = 2;
-    private static final int TITLE_INSET_TOP = 2;
-    private static final int TITLE_INSET_BOTTOM = 8;
-    private static final int BODY_PADDING = 10;
-    private static final float TITLE_FONT_SIZE = 18f;
-    private static final float ENTER_ALPHA_BASE = 0.35f;
-    private static final float ENTER_ALPHA_RANGE = 0.65f;
+    private static final int SURFACE_PADDING_X = 12;
+    private static final int SURFACE_PADDING_Y = 10;
+    private static final int HEADER_BOTTOM_GAP = 2;
+    private static final int TITLE_INSET_X = 1;
+    private static final int TITLE_INSET_TOP = 1;
+    private static final int TITLE_INSET_BOTTOM = 6;
+    private static final int BODY_PADDING = 8;
+    private static final float TITLE_FONT_SIZE = 16f;
+    private static final float BODY_FONT_SIZE = 14f;
+    private static final float BUTTON_FONT_SIZE = 13f;
     private static final int ENTER_SLIDE_PX = 12;
     private static final int EXIT_SLIDE_PX = 10;
 
@@ -107,6 +107,7 @@ public final class StageOverlayHost extends JPanel {
         state = State.ENTERING;
         animationStartAtMs = System.currentTimeMillis();
         setVisible(true);
+        surface.setVisual(1f, ENTER_SLIDE_PX);
         updateSurfaceBounds();
         animationTimer.start();
     }
@@ -129,21 +130,21 @@ public final class StageOverlayHost extends JPanel {
     }
 
     public static void styleOverlayBodyLabel(JLabel label) {
-        label.setFont(UiFonts.regular(16f));
+        label.setFont(UiFonts.regular(BODY_FONT_SIZE));
         label.setForeground(UiTheme.active().overlayText());
     }
 
     public static void styleOverlayActionButton(JButton button) {
-        button.setFont(UiFonts.regular(14f));
-        button.setMargin(new Insets(6, 14, 6, 14));
+        button.setFont(UiFonts.regular(BUTTON_FONT_SIZE));
+        button.setMargin(new Insets(4, 10, 4, 10));
         button.setFocusPainted(true);
         button.setFocusable(true);
     }
 
     public static JPanel createOverlayActionRow() {
-        JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         row.setOpaque(false);
-        row.setBorder(BorderFactory.createEmptyBorder(12, 0, 0, 0));
+        row.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         return row;
     }
 
@@ -154,7 +155,7 @@ public final class StageOverlayHost extends JPanel {
     public void applyTheme() {
         UiTheme theme = UiTheme.active();
         titleLabel.setForeground(theme.overlayText());
-        surface.setPanelColors(theme.overlaySurface(), theme.overlayBorder());
+        surface.setPanelColors(theme.overlayBackground(), theme.overlaySurface(), theme.overlayBorder(), theme.overlayAccent());
         repaint();
     }
 
@@ -165,8 +166,10 @@ public final class StageOverlayHost extends JPanel {
     }
 
     private void updateSurfaceBounds() {
-        int width = clamp((int) (getWidth() * 0.72), MIN_WIDTH, MAX_WIDTH);
-        int height = clamp((int) (getHeight() * 0.56), MIN_HEIGHT, MAX_HEIGHT);
+        int availableWidth = Math.max(1, getWidth() - 16);
+        int availableHeight = Math.max(1, getHeight() - 16);
+        int width = Math.min(clamp((int) (getWidth() * 0.72), MIN_WIDTH, MAX_WIDTH), availableWidth);
+        int height = Math.min(clamp((int) (getHeight() * 0.56), MIN_HEIGHT, MAX_HEIGHT), availableHeight);
         int x = (getWidth() - width) / 2;
         int y = (getHeight() - height) / 2;
         surface.setBounds(x, y, width, height);
@@ -182,7 +185,7 @@ public final class StageOverlayHost extends JPanel {
         float progress = Math.max(0f, Math.min(1f, elapsed));
 
         if (state == State.ENTERING) {
-            surface.setVisual(ENTER_ALPHA_BASE + (ENTER_ALPHA_RANGE * progress), (int) ((1f - progress) * ENTER_SLIDE_PX));
+            surface.setVisual(1f, (int) ((1f - progress) * ENTER_SLIDE_PX));
             if (progress >= 1f) {
                 state = State.VISIBLE;
                 surface.setVisual(1f, 0);
@@ -192,7 +195,7 @@ public final class StageOverlayHost extends JPanel {
                 animationTimer.stop();
             }
         } else if (state == State.EXITING) {
-            surface.setVisual(1f - (ENTER_ALPHA_RANGE * progress), (int) (progress * EXIT_SLIDE_PX));
+            surface.setVisual(1f, (int) (progress * EXIT_SLIDE_PX));
             if (progress >= 1f) {
                 OverlaySpec closing = activeOverlay;
                 activeOverlay = null;
@@ -241,12 +244,16 @@ public final class StageOverlayHost extends JPanel {
             this.offsetY = offsetY;
         }
 
-        private void setPanelColors(Color background, Color border) {
+        private void setPanelColors(Color background, Color surfaceColor, Color border, Color accent) {
             setBackground(background);
             setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(border, 1),
                     BorderFactory.createEmptyBorder(BODY_PADDING, BODY_PADDING, BODY_PADDING, BODY_PADDING)
             ));
+            if (body != null) {
+                body.setBackground(surfaceColor);
+            }
+            putClientProperty("overlayAccent", accent);
         }
 
         @Override
