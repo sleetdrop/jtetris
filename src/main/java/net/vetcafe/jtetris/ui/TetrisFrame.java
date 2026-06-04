@@ -516,47 +516,78 @@ public class TetrisFrame extends JFrame {
     }
 
     private void showLeaderboard() {
-        UiTheme theme = UiTheme.active();
-        var entries = scoreManager.getLeaderboard();
-        if (entries.isEmpty()) {
-            showStyledMessage("No scores yet", "Leaderboard");
+        StageOverlayHost.OverlaySpec active = overlayHost.activeOverlay();
+        if (active != null && "leaderboard".equals(active.id())) {
             return;
         }
-        DefaultTableModel model = new DefaultTableModel(new Object[]{"User", "Best"}, 0) {
-            @Override public boolean isCellEditable(int row, int column) { return false; }
-        };
-        for (var e : entries) {
-            model.addRow(new Object[]{e.user(), e.score()});
+
+        UiTheme theme = UiTheme.active();
+        var entries = scoreManager.getLeaderboard();
+
+        JPanel panel = new JPanel(new BorderLayout(0, 10));
+        panel.setOpaque(false);
+
+        if (entries.isEmpty()) {
+            JLabel empty = new JLabel("No scores yet");
+            empty.setFont(UiFonts.regular(16f));
+            empty.setForeground(theme.textPrimary());
+            panel.add(empty, BorderLayout.CENTER);
+        } else {
+            DefaultTableModel model = new DefaultTableModel(new Object[]{"User", "Best"}, 0) {
+                @Override public boolean isCellEditable(int row, int column) { return false; }
+            };
+            for (var entry : entries) {
+                model.addRow(new Object[]{entry.user(), entry.score()});
+            }
+            JTable table = new JTable(model);
+            table.setBackground(theme.dialogBackground());
+            table.setForeground(theme.textPrimary());
+            table.setGridColor(theme.tableGrid());
+            table.setRowHeight(28);
+            table.setIntercellSpacing(new Dimension(1, 1));
+            table.setFont(UiFonts.regular(16f));
+            table.getTableHeader().setBackground(theme.tableHeaderBackground());
+            table.getTableHeader().setForeground(theme.tableHeaderText());
+            table.getTableHeader().setFont(UiFonts.semibold(16f));
+            table.getTableHeader().setBorder(BorderFactory.createLineBorder(theme.dialogBorder(), 1));
+            table.getTableHeader().setReorderingAllowed(false);
+            table.setFillsViewportHeight(true);
+            table.setEnabled(false);
+            int visibleRows = Math.max(1, Math.min(entries.size(), 8));
+            int preferredHeight = (visibleRows * table.getRowHeight()) + table.getTableHeader().getPreferredSize().height + 8;
+            table.setPreferredScrollableViewportSize(new Dimension(520, preferredHeight));
+
+            JScrollPane scroll = new JScrollPane(table);
+            scroll.getViewport().setBackground(theme.dialogBackground());
+            scroll.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+            panel.add(scroll, BorderLayout.CENTER);
         }
-        JTable table = new JTable(model);
-        table.setBackground(theme.dialogBackground());
-        table.setForeground(theme.textPrimary());
-        table.setGridColor(theme.tableGrid());
-        table.setRowHeight(28);
-        table.setIntercellSpacing(new Dimension(1, 1));
-        table.setFont(UiFonts.regular(16f));
-        table.getTableHeader().setBackground(theme.tableHeaderBackground());
-        table.getTableHeader().setForeground(theme.tableHeaderText());
-        table.getTableHeader().setFont(UiFonts.semibold(16f));
-        table.getTableHeader().setBorder(BorderFactory.createLineBorder(theme.dialogBorder(), 1));
-        table.getTableHeader().setReorderingAllowed(false);
-        table.setFillsViewportHeight(true);
-        table.setEnabled(false);
-        int visibleRows = Math.max(1, Math.min(entries.size(), 8));
-        int preferredHeight = (visibleRows * table.getRowHeight()) + table.getTableHeader().getPreferredSize().height + 8;
-        table.setPreferredScrollableViewportSize(new Dimension(520, preferredHeight));
-        JScrollPane scroll = new JScrollPane(table);
-        scroll.getViewport().setBackground(theme.dialogBackground());
-        scroll.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(theme.dialogSurface());
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(theme.dialogBorder(), 1),
-                BorderFactory.createEmptyBorder(6, 6, 6, 6)
+
+        JButton close = new JButton("Close");
+        close.setFont(UiFonts.regular(14f));
+        close.addActionListener(e -> dismissOverlayIfVisible());
+        JPanel actions = new JPanel();
+        actions.setOpaque(false);
+        actions.add(close);
+        panel.add(actions, BorderLayout.SOUTH);
+
+        overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
+                "leaderboard",
+                "Leaderboard",
+                panel,
+                new StageOverlayHost.OverlayLifecycle() {
+                    @Override
+                    public void onOpened() {
+                        clearHeldInputs();
+                    }
+
+                    @Override
+                    public void onClosed() {
+                        clearHeldInputs();
+                        focusGame();
+                    }
+                }
         ));
-        panel.add(scroll, BorderLayout.CENTER);
-        showMessageDialogModal(this, panel, "Leaderboard", JOptionPane.PLAIN_MESSAGE);
-        focusGame();
     }
 
     private int showConfirmDialogModal(java.awt.Component parent, Object message, String title, int optionType, int messageType) {
