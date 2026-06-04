@@ -13,7 +13,7 @@
 
 ## Source Map
 - Main source: `src/main/java/net/vetcafe/jtetris`
-  - Model: `model/` (`Board`, `Tetromino`, `TetrominoType`, `PieceBag`, `ReplayAction`, `SrsKickTable`, `TSpinDetector`)
+  - Model: `model/` (`Board`, `Tetromino`, `TetrominoType`, `PieceBag`, `ReplayAction`, `ReplayPersistence`, `SrsKickTable`, `TSpinDetector`)
   - UI: `ui/` (`TetrisFrame`, `GamePanel`, `SidePanel`, `InputRepeater`, `SoftDropRepeater`, `UiTheme`, `UiFonts`, `ColorPalette`)
   - Score storage: `score/ScoreManager`
 - Tests: `src/test/java/net/vetcafe/jtetris`
@@ -23,6 +23,7 @@
 - Spec workflow: `doc/specs/README.md`
 - Copilot usage: `doc/copilot-agent-usage.md`
 - Copilot instructions: `.github/copilot-instructions.md`
+- Preferred prompts: `.github/prompts/session-start.prompt.md`, `.github/prompts/feature-task.prompt.md`, `.github/prompts/session-handoff.prompt.md`
 
 ## Build And Test
 - Preferred validation command:
@@ -52,7 +53,7 @@ mvn -Pmac clean package
 ## Execution Mode (Early Stage Stability)
 - Default mode is `strict`: only implement the current requested feature, no opportunistic refactors.
 - For non-trivial changes, update or create a spec in `doc/specs` before code changes.
-- Before implementation, define an explicit file allowlist; do not edit files outside that allowlist unless re-approved.
+- Before implementation, restate current goal, explicit file allowlist, and out-of-scope items; do not edit files outside that allowlist unless re-approved.
 - Treat `pom.xml`, package moves, dependency changes, and broad naming changes as standalone tasks with their own spec.
 - If unrelated issues are found, record them in notes/spec backlog and continue current scope only.
 
@@ -65,7 +66,7 @@ mvn -Pmac clean package
 - Start-of-session required steps:
   1. Read `AGENTS.md`.
   2. Read the active spec file and `doc/specs/context-pack.md` latest entry.
-  3. Restate plan + file allowlist before editing.
+  3. Restate current goal/plan + file allowlist + out-of-scope items before editing.
 
 ## Definition Of Done
 - Code compiles and tests pass with `mvn clean test`.
