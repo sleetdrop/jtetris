@@ -302,15 +302,13 @@ public class TetrisFrame extends JFrame {
         content.setOpaque(false);
 
         JLabel info = new JLabel("<html>" + message.replace("\n", "<br>") + "</html>");
-        info.setFont(UiFonts.regular(16f));
-        info.setForeground(theme.textPrimary());
+        StageOverlayHost.styleOverlayBodyLabel(info);
 
         JButton next = new JButton("Continue");
-        next.setFont(UiFonts.regular(14f));
+        StageOverlayHost.styleOverlayActionButton(next);
         next.addActionListener(e -> confirmOverlayIfVisible());
 
-        JPanel actions = new JPanel();
-        actions.setOpaque(false);
+        JPanel actions = StageOverlayHost.createOverlayActionRow();
         actions.add(next);
 
         content.add(info, BorderLayout.CENTER);
@@ -347,17 +345,15 @@ public class TetrisFrame extends JFrame {
         content.setOpaque(false);
 
         JLabel message = new JLabel("<html>Game over.<br>Start a new game?</html>");
-        message.setFont(UiFonts.regular(16f));
-        message.setForeground(theme.textPrimary());
+        StageOverlayHost.styleOverlayBodyLabel(message);
 
-        JPanel actions = new JPanel();
-        actions.setOpaque(false);
         JButton restart = new JButton("Restart");
-        restart.setFont(UiFonts.regular(14f));
+        StageOverlayHost.styleOverlayActionButton(restart);
         restart.addActionListener(e -> confirmOverlayIfVisible());
         JButton cancel = new JButton("Stay");
-        cancel.setFont(UiFonts.regular(14f));
+        StageOverlayHost.styleOverlayActionButton(cancel);
         cancel.addActionListener(e -> cancelOverlayIfVisible());
+        JPanel actions = StageOverlayHost.createOverlayActionRow();
         actions.add(restart);
         actions.add(cancel);
 
@@ -395,7 +391,7 @@ public class TetrisFrame extends JFrame {
         panel.setOpaque(false);
 
         JLabel scoreInfo = new JLabel("Score: " + pendingGameOverScore);
-        scoreInfo.setForeground(theme.textPrimary());
+        StageOverlayHost.styleOverlayBodyLabel(scoreInfo);
         scoreInfo.setFont(UiFonts.semibold(16f));
 
         JPanel formPanel = new JPanel(new GridBagLayout());
@@ -421,24 +417,21 @@ public class TetrisFrame extends JFrame {
         ));
 
         JLabel lblExisting = new JLabel("Choose existing:");
-        lblExisting.setForeground(theme.textPrimary());
-        lblExisting.setFont(UiFonts.regular(16f));
+        StageOverlayHost.styleOverlayBodyLabel(lblExisting);
         JLabel lblNew = new JLabel("Or enter new:");
-        lblNew.setForeground(theme.textPrimary());
-        lblNew.setFont(UiFonts.regular(16f));
+        StageOverlayHost.styleOverlayBodyLabel(lblNew);
 
         gbc.gridx = 0; gbc.gridy = 0; formPanel.add(lblExisting, gbc);
         gbc.gridx = 1; formPanel.add(scoreEntryExistingUsers, gbc);
         gbc.gridx = 0; gbc.gridy = 1; formPanel.add(lblNew, gbc);
         gbc.gridx = 1; formPanel.add(scoreEntryNewUserField, gbc);
 
-        JPanel actions = new JPanel();
-        actions.setOpaque(false);
+        JPanel actions = StageOverlayHost.createOverlayActionRow();
         JButton record = new JButton("Record");
-        record.setFont(UiFonts.regular(14f));
+        StageOverlayHost.styleOverlayActionButton(record);
         record.addActionListener(e -> confirmOverlayIfVisible());
         JButton skip = new JButton("Skip");
-        skip.setFont(UiFonts.regular(14f));
+        StageOverlayHost.styleOverlayActionButton(skip);
         skip.addActionListener(e -> cancelOverlayIfVisible());
         actions.add(record);
         actions.add(skip);
@@ -507,8 +500,7 @@ public class TetrisFrame extends JFrame {
 
         if (entries.isEmpty()) {
             JLabel empty = new JLabel("No scores yet");
-            empty.setFont(UiFonts.regular(16f));
-            empty.setForeground(theme.textPrimary());
+            StageOverlayHost.styleOverlayBodyLabel(empty);
             panel.add(empty, BorderLayout.CENTER);
         } else {
             DefaultTableModel model = new DefaultTableModel(new Object[]{"User", "Best"}, 0) {
@@ -542,10 +534,9 @@ public class TetrisFrame extends JFrame {
         }
 
         JButton close = new JButton("Close");
-        close.setFont(UiFonts.regular(14f));
+        StageOverlayHost.styleOverlayActionButton(close);
         close.addActionListener(e -> dismissOverlayIfVisible());
-        JPanel actions = new JPanel();
-        actions.setOpaque(false);
+        JPanel actions = StageOverlayHost.createOverlayActionRow();
         actions.add(close);
         panel.add(actions, BorderLayout.SOUTH);
 
@@ -579,19 +570,17 @@ public class TetrisFrame extends JFrame {
         content.setOpaque(false);
 
         JLabel message = new JLabel("Exit JTetris?");
-        message.setFont(UiFonts.regular(16f));
-        message.setForeground(theme.textPrimary());
+        StageOverlayHost.styleOverlayBodyLabel(message);
 
         JButton quit = new JButton("Quit");
-        quit.setFont(UiFonts.regular(14f));
+        StageOverlayHost.styleOverlayActionButton(quit);
         quit.addActionListener(e -> confirmOverlayIfVisible());
 
         JButton stay = new JButton("Stay");
-        stay.setFont(UiFonts.regular(14f));
+        StageOverlayHost.styleOverlayActionButton(stay);
         stay.addActionListener(e -> cancelOverlayIfVisible());
 
-        JPanel actions = new JPanel();
-        actions.setOpaque(false);
+        JPanel actions = StageOverlayHost.createOverlayActionRow();
         actions.add(quit);
         actions.add(stay);
 
@@ -660,11 +649,10 @@ public class TetrisFrame extends JFrame {
         JPanel content = new JPanel(new BorderLayout(0, 12));
         content.setOpaque(false);
         JLabel message = new JLabel("<html>Stage overlay foundation demo.<br>Gameplay input is blocked while this panel is visible.</html>");
-        message.setFont(UiFonts.regular(15f));
-        message.setForeground(UiTheme.active().textPrimary());
+        StageOverlayHost.styleOverlayBodyLabel(message);
 
         JButton close = new JButton("Close");
-        close.setFont(UiFonts.regular(14f));
+        StageOverlayHost.styleOverlayActionButton(close);
         close.addActionListener(e -> dismissOverlayIfVisible());
 
         content.add(message, BorderLayout.CENTER);

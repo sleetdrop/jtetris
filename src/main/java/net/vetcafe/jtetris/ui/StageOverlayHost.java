@@ -1,6 +1,7 @@
 package net.vetcafe.jtetris.ui;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -11,6 +12,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.FlowLayout;
+import java.awt.Insets;
 
 /**
  * In-stage overlay host that manages HUD-style panel lifecycle and basic enter/exit motion.
@@ -123,6 +126,25 @@ public final class StageOverlayHost extends JPanel {
 
     public boolean isOverlayVisible() {
         return state != State.HIDDEN;
+    }
+
+    public static void styleOverlayBodyLabel(JLabel label) {
+        label.setFont(UiFonts.regular(16f));
+        label.setForeground(UiTheme.active().overlayText());
+    }
+
+    public static void styleOverlayActionButton(JButton button) {
+        button.setFont(UiFonts.regular(14f));
+        button.setMargin(new Insets(6, 14, 6, 14));
+        button.setFocusPainted(true);
+        button.setFocusable(true);
+    }
+
+    public static JPanel createOverlayActionRow() {
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        row.setOpaque(false);
+        row.setBorder(BorderFactory.createEmptyBorder(12, 0, 0, 0));
+        return row;
     }
 
     public OverlaySpec activeOverlay() {
