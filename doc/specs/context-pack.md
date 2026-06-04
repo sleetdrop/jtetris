@@ -533,3 +533,24 @@ Compact implementation handoff notes for sequential spec delivery.
   - Gameplay prompts are still backed by `JOptionPane`; migration is deferred to M8.3/M8.4/M8.5.
 - Next spec input (what the next task needs to know):
   - Start M8.3 by replacing game-over + score-entry flows with overlay panels on top of `StageOverlayHost` lifecycle APIs.
+
+## 2026-06-04 - M8.3-STAGE-GAMEOVER-AND-SCORE-ENTRY
+- Decision summary (3 bullets max):
+  - Replaced game-over restart prompt with in-stage overlay actions (`Restart`/`Stay`) and kept unified overlay key contract (`Enter`/`Space` confirm, `Esc` cancel).
+  - Migrated score entry to stage overlay with dual path support (existing user selection + new username input) while preserving `ScoreManager` behavior.
+  - Routed score record/skip feedback through in-stage info overlay and removed `JOptionPane` usage from the game-over score flow.
+- Files changed (exact paths):
+  - `src/main/java/net/vetcafe/jtetris/ui/TetrisFrame.java`
+  - `doc/specs/m8.3-stage-gameover-and-score-entry.md`
+- Public behavior changes:
+  - Game-over and score-entry interactions now run fully inside the stage overlay system without OS modal dialogs.
+- Acceptance evidence:
+  - Manual: quick flow check pending for score-entry keyboard navigation and close sequencing.
+  - Automated: `mvn clean test` passed (42 tests).
+- Regressions checked:
+  - Existing model/input/scoring/replay tests remained green after overlay migration.
+- Known risks left:
+  - Leaderboard and exit confirm still use `JOptionPane` until M8.4/M8.5 migration steps.
+- Next spec input (what the next task needs to know):
+  - Start M8.4 by migrating leaderboard display to stage overlay while preserving `L` key behavior and focus recovery.
+
