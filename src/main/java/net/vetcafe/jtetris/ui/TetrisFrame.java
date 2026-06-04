@@ -844,13 +844,7 @@ public class TetrisFrame extends JFrame {
     }
 
     private void requestExit() {
-        int choice = showConfirmDialogModal(this, "Exit JTetris?", "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (choice == JOptionPane.YES_OPTION) {
-            dispose();
-            System.exit(0);
-        } else {
-            focusGame();
-        }
+        showExitConfirmOverlay();
     }
 
     private void registerAction(javax.swing.InputMap im, javax.swing.ActionMap am, String name, KeyStroke key, Runnable action) {
