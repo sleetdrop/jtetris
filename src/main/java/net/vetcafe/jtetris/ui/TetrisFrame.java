@@ -108,6 +108,11 @@ public class TetrisFrame extends JFrame {
     private boolean scorePrompted;
     private boolean lastGameOverProcessed;
     private String userName; // null means not tracking this run
+    private int pendingGameOverScore;
+    private JComboBox<String> scoreEntryExistingUsers;
+    private JTextField scoreEntryNewUserField;
+    private String scoreEntryFeedbackMessage;
+    private String scoreEntryFeedbackTitle;
     private boolean paused;
     private boolean modalActive;
 
@@ -157,8 +162,8 @@ public class TetrisFrame extends JFrame {
                 if (!scorePrompted || !lastGameOverProcessed) {
                     scorePrompted = true;
                     lastGameOverProcessed = true;
-                    maybeRecordScore();
-                    showGameOverOverlay();
+                    pendingGameOverScore = board.getScore();
+                    showScoreEntryOverlay();
                 }
                 return;
             } else {
@@ -274,16 +279,25 @@ public class TetrisFrame extends JFrame {
         focusGame();
     }
 
-    private void maybeRecordScore() {
-        int current = board.getScore();
-        String chosenUser = chooseOrCreateUser();
-        if (chosenUser == null) {
-            showStyledMessage("Score not recorded\nScore: " + current, "Game Over");
+    private void finalizeScoreEntryFromOverlay(boolean confirm) {
+        int current = pendingGameOverScore;
+        if (!confirm) {
+            scoreEntryFeedbackTitle = "Game Over";
+            scoreEntryFeedbackMessage = "Score not recorded\nScore: " + current;
             return;
         }
+
+        String chosenUser = extractScoreEntryCandidate();
+        if (chosenUser == null) {
+            scoreEntryFeedbackTitle = "Game Over";
+            scoreEntryFeedbackMessage = "Score not recorded\nScore: " + current;
+            return;
+        }
+
         userName = chosenUser;
         int best = scoreManager.updateIfHigher(userName, current);
-        showStyledMessage(userName + " score: " + current + "\nBest: " + best, "Game Over");
+        scoreEntryFeedbackTitle = "Game Over";
+        scoreEntryFeedbackMessage = userName + " score: " + current + "\nBest: " + best;
     }
 
     private void showGameOverOverlay() {
@@ -333,30 +347,39 @@ public class TetrisFrame extends JFrame {
         ));
     }
 
-    private String chooseOrCreateUser() {
+    private void showScoreEntryOverlay() {
+        StageOverlayHost.OverlaySpec active = overlayHost.activeOverlay();
+        if (active != null && "score-entry".equals(active.id())) {
+            return;
+        }
+
         UiTheme theme = UiTheme.active();
         var users = scoreManager.getUsers();
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(theme.dialogSurface());
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(theme.dialogBorder(), 1),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        ));
+        JPanel panel = new JPanel(new BorderLayout(0, 10));
+        panel.setOpaque(false);
+
+        JLabel scoreInfo = new JLabel("Score: " + pendingGameOverScore);
+        scoreInfo.setForeground(theme.textPrimary());
+        scoreInfo.setFont(UiFonts.semibold(16f));
+
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(4, 4, 4, 4);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JComboBox<String> existing = new JComboBox<>(users.toArray(String[]::new));
-        existing.setEditable(false);
-        existing.setFont(UiFonts.regular(16f));
-        existing.setBackground(theme.dialogBackground());
-        existing.setForeground(theme.textPrimary());
-        JTextField newUser = new JTextField();
-        newUser.setFont(UiFonts.regular(16f));
-        newUser.setBackground(theme.dialogBackground());
-        newUser.setForeground(theme.textPrimary());
-        newUser.setCaretColor(theme.textPrimary());
-        newUser.setBorder(BorderFactory.createCompoundBorder(
+        scoreEntryExistingUsers = new JComboBox<>(users.toArray(String[]::new));
+        scoreEntryExistingUsers.setEditable(false);
+        scoreEntryExistingUsers.setFont(UiFonts.regular(16f));
+        scoreEntryExistingUsers.setBackground(theme.dialogBackground());
+        scoreEntryExistingUsers.setForeground(theme.textPrimary());
+
+        scoreEntryNewUserField = new JTextField();
+        scoreEntryNewUserField.setFont(UiFonts.regular(16f));
+        scoreEntryNewUserField.setBackground(theme.dialogBackground());
+        scoreEntryNewUserField.setForeground(theme.textPrimary());
+        scoreEntryNewUserField.setCaretColor(theme.textPrimary());
+        scoreEntryNewUserField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(theme.dialogBorder(), 1),
                 BorderFactory.createEmptyBorder(4, 8, 4, 8)
         ));
@@ -368,16 +391,65 @@ public class TetrisFrame extends JFrame {
         lblNew.setForeground(theme.textPrimary());
         lblNew.setFont(UiFonts.regular(16f));
 
-        gbc.gridx = 0; gbc.gridy = 0; panel.add(lblExisting, gbc);
-        gbc.gridx = 1; panel.add(existing, gbc);
-        gbc.gridx = 0; gbc.gridy = 1; panel.add(lblNew, gbc);
-        gbc.gridx = 1; panel.add(newUser, gbc);
+        gbc.gridx = 0; gbc.gridy = 0; formPanel.add(lblExisting, gbc);
+        gbc.gridx = 1; formPanel.add(scoreEntryExistingUsers, gbc);
+        gbc.gridx = 0; gbc.gridy = 1; formPanel.add(lblNew, gbc);
+        gbc.gridx = 1; formPanel.add(scoreEntryNewUserField, gbc);
 
-        int result = showConfirmDialogModal(this, panel, "Record score", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (result != JOptionPane.OK_OPTION) return null;
-        String candidate = newUser.getText().trim();
-        if (candidate.isEmpty()) {
-            Object sel = existing.getSelectedItem();
+        JPanel actions = new JPanel();
+        actions.setOpaque(false);
+        JButton record = new JButton("Record");
+        record.setFont(UiFonts.regular(14f));
+        record.addActionListener(e -> confirmOverlayIfVisible());
+        JButton skip = new JButton("Skip");
+        skip.setFont(UiFonts.regular(14f));
+        skip.addActionListener(e -> cancelOverlayIfVisible());
+        actions.add(record);
+        actions.add(skip);
+
+        panel.add(scoreInfo, BorderLayout.NORTH);
+        panel.add(formPanel, BorderLayout.CENTER);
+        panel.add(actions, BorderLayout.SOUTH);
+
+        scoreEntryFeedbackMessage = null;
+        scoreEntryFeedbackTitle = null;
+
+        overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
+                "score-entry",
+                "Record score",
+                panel,
+                new StageOverlayHost.OverlayLifecycle() {
+                    @Override
+                    public void onOpened() {
+                        clearHeldInputs();
+                        if (scoreEntryNewUserField != null) {
+                            scoreEntryNewUserField.requestFocusInWindow();
+                        }
+                    }
+
+                    @Override
+                    public void onClosed() {
+                        clearHeldInputs();
+                        if (scoreEntryFeedbackMessage != null && scoreEntryFeedbackTitle != null) {
+                            showStyledMessage(scoreEntryFeedbackMessage, scoreEntryFeedbackTitle);
+                            scoreEntryFeedbackMessage = null;
+                            scoreEntryFeedbackTitle = null;
+                        }
+                        scoreEntryExistingUsers = null;
+                        scoreEntryNewUserField = null;
+                        showGameOverOverlay();
+                    }
+                }
+        ));
+    }
+
+    private String extractScoreEntryCandidate() {
+        String candidate = "";
+        if (scoreEntryNewUserField != null) {
+            candidate = scoreEntryNewUserField.getText().trim();
+        }
+        if (candidate.isEmpty() && scoreEntryExistingUsers != null) {
+            Object sel = scoreEntryExistingUsers.getSelectedItem();
             candidate = sel == null ? "" : sel.toString().trim();
         }
         return candidate.isEmpty() ? null : candidate;
@@ -618,6 +690,8 @@ public class TetrisFrame extends JFrame {
         StageOverlayHost.OverlaySpec active = overlayHost.activeOverlay();
         if (active != null && "game-over-restart".equals(active.id())) {
             restartGame();
+        } else if (active != null && "score-entry".equals(active.id())) {
+            finalizeScoreEntryFromOverlay(true);
         }
         dismissOverlayIfVisible();
     }
@@ -625,6 +699,10 @@ public class TetrisFrame extends JFrame {
     private void cancelOverlayIfVisible() {
         if (!overlayHost.isOverlayVisible() || overlayHost.state() == StageOverlayHost.State.EXITING) {
             return;
+        }
+        StageOverlayHost.OverlaySpec active = overlayHost.activeOverlay();
+        if (active != null && "score-entry".equals(active.id())) {
+            finalizeScoreEntryFromOverlay(false);
         }
         dismissOverlayIfVisible();
     }
