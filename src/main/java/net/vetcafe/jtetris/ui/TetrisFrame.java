@@ -112,7 +112,6 @@ public class TetrisFrame extends JFrame {
     private JComboBox<String> scoreEntryExistingUsers;
     private JTextField scoreEntryNewUserField;
     private String scoreEntryFeedbackMessage;
-    private String scoreEntryFeedbackTitle;
     private boolean paused;
     private boolean modalActive;
 
@@ -282,22 +281,64 @@ public class TetrisFrame extends JFrame {
     private void finalizeScoreEntryFromOverlay(boolean confirm) {
         int current = pendingGameOverScore;
         if (!confirm) {
-            scoreEntryFeedbackTitle = "Game Over";
             scoreEntryFeedbackMessage = "Score not recorded\nScore: " + current;
             return;
         }
 
         String chosenUser = extractScoreEntryCandidate();
         if (chosenUser == null) {
-            scoreEntryFeedbackTitle = "Game Over";
             scoreEntryFeedbackMessage = "Score not recorded\nScore: " + current;
             return;
         }
 
         userName = chosenUser;
         int best = scoreManager.updateIfHigher(userName, current);
-        scoreEntryFeedbackTitle = "Game Over";
         scoreEntryFeedbackMessage = userName + " score: " + current + "\nBest: " + best;
+    }
+
+    private void showScoreFeedbackOverlay(String message) {
+        StageOverlayHost.OverlaySpec active = overlayHost.activeOverlay();
+        if (active != null && "game-over-info".equals(active.id())) {
+            return;
+        }
+
+        UiTheme theme = UiTheme.active();
+        JPanel content = new JPanel(new BorderLayout(0, 12));
+        content.setOpaque(false);
+
+        JLabel info = new JLabel("<html>" + message.replace("\n", "<br>") + "</html>");
+        info.setFont(UiFonts.regular(16f));
+        info.setForeground(theme.textPrimary());
+
+        JButton next = new JButton("Continue");
+        next.setFont(UiFonts.regular(14f));
+        next.addActionListener(e -> confirmOverlayIfVisible());
+
+        JPanel actions = new JPanel();
+        actions.setOpaque(false);
+        actions.add(next);
+
+        content.add(info, BorderLayout.CENTER);
+        content.add(actions, BorderLayout.SOUTH);
+
+        overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
+                "game-over-info",
+                "Game Over",
+                content,
+                new StageOverlayHost.OverlayLifecycle() {
+                    @Override
+                    public void onOpened() {
+                        clearHeldInputs();
+                    }
+
+                    @Override
+                    public void onClosed() {
+                        clearHeldInputs();
+                        focusGame();
+                        showGameOverOverlay();
+                    }
+                }
+        ));
     }
 
     private void showGameOverOverlay() {
@@ -412,7 +453,6 @@ public class TetrisFrame extends JFrame {
         panel.add(actions, BorderLayout.SOUTH);
 
         scoreEntryFeedbackMessage = null;
-        scoreEntryFeedbackTitle = null;
 
         overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
                 "score-entry",
@@ -430,10 +470,13 @@ public class TetrisFrame extends JFrame {
                     @Override
                     public void onClosed() {
                         clearHeldInputs();
-                        if (scoreEntryFeedbackMessage != null && scoreEntryFeedbackTitle != null) {
-                            showStyledMessage(scoreEntryFeedbackMessage, scoreEntryFeedbackTitle);
+                        if (scoreEntryFeedbackMessage != null) {
+                            String feedback = scoreEntryFeedbackMessage;
                             scoreEntryFeedbackMessage = null;
-                            scoreEntryFeedbackTitle = null;
+                            scoreEntryExistingUsers = null;
+                            scoreEntryNewUserField = null;
+                            showScoreFeedbackOverlay(feedback);
+                            return;
                         }
                         scoreEntryExistingUsers = null;
                         scoreEntryNewUserField = null;
@@ -692,6 +735,8 @@ public class TetrisFrame extends JFrame {
             restartGame();
         } else if (active != null && "score-entry".equals(active.id())) {
             finalizeScoreEntryFromOverlay(true);
+        } else if (active != null && "game-over-info".equals(active.id())) {
+            // Continue to restart/cancel prompt via lifecycle close hook.
         }
         dismissOverlayIfVisible();
     }
