@@ -11,7 +11,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Timer;
@@ -32,9 +31,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public class TetrisFrame extends JFrame {
     private static final String APP_NAME = "JTetris";
@@ -113,7 +109,6 @@ public class TetrisFrame extends JFrame {
     private JTextField scoreEntryNewUserField;
     private String scoreEntryFeedbackMessage;
     private boolean paused;
-    private boolean modalActive;
 
     public TetrisFrame() {
         super(APP_NAME);
@@ -498,23 +493,6 @@ public class TetrisFrame extends JFrame {
         return candidate.isEmpty() ? null : candidate;
     }
 
-    private void showStyledMessage(String msg, String title) {
-        UiTheme theme = UiTheme.active();
-        JLabel label = new JLabel("<html>" + msg.replace("\n", "<br>") + "</html>");
-        label.setForeground(theme.textPrimary());
-        label.setFont(UiFonts.regular(18f));
-        label.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
-        JPanel panel = new JPanel();
-        panel.setBackground(theme.dialogSurface());
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(theme.dialogBorder(), 1),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        ));
-        panel.add(label);
-        showMessageDialogModal(this, panel, title, JOptionPane.INFORMATION_MESSAGE);
-        focusGame();
-    }
-
     private void showLeaderboard() {
         StageOverlayHost.OverlaySpec active = overlayHost.activeOverlay();
         if (active != null && "leaderboard".equals(active.id())) {
@@ -639,83 +617,8 @@ public class TetrisFrame extends JFrame {
         ));
     }
 
-    private int showConfirmDialogModal(java.awt.Component parent, Object message, String title, int optionType, int messageType) {
-        return withModalInputBlocked(() -> withDialogUiDefaults(() ->
-                JOptionPane.showConfirmDialog(parent, message, title, optionType, messageType)
-        ));
-    }
-
-    private void showMessageDialogModal(java.awt.Component parent, Object message, String title, int messageType) {
-        withModalInputBlocked(() -> {
-            withDialogUiDefaults(() -> {
-                JOptionPane.showMessageDialog(parent, message, title, messageType);
-                return null;
-            });
-            return null;
-        });
-    }
-
-    private <T> T withDialogUiDefaults(Supplier<T> action) {
-        Map<String, Object> backup = installDialogUiDefaults();
-        try {
-            return action.get();
-        } finally {
-            restoreUiDefaults(backup);
-        }
-    }
-
-    private Map<String, Object> installDialogUiDefaults() {
-        UiTheme theme = UiTheme.active();
-        Map<String, Object> previous = new HashMap<>();
-        putUiDefault(previous, "OptionPane.background", theme.dialogSurface());
-        putUiDefault(previous, "Panel.background", theme.dialogSurface());
-        putUiDefault(previous, "OptionPane.messageForeground", theme.textPrimary());
-        putUiDefault(previous, "OptionPane.messageFont", UiFonts.regular(17f));
-        putUiDefault(previous, "Label.foreground", theme.textPrimary());
-        putUiDefault(previous, "Label.font", UiFonts.regular(15f));
-        putUiDefault(previous, "Button.font", UiFonts.regular(15f));
-        putUiDefault(previous, "Button.background", theme.accent());
-        putUiDefault(previous, "Button.foreground", theme.textPrimary());
-        putUiDefault(previous, "Button.select", theme.accent().darker());
-        putUiDefault(previous, "OptionPane.minimumSize", new Dimension(420, 180));
-        putUiDefault(previous, "OptionPane.buttonPadding", 8);
-        putUiDefault(previous, "TextField.font", UiFonts.regular(16f));
-        putUiDefault(previous, "TextField.background", theme.dialogBackground());
-        putUiDefault(previous, "TextField.foreground", theme.textPrimary());
-        putUiDefault(previous, "ComboBox.font", UiFonts.regular(16f));
-        putUiDefault(previous, "ComboBox.background", theme.dialogBackground());
-        putUiDefault(previous, "ComboBox.foreground", theme.textPrimary());
-        putUiDefault(previous, "Table.font", UiFonts.regular(15f));
-        putUiDefault(previous, "Table.foreground", theme.textPrimary());
-        putUiDefault(previous, "Table.background", theme.dialogBackground());
-        putUiDefault(previous, "TableHeader.font", UiFonts.semibold(15f));
-        return previous;
-    }
-
-    private void putUiDefault(Map<String, Object> previous, String key, Object value) {
-        previous.put(key, UIManager.get(key));
-        UIManager.put(key, value);
-    }
-
-    private void restoreUiDefaults(Map<String, Object> previous) {
-        for (var entry : previous.entrySet()) {
-            UIManager.put(entry.getKey(), entry.getValue());
-        }
-    }
-
-    private <T> T withModalInputBlocked(Supplier<T> dialogAction) {
-        clearHeldInputs();
-        modalActive = true;
-        try {
-            return dialogAction.get();
-        } finally {
-            modalActive = false;
-            clearHeldInputs();
-        }
-    }
-
     private boolean isModalLayerActive() {
-        return modalActive || overlayHost.isOverlayVisible();
+        return overlayHost.isOverlayVisible();
     }
 
     private void focusGame() {
