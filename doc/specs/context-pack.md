@@ -554,3 +554,24 @@ Compact implementation handoff notes for sequential spec delivery.
 - Next spec input (what the next task needs to know):
   - Start M8.4 by migrating leaderboard display to stage overlay while preserving `L` key behavior and focus recovery.
 
+## 2026-06-04 - M8.4-STAGE-LEADERBOARD-AND-EXIT-CONFIRM
+- Decision summary (3 bullets max):
+  - Migrated leaderboard rendering to an in-stage overlay (including empty-state and table views) while preserving existing `L` menu/key entry points.
+  - Added dedicated stage exit-confirm overlay (`Quit`/`Stay`) and aligned it with the existing overlay key contract (`Enter`/`Space` confirm, `Esc` cancel).
+  - Routed `requestExit()` to overlay flow and removed `JOptionPane` usage from leaderboard/exit paths.
+- Files changed (exact paths):
+  - `src/main/java/net/vetcafe/jtetris/ui/TetrisFrame.java`
+  - `doc/specs/m8.4-stage-leaderboard-and-exit-confirm.md`
+  - `doc/specs/context-pack.md`
+- Public behavior changes:
+  - Leaderboard and exit confirmation now display inside stage overlays instead of OS dialogs.
+- Acceptance evidence:
+  - Manual: pending quick UX pass for leaderboard readability and exit-confirm keyboard feel.
+  - Automated: `mvn clean test` passed (42 tests).
+- Regressions checked:
+  - Existing model/input/scoring/replay tests remained green.
+- Known risks left:
+  - Legacy dialog helper methods still exist in `TetrisFrame` for remaining migration scope (M8.5).
+- Next spec input (what the next task needs to know):
+  - Start M8.5 by retiring unused dialog helpers and polishing overlay lifecycle consistency.
+
