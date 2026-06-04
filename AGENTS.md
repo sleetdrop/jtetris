@@ -54,6 +54,7 @@ mvn -Pmac clean package
 - Default mode is `strict`: only implement the current requested feature, no opportunistic refactors.
 - For non-trivial changes, update or create a spec in `doc/specs` before code changes.
 - Before implementation, restate current goal, explicit file allowlist, and out-of-scope items; do not edit files outside that allowlist unless re-approved.
+- After finishing each approved checklist step, create one focused git commit before starting the next step.
 - Treat `pom.xml`, package moves, dependency changes, and broad naming changes as standalone tasks with their own spec.
 - If unrelated issues are found, record them in notes/spec backlog and continue current scope only.
 

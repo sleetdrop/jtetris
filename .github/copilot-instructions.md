@@ -18,8 +18,9 @@ This file defines project-specific behavior for GitHub Copilot in this repositor
 1. Read `AGENTS.md`.
 2. Read active spec and latest `doc/specs/context-pack.md` entry.
 3. Implement only one small checklist step per iteration.
-4. Run `mvn clean test` before finishing.
-5. Update spec `Verification` and append handoff notes.
+4. Commit the completed checklist step with a focused git commit before starting the next step.
+5. Run `mvn clean test` before finishing.
+6. Update spec `Verification` and append handoff notes.
 
 ## Avoid
 - Opportunistic refactors.

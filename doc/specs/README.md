@@ -51,11 +51,12 @@ This matches option **C** from the decision set.
 ## Working routine
 1. Create or update a spec in this folder (start from `doc/specs/_feature-spec-template.md` when applicable).
 2. Define an implementation file allowlist in the spec before coding.
-3. Implement one small checklist item per session/commit when possible.
-4. Fill verification results directly in the spec.
-5. End each step by preparing/updating a handoff note for the next step (from `doc/specs/_session-handoff-template.md`), saved near the active spec (for example `doc/specs/m8.1-handoff.md`).
-6. Before context handoff, append one entry to `context-pack.md` when a sub-spec is completed.
-7. Mark spec status as `Done` only after verification is complete.
+3. Implement one small checklist item per iteration.
+4. Commit that completed checklist item before starting the next one.
+5. Fill verification results directly in the spec.
+6. End each step by preparing/updating a handoff note for the next step (from `doc/specs/_session-handoff-template.md`), saved near the active spec (for example `doc/specs/m8.1-handoff.md`).
+7. Before context handoff, append one entry to `context-pack.md` when a sub-spec is completed.
+8. Mark spec status as `Done` only after verification is complete.
 
 ## Solo-dev phase note
 - During early development, GitHub issue/PR linkage is optional.
