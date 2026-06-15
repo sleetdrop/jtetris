@@ -1,12 +1,12 @@
 # Quality Gates
 
-This document defines practical quality gates for local development and PR validation.
+This document defines practical quality gates for local development, OpenSpec changes, and optional PR validation.
 
 ## Gate levels
 
 - `Gate 0` (fast local): compile + unit tests.
-- `Gate 1` (pre-PR): full test suite + deterministic replay check.
-- `Gate 2` (PR/CI): same as Gate 1 plus documentation sanity checklist.
+- `Gate 1` (local completion): full test suite + deterministic replay check.
+- `Gate 2` (review/CI): same as Gate 1 plus OpenSpec and documentation sanity checklist.
 
 ## Gate 0: Fast local check
 
@@ -18,7 +18,7 @@ Pass condition:
 - Build succeeds.
 - All tests pass.
 
-## Gate 1: Pre-PR check
+## Gate 1: Local completion check
 
 ```bash
 mvn -q clean test
@@ -33,7 +33,7 @@ Pass condition:
 - Full suite passes from clean state.
 - No unexpected test flakes.
 
-## Gate 2: PR/CI check
+## Gate 2: Review/CI check
 
 For this project, CI should execute:
 
@@ -42,8 +42,8 @@ mvn -q clean test
 ```
 
 And enforce a lightweight docs checklist:
-- Behavior change has corresponding spec update in `doc/specs/`.
-- `doc/specs/context-pack.md` includes the new handoff entry.
+- Behavior change has corresponding OpenSpec change/spec update under `openspec/`.
+- The active OpenSpec change records verification evidence and any needed handoff notes.
 - User-facing behavior changes are reflected in `README.md` or `doc/overview.md`.
 
 ## Deterministic replay debug flow
@@ -73,4 +73,3 @@ Board replay = Board.replayFromSeed(42L, original.getReplayActions());
 4. Scoring tests (`ScoringRulesTest`, `TSpinDetectorTest`)
 
 This order usually narrows root cause fastest.
-

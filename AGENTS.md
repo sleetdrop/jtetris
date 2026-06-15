@@ -20,10 +20,10 @@
 - Resources: `src/main/resources/fonts` (bundled Inter regular/semibold fonts + license text)
 - Legacy spec path note: older specs may still mention `src/tetris`; map those references to the Maven layout above when implementing.
 - Design docs: `doc/overview.md`, `doc/algorithms.md`, `doc/quality-gates.md`
-- Spec workflow: `doc/specs/README.md`
-- Copilot usage: `doc/copilot-agent-usage.md`
-- Copilot instructions: `.github/copilot-instructions.md`
-- Preferred prompts: `.github/prompts/session-start.prompt.md`, `.github/prompts/feature-task.prompt.md`, `.github/prompts/session-handoff.prompt.md`
+- OpenSpec project guide: `openspec/project.md`
+- OpenSpec agent guide: `openspec/AGENTS.md`
+- OpenSpec workflow spec: `openspec/specs/project-workflow/spec.md`
+- Historical specs and handoff ledger: `doc/specs/README.md`, `doc/specs/context-pack.md`
 
 ## Build And Test
 - Preferred validation command:
@@ -52,7 +52,8 @@ mvn -Pmac clean package
 
 ## Execution Mode (Early Stage Stability)
 - Default mode is `strict`: only implement the current requested feature, no opportunistic refactors.
-- For non-trivial changes, update or create a spec in `doc/specs` before code changes.
+- For non-trivial changes, create or update an OpenSpec change under `openspec/changes/<change-id>` before code changes.
+- Use `doc/specs` as historical context only unless a task explicitly asks to repair or archive old workflow documents.
 - Before implementation, restate current goal, explicit file allowlist, and out-of-scope items; do not edit files outside that allowlist unless re-approved.
 - After finishing each approved checklist step, create one focused git commit before starting the next step.
 - Treat `pom.xml`, package moves, dependency changes, and broad naming changes as standalone tasks with their own spec.
@@ -61,17 +62,17 @@ mvn -Pmac clean package
 ## Session Handoff Protocol
 - End-of-session required steps:
   1. Run `mvn clean test`.
-  2. Update current spec checklist and `Verification`.
-  3. Append one entry to `doc/specs/context-pack.md` (append-only).
-  4. Save a handoff draft from `doc/specs/_session-handoff-template.md` in the active spec or work notes.
+  2. Update the active OpenSpec `tasks.md` checklist and verification notes.
+  3. If the work depends on historical decisions, add a concise note to the active OpenSpec change instead of rewriting `doc/specs`.
+  4. Leave a short resume note in the active OpenSpec change when work is incomplete.
 - Start-of-session required steps:
   1. Read `AGENTS.md`.
-  2. Read the active spec file and `doc/specs/context-pack.md` latest entry.
-  3. Restate current goal/plan + file allowlist + out-of-scope items before editing.
+  2. Read `openspec/project.md` and `openspec/AGENTS.md`.
+  3. Read the active OpenSpec change and any relevant historical `doc/specs/context-pack.md` entry.
+  4. Restate current goal/plan + file allowlist + out-of-scope items before editing.
 
 ## Definition Of Done
 - Code compiles and tests pass with `mvn clean test`.
 - Behavior remains responsive for input and rendering.
 - Docs are updated when public behavior, paths, or developer workflow changes.
-
 

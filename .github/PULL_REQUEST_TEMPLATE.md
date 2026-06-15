@@ -1,10 +1,10 @@
 ## Purpose
-- Spec ID: `M?-?`
-- Related issue: `#<issue-number>`
+- OpenSpec change: `openspec/changes/<change-id>`
+- Related issue: `#<issue-number>` or `N/A`
 
 ## Change scope
-- [ ] I only changed items described in the linked spec.
-- [ ] I updated the spec checklist/status if needed.
+- [ ] I only changed items described in the linked OpenSpec change.
+- [ ] I updated the OpenSpec task checklist and verification notes if needed.
 
 ## Acceptance checklist
 - [ ] Spec acceptance criteria are satisfied.
@@ -30,4 +30,3 @@ Result:
 ## Notes for reviewers
 - Focus points:
 - Out-of-scope items intentionally not included:
-

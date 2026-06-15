@@ -1,5 +1,7 @@
 # Optimization Roadmap (Competition-oriented)
 
+> Historical roadmap from the pre-OpenSpec workflow. New non-trivial work should be proposed under `openspec/changes/<change-id>/`; use this file as planning context, not as the active workflow.
+
 ## Priorities
 - `P0`: fairness, responsiveness, deterministic behavior
 - `P1`: advanced scoring and richer match UI
@@ -98,4 +100,3 @@
 - Swing timer jitter may affect precise input timing.
 - Rotation edge cases can create hidden regressions.
 - Score-rule upgrades require careful compatibility decisions.
-

@@ -1,6 +1,8 @@
-# Spec Workflow
+# Historical Spec Workflow
 
-This folder defines the project spec mechanism used to drive changes safely.
+This folder contains the pre-OpenSpec project spec mechanism that drove earlier JTetris changes safely.
+
+New non-trivial work should use OpenSpec under `openspec/changes/<change-id>/`. Keep this folder as historical project memory unless a task explicitly asks to repair old docs.
 
 ## Source path note
 - Current source layout is Maven standard: `src/main/java/net/vetcafe/jtetris` and `src/test/java/net/vetcafe/jtetris`.
@@ -10,6 +12,11 @@ This folder defines the project spec mechanism used to drive changes safely.
 - Keep optimization work incremental and reviewable.
 - Bind every non-trivial change to an explicit spec.
 - Require clear acceptance checks before merge.
+
+## Current status
+- Superseded by OpenSpec for new work.
+- Historical specs remain useful for understanding prior design decisions and acceptance evidence.
+- `context-pack.md` remains an append-only historical ledger from the old workflow.
 
 ## Status model
 - `Draft`: idea captured, not approved yet.
@@ -49,6 +56,9 @@ This matches option **C** from the decision set.
 9. `Rollback plan`
 
 ## Working routine
+For new work, use `openspec/AGENTS.md` instead of this routine.
+
+Historical routine:
 1. Create or update a spec in this folder (start from `doc/specs/_feature-spec-template.md` when applicable).
 2. Define an implementation file allowlist in the spec before coding.
 3. Implement one small checklist item per iteration.
@@ -58,7 +68,6 @@ This matches option **C** from the decision set.
 7. Before context handoff, append one entry to `context-pack.md` when a sub-spec is completed.
 8. Mark spec status as `Done` only after verification is complete.
 
-## Solo-dev phase note
-- During early development, GitHub issue/PR linkage is optional.
-- Once collaboration starts, add issue/PR references back as required metadata.
-
+## Archive note
+- Keep existing files stable for historical lookup.
+- Do not add GitHub issue/PR metadata here for new work; record review links in the active OpenSpec change when they are relevant.

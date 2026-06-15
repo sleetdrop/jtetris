@@ -31,20 +31,21 @@ mvn clean test
 
 ## Docs
 - [Agent Instructions](AGENTS.md)
-- [Copilot Usage (Project-local)](doc/copilot-agent-usage.md)
+- [OpenSpec Project Guide](openspec/project.md)
+- [OpenSpec Agent Guide](openspec/AGENTS.md)
 - [Overview](doc/overview.md)
 - [Algorithms](doc/algorithms.md)
 - [Quality Gates](doc/quality-gates.md)
-- [Spec Workflow](doc/specs/README.md)
-- [Optimization Roadmap](doc/specs/roadmap.md)
-- [M1 Core Rules Spec](doc/specs/m1-core-rules.md)
+- [Historical Spec Workflow](doc/specs/README.md)
+- [Historical Optimization Roadmap](doc/specs/roadmap.md)
 - [Contributing](CONTRIBUTING.md)
 - [License](LICENSE)
 
-## Copilot prompts
-- `.github/prompts/session-start.prompt.md`
-- `.github/prompts/feature-task.prompt.md`
-- `.github/prompts/session-handoff.prompt.md`
+## Agent workflow
+- New non-trivial work starts in `openspec/changes/<change-id>/`.
+- Read `AGENTS.md`, `openspec/project.md`, and `openspec/AGENTS.md` before editing.
+- Historical specs under `doc/specs` remain useful context, but new feature specs should use OpenSpec.
+- Validate with `mvn clean test` before finishing.
 
 ## Controls
 - Move: ← / →

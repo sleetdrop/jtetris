@@ -599,3 +599,43 @@ Compact implementation handoff notes for sequential spec delivery.
 - Next spec input (what the next task needs to know):
   - M8.5 is complete; future work can proceed from the stabilized stage-overlay prompt foundation.
 
+## 2026-06-15 - M9.1-OPENSPEC-MIGRATION
+- Decision summary (3 bullets max):
+  - Added an OpenSpec-first maintenance workflow with `openspec/project.md`, `openspec/AGENTS.md`, a canonical `project-workflow` spec, and an archived `migrate-to-openspec` change.
+  - Reframed `doc/specs` as historical context while preserving all prior milestone specs and the context ledger.
+  - Removed Copilot prompt/instruction files and the old GitHub issue template as primary workflow entry points; the PR template is now a generic OpenSpec wrapper.
+- Files changed (exact paths):
+  - `AGENTS.md`
+  - `README.md`
+  - `CONTRIBUTING.md`
+  - `doc/quality-gates.md`
+  - `doc/specs/README.md`
+  - `doc/specs/roadmap.md`
+  - `doc/specs/m9.1-openspec-migration.md`
+  - `doc/specs/context-pack.md`
+  - `.github/PULL_REQUEST_TEMPLATE.md`
+  - `.github/ISSUE_TEMPLATE/spec-task.yml`
+  - `.github/copilot-instructions.md`
+  - `.github/prompts/session-start.prompt.md`
+  - `.github/prompts/feature-task.prompt.md`
+  - `.github/prompts/session-handoff.prompt.md`
+  - `doc/copilot-agent-usage.md`
+  - `openspec/project.md`
+  - `openspec/AGENTS.md`
+  - `openspec/specs/project-workflow/spec.md`
+  - `openspec/changes/archive/migrate-to-openspec/proposal.md`
+  - `openspec/changes/archive/migrate-to-openspec/design.md`
+  - `openspec/changes/archive/migrate-to-openspec/tasks.md`
+  - `openspec/changes/archive/migrate-to-openspec/specs/project-workflow/spec.md`
+- Public behavior changes:
+  - Project maintenance workflow now starts from OpenSpec instead of the custom `doc/specs` and Copilot prompt flow.
+- Acceptance evidence:
+  - Automated: `mvn clean test` passed (42 tests).
+  - Manual: documentation links and workflow references checked for the new OpenSpec-first path.
+- Regressions checked:
+  - Java compile and full existing test suite remained green; no source or build files were changed.
+- Known risks left:
+  - `RTK.md` was referenced in the user-provided instruction preamble but is not present in the repository root.
+  - Legacy per-step commits were not created because early commit attempts could not write `.git/index.lock` and escalation approval timed out twice; the final reviewed migration is committed as one focused workflow change.
+- Next spec input (what the next task needs to know):
+  - Start new non-trivial work in `openspec/changes/<change-id>/`; read `AGENTS.md`, `openspec/project.md`, and `openspec/AGENTS.md` first.
