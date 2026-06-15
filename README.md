@@ -20,6 +20,27 @@ java -jar target/jtetris-1.0-SNAPSHOT.jar
 mvn clean test
 ```
 
+## Packaging
+Build the runnable jar and copy runtime dependencies:
+```bash
+mvn clean package
+java -jar target/jtetris-1.0-SNAPSHOT.jar
+```
+
+Build a macOS application image:
+```bash
+mvn -Pmac clean package
+open target/dist/JTetris.app
+```
+
+App icon assets live under `art/`:
+- `art/icon.svg`: deterministic source icon.
+- `art/icon.icns`: macOS packaging icon.
+- `art/icon.ico`: Windows packaging icon.
+- `art/icons/icon-*.png`: Linux/desktop packaging sizes.
+
+macOS app metadata is overridden from `packaging/macos/Info.plist` so the generated app bundle only advertises capabilities JTetris actually uses.
+
 ## UI theme and fonts
 - JTetris now ships with a dual palette (light/dark) and chooses a default theme from system/LAF appearance.
 - You can override theme selection with a JVM flag:

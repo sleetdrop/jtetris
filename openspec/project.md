@@ -17,6 +17,7 @@ JTetris is a lightweight Java 17 Swing Tetris clone used for learning, gameplay-
 - `src/main/java/net/vetcafe/jtetris/score`: local high-score persistence.
 - `src/test/java/net/vetcafe/jtetris`: model and UI support tests.
 - `src/main/resources/fonts`: bundled Inter fonts and license.
+- `art`: source and generated app icon assets for macOS, Windows, and Linux packaging.
 - `doc`: stable design and quality documentation.
 - `doc/specs`: historical specs and handoff ledger from the pre-OpenSpec workflow.
 - `openspec`: current spec-driven workflow for new non-trivial changes.
@@ -27,6 +28,7 @@ mvn clean test
 mvn clean package
 java -jar target/jtetris-1.0-SNAPSHOT.jar
 mvn -Pmac clean package
+open target/dist/JTetris.app
 ```
 
 ## Development Constraints

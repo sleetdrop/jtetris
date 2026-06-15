@@ -11,8 +11,11 @@
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jpackage.type>app-image</jpackage.type>
-        <jpackage.icon></jpackage.icon>
+        <jpackage.name>JTetris</jpackage.name>
+        <jpackage.type>APP_IMAGE</jpackage.type>
+        <jpackage.appVersion>1.0.0</jpackage.appVersion>
+        <jpackage.icon>${project.basedir}/art/icon.icns</jpackage.icon>
+        <jpackage.macPackageIdentifier>net.vetcafe.jtetris</jpackage.macPackageIdentifier>
         <junit.jupiter.version>5.10.2</junit.jupiter.version>
         <flatlaf.version>3.4.1</flatlaf.version>
     </properties>
@@ -47,9 +50,28 @@
                         <manifest>
                             <mainClass>net.vetcafe.jtetris.ui.TetrisFrame</mainClass>
                             <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-runtime-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeScope>runtime</includeScope>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -68,6 +90,51 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.4.0</version>
+                        <executions>
+                            <execution>
+                                <id>stage-jpackage-input</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/jpackage-input</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.build.directory}</directory>
+                                            <includes>
+                                                <include>${project.build.finalName}.jar</include>
+                                                <include>lib/**</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>stage-jpackage-resources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/jpackage-resources</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}/packaging/macos</directory>
+                                            <filtering>true</filtering>
+                                            <includes>
+                                                <include>Info.plist</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.panteleyev</groupId>
                         <artifactId>jpackage-maven-plugin</artifactId>
                         <version>1.7.4</version>
@@ -80,17 +147,20 @@
                                 </goals>
                                 <configuration>
                                     <type>${jpackage.type}</type>
-                                    <input>${project.build.directory}</input>
-                                    <dest>${project.build.directory}/dist</dest>
-                                    <name>JTetris</name>
+                                    <input>${project.build.directory}/jpackage-input</input>
+                                    <destination>${project.build.directory}/dist</destination>
+                                    <removeDestination>true</removeDestination>
+                                    <name>${jpackage.name}</name>
                                     <mainClass>net.vetcafe.jtetris.ui.TetrisFrame</mainClass>
                                     <mainJar>${project.build.finalName}.jar</mainJar>
-                                    <appVersion>${project.version}</appVersion>
+                                    <appVersion>${jpackage.appVersion}</appVersion>
                                     <vendor>JTetris</vendor>
                                     <icon>${jpackage.icon}</icon>
-                                    <jvmArgs>
-                                        <jvmArg>-Xmx512m</jvmArg>
-                                    </jvmArgs>
+                                    <resourceDir>${project.build.directory}/jpackage-resources</resourceDir>
+                                    <macPackageIdentifier>${jpackage.macPackageIdentifier}</macPackageIdentifier>
+                                    <javaOptions>
+                                        <option>-Xmx512m</option>
+                                    </javaOptions>
                                 </configuration>
                             </execution>
                         </executions>
