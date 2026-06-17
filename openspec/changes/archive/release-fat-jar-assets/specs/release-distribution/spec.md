@@ -1,6 +1,4 @@
-# release-distribution Specification
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Initial Release Artifacts
 JTetris MUST provide initial `1.0.0` release artifacts that are directly executable for Java users and Apple Silicon macOS users.

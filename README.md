@@ -21,7 +21,7 @@ A lightweight JTetris clone for learning Java, Swing UI, and basic game loop/sco
 ## Quick start
 ```bash
 ./mvnw clean package
-java -jar target/jtetris-1.0.0.jar
+java -jar target/jtetris-1.0.0-standalone.jar
 ```
 
 ## Project map
@@ -37,10 +37,10 @@ java -jar target/jtetris-1.0.0.jar
 ```
 
 ## Packaging
-Build the runnable jar and copy runtime dependencies:
+Build the standalone runnable jar:
 ```bash
 ./mvnw clean package
-java -jar target/jtetris-1.0.0.jar
+java -jar target/jtetris-1.0.0-standalone.jar
 ```
 
 Build a macOS application image:
