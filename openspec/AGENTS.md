@@ -37,7 +37,7 @@ Use lower-kebab-case change IDs, such as `add-replay-export-ui` or `tune-lock-de
 ## Verification
 - Minimum command before completion:
   ```bash
-  mvn clean test
+  ./mvnw clean test
   ```
 - Record manual checks when UI or workflow behavior changes.
 - Keep verification notes in the active change's `tasks.md` until the change is archived.

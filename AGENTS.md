@@ -17,7 +17,7 @@
   - UI: `ui/` (`TetrisFrame`, `GamePanel`, `SidePanel`, `InputRepeater`, `SoftDropRepeater`, `UiTheme`, `UiFonts`, `ColorPalette`)
   - Score storage: `score/ScoreManager`
 - Tests: `src/test/java/net/vetcafe/jtetris`
-- Resources: `src/main/resources/fonts` (bundled Inter regular/semibold fonts + license text)
+- Resources: no custom font binaries are currently bundled; `UiFonts` falls back to Java/Swing logical fonts.
 - Legacy spec path note: older specs may still mention `src/tetris`; map those references to the Maven layout above when implementing.
 - Design docs: `doc/overview.md`, `doc/algorithms.md`, `doc/quality-gates.md`
 - OpenSpec project guide: `openspec/project.md`
@@ -28,22 +28,22 @@
 ## Build And Test
 - Preferred validation command:
 ```bash
-mvn clean test
+./mvnw clean test
 ```
 - Package runnable jar:
 ```bash
-mvn clean package
+./mvnw clean package
 java -jar target/jtetris-1.0-SNAPSHOT.jar
 ```
 - macOS app-image packaging profile:
 ```bash
-mvn -Pmac clean package
+./mvnw -Pmac clean package
 ```
 
 ## Editing Rules For Agents
 - Keep UI text English-only unless explicitly requested.
 - Preserve keyboard behavior and focus semantics in `TetrisFrame` (`focusGame()`, key bindings, repeaters, modal-dialog input clearing, and the `C` hold action).
-- Keep the theme/font pipeline intact (`UiTheme`, `UiFonts`, and the bundled Inter fonts under `src/main/resources/fonts`) unless the task explicitly changes the UI system.
+- Keep the theme/font pipeline intact (`UiTheme`, `UiFonts`, and `ui/ColorPalette`) unless the task explicitly changes the UI system.
 - Preserve the theme-selection contract in `UiTheme.modeOverride()` (`-Djtetris.theme=auto|light|dark`) and keep piece-color routing through `ui/ColorPalette`.
 - Keep score file compatibility at `~/.tetris_scores.properties` unless a migration is explicitly requested.
 - Keep replay hooks (`Board.applyReplayAction(...)`, `Board.replayFromSeed(...)`) aligned with any model-behavior change.
@@ -61,7 +61,7 @@ mvn -Pmac clean package
 
 ## Session Handoff Protocol
 - End-of-session required steps:
-  1. Run `mvn clean test`.
+  1. Run `./mvnw clean test`.
   2. Update the active OpenSpec `tasks.md` checklist and verification notes.
   3. If the work depends on historical decisions, add a concise note to the active OpenSpec change instead of rewriting `doc/specs`.
   4. Leave a short resume note in the active OpenSpec change when work is incomplete.
@@ -72,7 +72,6 @@ mvn -Pmac clean package
   4. Restate current goal/plan + file allowlist + out-of-scope items before editing.
 
 ## Definition Of Done
-- Code compiles and tests pass with `mvn clean test`.
+- Code compiles and tests pass with `./mvnw clean test`.
 - Behavior remains responsive for input and rendering.
 - Docs are updated when public behavior, paths, or developer workflow changes.
-

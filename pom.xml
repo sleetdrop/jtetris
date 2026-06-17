@@ -7,7 +7,32 @@
     <artifactId>jtetris</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>JTetris</name>
-    <description>Simple Java Swing JTetris</description>
+    <description>A lightweight Java Swing Tetris clone for learning and code-quality practice.</description>
+    <url>https://github.com/sleetdrop/jtetris</url>
+    <inceptionYear>2026</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/license/mit</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>sleetdrop</id>
+            <name>Yuan Jiang</name>
+            <email>sleetdrop@gmail.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/sleetdrop/jtetris.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/sleetdrop/jtetris.git</developerConnection>
+        <url>https://github.com/sleetdrop/jtetris</url>
+    </scm>
+
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,6 +41,7 @@
         <jpackage.appVersion>1.0.0</jpackage.appVersion>
         <jpackage.icon>${project.basedir}/art/icon.icns</jpackage.icon>
         <jpackage.macPackageIdentifier>net.vetcafe.jtetris</jpackage.macPackageIdentifier>
+        <jpackage.vendor>Yuan Jiang</jpackage.vendor>
         <junit.jupiter.version>5.10.2</junit.jupiter.version>
         <flatlaf.version>3.4.1</flatlaf.version>
     </properties>
@@ -154,7 +180,7 @@
                                     <mainClass>net.vetcafe.jtetris.ui.TetrisFrame</mainClass>
                                     <mainJar>${project.build.finalName}.jar</mainJar>
                                     <appVersion>${jpackage.appVersion}</appVersion>
-                                    <vendor>JTetris</vendor>
+                                    <vendor>${jpackage.vendor}</vendor>
                                     <icon>${jpackage.icon}</icon>
                                     <resourceDir>${project.build.directory}/jpackage-resources</resourceDir>
                                     <macPackageIdentifier>${jpackage.macPackageIdentifier}</macPackageIdentifier>

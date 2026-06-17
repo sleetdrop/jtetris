@@ -2,9 +2,25 @@
 
 A lightweight JTetris clone for learning Java, Swing UI, and basic game loop/scoring mechanics. UI text is English-only.
 
+## Features
+- Java 17 Swing desktop UI with light/dark theme support.
+- Guideline-style Tetris mechanics including 7-bag randomization, hold piece, ghost piece, SRS rotation kicks, lock delay, combo/B2B scoring, and T-spin detection.
+- Local best-score storage per user.
+- Replay-oriented model hooks and regression tests for core gameplay behavior.
+- Runnable jar packaging and macOS app-image packaging.
+
+## Screenshots
+| Light theme | Dark theme |
+| --- | --- |
+| ![JTetris light theme](doc/images/jtetris-light.png) | ![JTetris dark theme](doc/images/jtetris-dark.png) |
+
+## Requirements
+- JDK 17 or newer
+- Maven is optional if you use the included Maven Wrapper
+
 ## Quick start
 ```bash
-mvn clean package
+./mvnw clean package
 java -jar target/jtetris-1.0-SNAPSHOT.jar
 ```
 
@@ -17,19 +33,19 @@ java -jar target/jtetris-1.0-SNAPSHOT.jar
 
 ## Development
 ```bash
-mvn clean test
+./mvnw clean test
 ```
 
 ## Packaging
 Build the runnable jar and copy runtime dependencies:
 ```bash
-mvn clean package
+./mvnw clean package
 java -jar target/jtetris-1.0-SNAPSHOT.jar
 ```
 
 Build a macOS application image:
 ```bash
-mvn -Pmac clean package
+./mvnw -Pmac clean package
 open target/dist/JTetris.app
 ```
 
@@ -47,8 +63,7 @@ macOS app metadata is overridden from `packaging/macos/Info.plist` so the genera
   - `-Djtetris.theme=auto` (default)
   - `-Djtetris.theme=light`
   - `-Djtetris.theme=dark`
-- Bundled UI font: Inter (`src/main/resources/fonts`). If loading fails, Swing logical fonts are used as fallback.
-- Font license text is included at `src/main/resources/fonts/OFL-Inter.txt` (SIL Open Font License 1.1).
+- The UI uses Java/Swing logical fonts through `UiFonts`, with hooks left in place for future bundled fonts.
 
 ## Docs
 - [Agent Instructions](AGENTS.md)
@@ -61,12 +76,18 @@ macOS app metadata is overridden from `packaging/macos/Info.plist` so the genera
 - [Historical Optimization Roadmap](doc/specs/roadmap.md)
 - [Contributing](CONTRIBUTING.md)
 - [License](LICENSE)
+- [Notices](NOTICE.md)
+- [Security](SECURITY.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+
+## Third-party notices
+Runtime and test dependency notices are tracked in [NOTICE.md](NOTICE.md).
 
 ## Agent workflow
 - New non-trivial work starts in `openspec/changes/<change-id>/`.
 - Read `AGENTS.md`, `openspec/project.md`, and `openspec/AGENTS.md` before editing.
 - Historical specs under `doc/specs` remain useful context, but new feature specs should use OpenSpec.
-- Validate with `mvn clean test` before finishing.
+- Validate with `./mvnw clean test` before finishing.
 
 ## Controls
 - Move: ← / →

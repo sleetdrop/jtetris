@@ -16,7 +16,7 @@ JTetris is a lightweight Java 17 Swing Tetris clone used for learning, gameplay-
 - `src/main/java/net/vetcafe/jtetris/ui`: Swing frame, board rendering, panels, input repeaters, theme, fonts, stage overlays.
 - `src/main/java/net/vetcafe/jtetris/score`: local high-score persistence.
 - `src/test/java/net/vetcafe/jtetris`: model and UI support tests.
-- `src/main/resources/fonts`: bundled Inter fonts and license.
+- No custom font binaries are currently bundled; `UiFonts` falls back to Java/Swing logical fonts.
 - `art`: source and generated app icon assets for macOS, Windows, and Linux packaging.
 - `doc`: stable design and quality documentation.
 - `doc/specs`: historical specs and handoff ledger from the pre-OpenSpec workflow.
@@ -24,17 +24,17 @@ JTetris is a lightweight Java 17 Swing Tetris clone used for learning, gameplay-
 
 ## Commands
 ```bash
-mvn clean test
-mvn clean package
+./mvnw clean test
+./mvnw clean package
 java -jar target/jtetris-1.0-SNAPSHOT.jar
-mvn -Pmac clean package
+./mvnw -Pmac clean package
 open target/dist/JTetris.app
 ```
 
 ## Development Constraints
 - Keep UI text English-only unless the requested feature explicitly changes language behavior.
 - Preserve keyboard behavior and focus semantics in `TetrisFrame`, including `focusGame()`, key bindings, repeaters, modal/overlay input clearing, and the `C` hold action.
-- Keep the theme/font pipeline intact through `UiTheme`, `UiFonts`, bundled Inter fonts, and `ui/ColorPalette`.
+- Keep the theme/font pipeline intact through `UiTheme`, `UiFonts`, and `ui/ColorPalette`.
 - Preserve `UiTheme.modeOverride()` behavior for `-Djtetris.theme=auto|light|dark`.
 - Keep score file compatibility at `~/.tetris_scores.properties` unless a migration is explicitly requested.
 - Keep replay hooks aligned when model behavior changes: `Board.applyReplayAction(...)` and `Board.replayFromSeed(...)`.
@@ -47,7 +47,7 @@ open target/dist/JTetris.app
 - Include `proposal.md`, `tasks.md`, and spec deltas under `specs/<capability>/spec.md`; add `design.md` for cross-cutting or risky changes.
 - Before editing implementation files, restate the current goal, exact file allowlist, and out-of-scope items.
 - Complete one small task at a time and keep verification evidence with the active change.
-- Run `mvn clean test` before marking a change complete.
+- Run `./mvnw clean test` before marking a change complete.
 
 ## Historical Notes
 The previous workflow lives in `doc/specs`. Those files remain useful project memory, especially `doc/specs/context-pack.md`, but they are no longer the starting point for new work after the OpenSpec migration.

@@ -4,7 +4,7 @@ Thanks for contributing.
 
 ## Prerequisites
 - JDK 17
-- Maven 3.9+
+- Use the included Maven Wrapper (`./mvnw` on macOS/Linux, `mvnw.cmd` on Windows), or install Maven 3.9+ locally.
 
 ## Project layout
 - Main source: `src/main/java/net/vetcafe/jtetris`
@@ -22,12 +22,12 @@ Thanks for contributing.
 Run before opening a PR:
 
 ```bash
-mvn clean test
+./mvnw clean test
 ```
 
 ## Pull request checklist
 - Keep changes focused and small.
 - Add or update tests for behavior changes.
 - Update docs when user-facing behavior or structure changes.
-- Ensure `mvn clean test` passes locally.
+- Ensure `./mvnw clean test` passes locally.
 - Fill verification notes in the related OpenSpec change.

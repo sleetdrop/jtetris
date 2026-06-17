@@ -8,4 +8,4 @@ Generated assets:
 - `icon-1024.png`: large preview/source raster.
 - `icons/icon-*.png`: reusable Linux and desktop packaging sizes.
 
-When regenerating assets, render PNG sizes from the SVG with `rsvg-convert`, build `icon.ico` with ImageMagick, and verify `icon.icns` with both `file art/icon.icns` and `mvn -Pmac clean package`.
+When regenerating assets, render PNG sizes from the SVG with `rsvg-convert`, build `icon.ico` with ImageMagick, and verify `icon.icns` with both `file art/icon.icns` and `./mvnw -Pmac clean package`.
