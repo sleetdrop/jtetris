@@ -160,6 +160,7 @@
                                     <macPackageIdentifier>${jpackage.macPackageIdentifier}</macPackageIdentifier>
                                     <javaOptions>
                                         <option>-Xmx512m</option>
+                                        <option>-Dflatlaf.useNativeLibrary=false</option>
                                     </javaOptions>
                                 </configuration>
                             </execution>

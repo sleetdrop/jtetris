@@ -4,6 +4,8 @@ import net.vetcafe.jtetris.model.Board;
 import net.vetcafe.jtetris.score.ScoreManager;
 
 import javax.swing.JComboBox;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
@@ -31,6 +33,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
+import java.awt.Component;
 
 public class TetrisFrame extends JFrame {
     private static final String APP_NAME = "JTetris";
@@ -47,6 +50,7 @@ public class TetrisFrame extends JFrame {
         // On macOS this merges the menu bar into the system bar when supported
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", APP_NAME);
+        System.setProperty("flatlaf.useNativeLibrary", System.getProperty("flatlaf.useNativeLibrary", "false"));
         installInitialLookAndFeel();
         UiTheme.refreshFromSystem();
     }
@@ -298,10 +302,6 @@ public class TetrisFrame extends JFrame {
             return;
         }
 
-        UiTheme theme = UiTheme.active();
-        JPanel content = new JPanel(new BorderLayout(0, 12));
-        content.setOpaque(false);
-
         JLabel info = new JLabel("<html>" + message.replace("\n", "<br>") + "</html>");
         StageOverlayHost.styleOverlayBodyLabel(info);
         info.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
@@ -313,8 +313,7 @@ public class TetrisFrame extends JFrame {
         JPanel actions = StageOverlayHost.createOverlayActionRow();
         actions.add(next);
 
-        content.add(info, BorderLayout.CENTER);
-        content.add(actions, BorderLayout.SOUTH);
+        JPanel content = createSimpleOverlayContent(info, actions);
 
         overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
                 "game-over-info",
@@ -342,10 +341,6 @@ public class TetrisFrame extends JFrame {
             return;
         }
 
-        UiTheme theme = UiTheme.active();
-        JPanel content = new JPanel(new BorderLayout(0, 12));
-        content.setOpaque(false);
-
         JLabel message = new JLabel("<html>Game over.<br>Start a new game?</html>");
         StageOverlayHost.styleOverlayBodyLabel(message);
         message.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
@@ -360,8 +355,7 @@ public class TetrisFrame extends JFrame {
         actions.add(restart);
         actions.add(cancel);
 
-        content.add(message, BorderLayout.CENTER);
-        content.add(actions, BorderLayout.SOUTH);
+        JPanel content = createSimpleOverlayContent(message, actions);
 
         overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
                 "game-over-restart",
@@ -406,12 +400,14 @@ public class TetrisFrame extends JFrame {
 
         scoreEntryExistingUsers = new JComboBox<>(users.toArray(String[]::new));
         scoreEntryExistingUsers.setEditable(false);
-        scoreEntryExistingUsers.setFont(UiFonts.regular(16f));
+        scoreEntryExistingUsers.setFont(UiFonts.regular(14f));
         scoreEntryExistingUsers.setBackground(theme.dialogBackground());
         scoreEntryExistingUsers.setForeground(theme.textPrimary());
+        scoreEntryExistingUsers.setPrototypeDisplayValue("Player name");
 
         scoreEntryNewUserField = new JTextField();
-        scoreEntryNewUserField.setFont(UiFonts.regular(16f));
+        scoreEntryNewUserField.setColumns(12);
+        scoreEntryNewUserField.setFont(UiFonts.regular(14f));
         scoreEntryNewUserField.setBackground(theme.dialogBackground());
         scoreEntryNewUserField.setForeground(theme.textPrimary());
         scoreEntryNewUserField.setCaretColor(theme.textPrimary());
@@ -520,19 +516,19 @@ public class TetrisFrame extends JFrame {
             table.setBackground(theme.dialogBackground());
             table.setForeground(theme.textPrimary());
             table.setGridColor(theme.tableGrid());
-            table.setRowHeight(28);
+            table.setRowHeight(26);
             table.setIntercellSpacing(new Dimension(1, 1));
-            table.setFont(UiFonts.regular(16f));
+            table.setFont(UiFonts.regular(14f));
             table.getTableHeader().setBackground(theme.tableHeaderBackground());
             table.getTableHeader().setForeground(theme.tableHeaderText());
-            table.getTableHeader().setFont(UiFonts.semibold(16f));
+            table.getTableHeader().setFont(UiFonts.semibold(14f));
             table.getTableHeader().setBorder(BorderFactory.createLineBorder(theme.dialogBorder(), 1));
             table.getTableHeader().setReorderingAllowed(false);
             table.setFillsViewportHeight(true);
             table.setEnabled(false);
             int visibleRows = Math.max(1, Math.min(entries.size(), 8));
             int preferredHeight = (visibleRows * table.getRowHeight()) + table.getTableHeader().getPreferredSize().height + 8;
-            table.setPreferredScrollableViewportSize(new Dimension(520, preferredHeight));
+            table.setPreferredScrollableViewportSize(new Dimension(360, preferredHeight));
 
             JScrollPane scroll = new JScrollPane(table);
             scroll.getViewport().setBackground(theme.dialogBackground());
@@ -572,10 +568,6 @@ public class TetrisFrame extends JFrame {
             return;
         }
 
-        UiTheme theme = UiTheme.active();
-        JPanel content = new JPanel(new BorderLayout(0, 12));
-        content.setOpaque(false);
-
         JLabel message = new JLabel("Exit JTetris?");
         StageOverlayHost.styleOverlayBodyLabel(message);
         message.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
@@ -592,8 +584,7 @@ public class TetrisFrame extends JFrame {
         actions.add(quit);
         actions.add(stay);
 
-        content.add(message, BorderLayout.CENTER);
-        content.add(actions, BorderLayout.SOUTH);
+        JPanel content = createSimpleOverlayContent(message, actions);
 
         overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
                 "exit-confirm",
@@ -654,8 +645,6 @@ public class TetrisFrame extends JFrame {
             return;
         }
 
-        JPanel content = new JPanel(new BorderLayout(0, 12));
-        content.setOpaque(false);
         JLabel message = new JLabel("<html>Stage overlay foundation demo.<br>Gameplay input is blocked while this panel is visible.</html>");
         StageOverlayHost.styleOverlayBodyLabel(message);
         message.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
@@ -664,8 +653,9 @@ public class TetrisFrame extends JFrame {
         StageOverlayHost.styleOverlayActionButton(close);
         close.addActionListener(e -> dismissOverlayIfVisible());
 
-        content.add(message, BorderLayout.CENTER);
-        content.add(close, BorderLayout.SOUTH);
+        JPanel actions = StageOverlayHost.createOverlayActionRow();
+        actions.add(close);
+        JPanel content = createSimpleOverlayContent(message, actions);
 
         overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
                 "demo-info",
@@ -684,6 +674,21 @@ public class TetrisFrame extends JFrame {
                     }
                 }
         ));
+    }
+
+    private JPanel createSimpleOverlayContent(JLabel message, JPanel actions) {
+        JPanel content = new JPanel();
+        content.setOpaque(false);
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+
+        message.setAlignmentX(Component.LEFT_ALIGNMENT);
+        actions.setAlignmentX(Component.LEFT_ALIGNMENT);
+        actions.setMaximumSize(new Dimension(Integer.MAX_VALUE, actions.getPreferredSize().height));
+
+        content.add(message);
+        content.add(Box.createVerticalStrut(12));
+        content.add(actions);
+        return content;
     }
 
     private void onSpacePressed() {

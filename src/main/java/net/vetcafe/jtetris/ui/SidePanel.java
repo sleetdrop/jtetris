@@ -14,8 +14,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.GridLayout;
+import java.awt.RenderingHints;
 
 public class SidePanel extends JPanel {
     private final Board board;
@@ -33,8 +33,8 @@ public class SidePanel extends JPanel {
         this.board = board;
         setPreferredSize(new Dimension(200, 520));
         setBackground(UiTheme.active().sidePanelBackground());
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        setLayout(new BorderLayout(0, 10));
+        setBorder(BorderFactory.createEmptyBorder(18, 18, 16, 18));
+        setLayout(new BorderLayout(0, 14));
 
         statsPanel = createStatsPanel();
         add(statsPanel, BorderLayout.NORTH);
@@ -49,7 +49,7 @@ public class SidePanel extends JPanel {
     }
 
     private JPanel createStatsPanel() {
-        JPanel panel = new JPanel(new GridLayout(6, 1, 0, 6));
+        JPanel panel = new JPanel(new GridLayout(6, 1, 0, 5));
         panel.setOpaque(false);
         scoreLabel = createLabel("Score: 0");
         levelLabel = createLabel("Level: 1");
@@ -69,7 +69,7 @@ public class SidePanel extends JPanel {
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setForeground(UiTheme.active().textPrimary());
-        label.setFont(UiFonts.semibold(15f));
+        label.setFont(UiFonts.semibold(14f));
         return label;
     }
 
@@ -100,7 +100,7 @@ public class SidePanel extends JPanel {
         controlsArea.setEditable(false);
         controlsArea.setOpaque(false);
         controlsArea.setForeground(UiTheme.active().textMuted());
-        controlsArea.setFont(UiFonts.mono(12f));
+        controlsArea.setFont(UiFonts.mono(11f));
         controlsArea.setText("Controls:\n" +
                 "← / →  move\n" +
                 "↓       soft drop\n" +
@@ -110,7 +110,7 @@ public class SidePanel extends JPanel {
                 "P       pause/resume\n" +
                 "R       restart\n" +
                 "Esc     quit");
-        controlsArea.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
+        controlsArea.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
 
         panel.add(controlsArea, BorderLayout.CENTER);
         return panel;
@@ -144,32 +144,39 @@ public class SidePanel extends JPanel {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            drawPreview(g2d, "Hold", board.getHold(), 16);
-            drawPreview(g2d, "Next", board.getNext(), 116);
+            drawDivider(g2d, 0);
+            drawPreview(g2d, "Hold", board.getHold(), 26);
+            drawDivider(g2d, 106);
+            drawPreview(g2d, "Next", board.getNext(), 132);
             g2d.dispose();
         }
 
+        private void drawDivider(Graphics2D g2d, int y) {
+            g2d.setColor(UiTheme.active().boardGrid());
+            g2d.drawLine(0, y, getWidth(), y);
+        }
+
         private void drawPreview(Graphics2D g2d, String title, Tetromino piece, int top) {
-            g2d.setColor(UiTheme.active().textPrimary());
-            g2d.setFont(UiFonts.regular(17f));
-            g2d.drawString(title, 16, top);
+            g2d.setColor(UiTheme.active().textMuted());
+            g2d.setFont(UiFonts.semibold(12f));
+            g2d.drawString(title, 0, top);
 
             if (piece == null) return;
             TetrominoType type = piece.getType();
             Color color = ColorPalette.colorFor(type);
+            Color edge = ColorPalette.outlineFor(type);
             int cell = 18;
-            int offsetX = 20;
-            int offsetY = top + 12;
+            int offsetX = 22;
+            int offsetY = top + 16;
             for (var cellPos : type.cells(0)) {
                 int x = offsetX + (cellPos.x * cell);
                 int y = offsetY + (cellPos.y * cell);
                 g2d.setColor(color);
-                g2d.fillRect(x, y, cell, cell);
-                g2d.setColor(color.darker());
-                g2d.drawRect(x, y, cell, cell);
+                g2d.fillRect(x + 1, y + 1, cell - 2, cell - 2);
+                g2d.setColor(edge);
+                g2d.drawRect(x + 1, y + 1, cell - 3, cell - 3);
             }
         }
     }
 }
-
 

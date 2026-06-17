@@ -14,37 +14,37 @@ public final class UiTheme {
     private static final UiTheme LIGHT = new UiTheme(
             Mode.LIGHT,
             false,
-            new Color(243, 239, 232),
-            new Color(231, 224, 213),
-            new Color(132, 116, 89),
-            new Color(250, 248, 243),
-            new Color(44, 39, 31),
-            new Color(104, 94, 78),
-            new Color(146, 114, 59),
-            new Color(236, 229, 217),
-            new Color(230, 221, 206),
-            new Color(142, 126, 99),
-            new Color(233, 228, 221),
-            new Color(78, 71, 58),
-            new Color(204, 193, 174)
+            new Color(238, 241, 244),
+            new Color(247, 248, 250),
+            new Color(224, 229, 235),
+            new Color(252, 252, 253),
+            new Color(36, 42, 52),
+            new Color(96, 105, 117),
+            new Color(60, 111, 182),
+            new Color(242, 244, 247),
+            new Color(255, 255, 255),
+            new Color(198, 206, 216),
+            new Color(231, 235, 240),
+            new Color(50, 58, 70),
+            new Color(213, 219, 227)
     );
 
     private static final UiTheme DARK = new UiTheme(
             Mode.DARK,
             true,
-            new Color(15, 17, 30),
-            new Color(22, 25, 40),
-            new Color(42, 47, 66),
-            new Color(26, 30, 48),
-            new Color(235, 233, 227),
-            new Color(180, 177, 168),
-            new Color(185, 151, 92),
-            new Color(31, 35, 55),
-            new Color(23, 26, 42),
-            new Color(76, 84, 112),
-            new Color(35, 39, 59),
-            new Color(189, 184, 171),
-            new Color(50, 56, 80)
+            new Color(17, 21, 29),
+            new Color(23, 27, 38),
+            new Color(36, 42, 56),
+            new Color(28, 33, 46),
+            new Color(241, 243, 247),
+            new Color(166, 174, 188),
+            new Color(137, 167, 232),
+            new Color(29, 35, 49),
+            new Color(21, 26, 37),
+            new Color(73, 84, 108),
+            new Color(34, 40, 55),
+            new Color(214, 219, 229),
+            new Color(51, 59, 78)
     );
 
     private static volatile Mode activeMode = modeOverride();
@@ -245,4 +245,3 @@ public final class UiTheme {
         return Math.max(0, Math.min(255, value));
     }
 }
-

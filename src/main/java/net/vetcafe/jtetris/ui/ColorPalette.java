@@ -10,21 +10,21 @@ public final class ColorPalette {
     private static final Map<TetrominoType, Color> LIGHT_COLORS = new EnumMap<>(TetrominoType.class);
 
     static {
-        DARK_COLORS.put(TetrominoType.I, new Color(107, 206, 216));
-        DARK_COLORS.put(TetrominoType.O, new Color(236, 196, 109));
-        DARK_COLORS.put(TetrominoType.T, new Color(178, 146, 213));
-        DARK_COLORS.put(TetrominoType.S, new Color(126, 191, 150));
-        DARK_COLORS.put(TetrominoType.Z, new Color(212, 117, 116));
-        DARK_COLORS.put(TetrominoType.J, new Color(121, 142, 210));
-        DARK_COLORS.put(TetrominoType.L, new Color(228, 155, 107));
+        DARK_COLORS.put(TetrominoType.I, new Color(79, 190, 203));
+        DARK_COLORS.put(TetrominoType.O, new Color(226, 184, 82));
+        DARK_COLORS.put(TetrominoType.T, new Color(169, 136, 210));
+        DARK_COLORS.put(TetrominoType.S, new Color(98, 181, 128));
+        DARK_COLORS.put(TetrominoType.Z, new Color(221, 105, 106));
+        DARK_COLORS.put(TetrominoType.J, new Color(103, 135, 218));
+        DARK_COLORS.put(TetrominoType.L, new Color(226, 145, 82));
 
-        LIGHT_COLORS.put(TetrominoType.I, new Color(71, 148, 165));
-        LIGHT_COLORS.put(TetrominoType.O, new Color(182, 144, 60));
-        LIGHT_COLORS.put(TetrominoType.T, new Color(121, 94, 165));
-        LIGHT_COLORS.put(TetrominoType.S, new Color(80, 137, 95));
-        LIGHT_COLORS.put(TetrominoType.Z, new Color(161, 84, 82));
-        LIGHT_COLORS.put(TetrominoType.J, new Color(78, 96, 152));
-        LIGHT_COLORS.put(TetrominoType.L, new Color(169, 108, 71));
+        LIGHT_COLORS.put(TetrominoType.I, new Color(43, 157, 174));
+        LIGHT_COLORS.put(TetrominoType.O, new Color(204, 155, 48));
+        LIGHT_COLORS.put(TetrominoType.T, new Color(135, 96, 185));
+        LIGHT_COLORS.put(TetrominoType.S, new Color(58, 152, 96));
+        LIGHT_COLORS.put(TetrominoType.Z, new Color(195, 80, 82));
+        LIGHT_COLORS.put(TetrominoType.J, new Color(74, 107, 184));
+        LIGHT_COLORS.put(TetrominoType.L, new Color(204, 118, 50));
     }
 
     private ColorPalette() {}
@@ -33,6 +33,27 @@ public final class ColorPalette {
         Map<TetrominoType, Color> palette = UiTheme.active().isDark() ? DARK_COLORS : LIGHT_COLORS;
         return palette.getOrDefault(type, Color.GRAY);
     }
+
+    public static Color outlineFor(TetrominoType type) {
+        return outlineFor(colorFor(type));
+    }
+
+    static Color outlineFor(Color color) {
+        UiTheme theme = UiTheme.active();
+        Color anchor = theme.isDark() ? theme.boardBackground() : theme.boardGrid();
+        double anchorWeight = theme.isDark() ? 0.34 : 0.32;
+        return mix(color, anchor, anchorWeight);
+    }
+
+    private static Color mix(Color a, Color b, double bWeight) {
+        double aWeight = 1.0 - bWeight;
+        int red = clamp((int) Math.round((a.getRed() * aWeight) + (b.getRed() * bWeight)));
+        int green = clamp((int) Math.round((a.getGreen() * aWeight) + (b.getGreen() * bWeight)));
+        int blue = clamp((int) Math.round((a.getBlue() * aWeight) + (b.getBlue() * bWeight)));
+        return new Color(red, green, blue);
+    }
+
+    private static int clamp(int value) {
+        return Math.max(0, Math.min(255, value));
+    }
 }
-
-

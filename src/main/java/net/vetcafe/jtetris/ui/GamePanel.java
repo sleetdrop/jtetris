@@ -131,7 +131,7 @@ public class GamePanel extends JPanel {
             for (int x = 0; x < Board.WIDTH; x++) {
                 TetrominoType type = grid[y][x];
                 if (type != null) {
-                    fillCell(g2d, x, y - 2, ColorPalette.colorFor(type));
+                    fillCell(g2d, x, y - 2, type);
                 }
             }
         }
@@ -140,12 +140,11 @@ public class GamePanel extends JPanel {
     private void drawCurrentPiece(Graphics2D g2d) {
         Tetromino current = board.getCurrent();
         if (current == null) return;
-        Color color = ColorPalette.colorFor(current.getType());
         for (var cell : current.getCells()) {
             int px = (current.getX() + cell.x) * cellSize;
             int py = (current.getY() + cell.y - 2) * cellSize;
             if (py + cellSize <= 0) continue; // skip hidden rows
-            fillCell(g2d, px / cellSize, py / cellSize, color);
+            fillCell(g2d, px / cellSize, py / cellSize, current.getType());
         }
     }
 
@@ -154,9 +153,9 @@ public class GamePanel extends JPanel {
         if (ghost == null) return;
 
         UiTheme theme = UiTheme.active();
-        Color shadowBase = theme.isDark() ? new Color(203, 210, 230) : new Color(92, 99, 118);
-        int fillAlpha = theme.isDark() ? 38 : 34;
-        int strokeAlpha = theme.isDark() ? 88 : 80;
+        Color shadowBase = theme.isDark() ? new Color(190, 198, 214) : new Color(77, 88, 104);
+        int fillAlpha = theme.isDark() ? 34 : 26;
+        int strokeAlpha = theme.isDark() ? 78 : 66;
         Color fill = new Color(shadowBase.getRed(), shadowBase.getGreen(), shadowBase.getBlue(), fillAlpha);
         Color stroke = new Color(shadowBase.getRed(), shadowBase.getGreen(), shadowBase.getBlue(), strokeAlpha);
         for (var cell : ghost.getCells()) {
@@ -232,14 +231,17 @@ public class GamePanel extends JPanel {
         }
     }
 
-    private void fillCell(Graphics2D g2d, int gridX, int gridY, Color color) {
+    private void fillCell(Graphics2D g2d, int gridX, int gridY, TetrominoType type) {
         int x = gridX * cellSize;
         int y = gridY * cellSize;
+        Color color = ColorPalette.colorFor(type);
+        Color edge = ColorPalette.outlineFor(type);
+        int inset = cellSize <= 18 ? 1 : 2;
+        int size = Math.max(1, cellSize - (inset * 2));
         g2d.setColor(color);
-        g2d.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
-        Color edge = UiTheme.active().isDark() ? color.darker() : color.darker().darker();
+        g2d.fillRect(x + inset, y + inset, size, size);
         g2d.setColor(edge);
-        g2d.drawRect(x, y, cellSize, cellSize);
+        g2d.drawRect(x + inset, y + inset, size - 1, size - 1);
     }
 
     private static int boostedAlpha(int base, int boost) {

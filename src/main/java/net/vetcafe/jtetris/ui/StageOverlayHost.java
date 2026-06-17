@@ -19,15 +19,15 @@ import java.awt.Insets;
  * In-stage overlay host that manages HUD-style panel lifecycle and basic enter/exit motion.
  */
 public final class StageOverlayHost extends JPanel {
-    private static final int MIN_WIDTH = 250;
-    private static final int MAX_WIDTH = 460;
-    private static final int MIN_HEIGHT = 120;
+    private static final int MIN_WIDTH = 320;
+    private static final int MAX_WIDTH = 420;
+    private static final int MIN_HEIGHT = 150;
     private static final int MAX_HEIGHT = 270;
     private static final int ANIMATION_MS = 140;
     private static final int TICK_MS = 16;
-    private static final int SURFACE_PADDING_X = 12;
-    private static final int SURFACE_PADDING_Y = 10;
-    private static final int HEADER_BOTTOM_GAP = 2;
+    private static final int SURFACE_PADDING_X = 16;
+    private static final int SURFACE_PADDING_Y = 14;
+    private static final int HEADER_BOTTOM_GAP = 10;
     private static final int TITLE_INSET_X = 1;
     private static final int TITLE_INSET_TOP = 1;
     private static final int TITLE_INSET_BOTTOM = 6;
@@ -136,7 +136,7 @@ public final class StageOverlayHost extends JPanel {
 
     public static void styleOverlayActionButton(JButton button) {
         button.setFont(UiFonts.regular(BUTTON_FONT_SIZE));
-        button.setMargin(new Insets(4, 10, 4, 10));
+        button.setMargin(new Insets(5, 14, 5, 14));
         button.setFocusPainted(true);
         button.setFocusable(true);
     }
@@ -144,7 +144,7 @@ public final class StageOverlayHost extends JPanel {
     public static JPanel createOverlayActionRow() {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         row.setOpaque(false);
-        row.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        row.setBorder(BorderFactory.createEmptyBorder(14, 0, 4, 0));
         return row;
     }
 
@@ -168,11 +168,14 @@ public final class StageOverlayHost extends JPanel {
     private void updateSurfaceBounds() {
         int availableWidth = Math.max(1, getWidth() - 16);
         int availableHeight = Math.max(1, getHeight() - 16);
-        int width = Math.min(clamp((int) (getWidth() * 0.72), MIN_WIDTH, MAX_WIDTH), availableWidth);
-        int height = Math.min(clamp((int) (getHeight() * 0.56), MIN_HEIGHT, MAX_HEIGHT), availableHeight);
+        Dimension preferred = surface.getPreferredSize();
+        int contentWidth = Math.max(MIN_WIDTH, preferred.width + 24);
+        int contentHeight = Math.max(MIN_HEIGHT, preferred.height + 8);
+        int width = Math.min(clamp(contentWidth, MIN_WIDTH, MAX_WIDTH), availableWidth);
+        int height = Math.min(clamp(contentHeight, MIN_HEIGHT, MAX_HEIGHT), availableHeight);
         int x = (getWidth() - width) / 2;
         int y = (getHeight() - height) / 2;
-        surface.setBounds(x, y, width, height);
+        surface.setBaseBounds(x, y, width, height);
     }
 
     private void advanceAnimation() {
@@ -218,6 +221,8 @@ public final class StageOverlayHost extends JPanel {
     private static final class OverlaySurface extends JPanel {
         private float alpha = 1f;
         private int offsetY;
+        private int baseX;
+        private int baseY;
         private JComponent body;
 
         private void setContent(JComponent content) {
@@ -242,6 +247,13 @@ public final class StageOverlayHost extends JPanel {
         private void setVisual(float alpha, int offsetY) {
             this.alpha = Math.max(0f, Math.min(1f, alpha));
             this.offsetY = offsetY;
+            setBounds(baseX, baseY + offsetY, getWidth(), getHeight());
+        }
+
+        private void setBaseBounds(int x, int y, int width, int height) {
+            baseX = x;
+            baseY = y;
+            setBounds(baseX, baseY + offsetY, width, height);
         }
 
         private void setPanelColors(Color background, Color surfaceColor, Color border, Color accent) {
@@ -259,11 +271,9 @@ public final class StageOverlayHost extends JPanel {
         @Override
         public void paint(Graphics g) {
             Graphics2D g2d = (Graphics2D) g.create();
-            g2d.translate(0, offsetY);
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
             super.paint(g2d);
             g2d.dispose();
         }
     }
 }
-
