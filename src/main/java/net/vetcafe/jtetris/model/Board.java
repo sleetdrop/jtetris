@@ -100,6 +100,10 @@ public class Board {
         return hold;
     }
 
+    public boolean isHoldAvailable() {
+        return !gameOver && !holdUsedThisTurn && current != null;
+    }
+
     public Tetromino getGhost() {
         if (gameOver || current == null) return null;
         Tetromino ghost = current.copy();
@@ -427,4 +431,3 @@ public class Board {
         return true;
     }
 }
-

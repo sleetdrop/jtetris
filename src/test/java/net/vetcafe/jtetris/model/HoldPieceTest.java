@@ -15,10 +15,12 @@ class HoldPieceTest {
         TetrominoType firstCurrent = board.getCurrent().getType();
         TetrominoType firstNext = board.getNext().getType();
 
+        assertTrue(board.isHoldAvailable());
         assertTrue(board.hold());
         assertNotNull(board.getHold());
         assertEquals(firstCurrent, board.getHold().getType());
         assertEquals(firstNext, board.getCurrent().getType());
+        assertFalse(board.isHoldAvailable());
     }
 
     @Test
@@ -39,6 +41,7 @@ class HoldPieceTest {
 
         lockCurrent(board);
 
+        assertTrue(board.isHoldAvailable());
         assertTrue(board.hold());
     }
 
@@ -50,5 +53,4 @@ class HoldPieceTest {
         board.tick();
     }
 }
-
 

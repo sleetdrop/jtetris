@@ -113,6 +113,8 @@ public class TetrisFrame extends JFrame {
     private JTextField scoreEntryNewUserField;
     private String scoreEntryFeedbackMessage;
     private boolean paused;
+    private HelpDialog helpDialog;
+    private boolean pausedBeforeHelp;
 
     public TetrisFrame() {
         super(APP_NAME);
@@ -213,10 +215,17 @@ public class TetrisFrame extends JFrame {
         scores.add(viewBoard);
 
         JMenu themeMenu = createThemeMenu();
+        JMenu helpMenu = new JMenu("Help");
+        helpMenu.setFont(UiFonts.regular(13f));
+        JMenuItem help = new JMenuItem("JTetris Help (H)");
+        help.setFont(UiFonts.regular(13f));
+        help.addActionListener(e -> showHelp());
+        helpMenu.add(help);
 
         bar.add(gameMenu);
         bar.add(scores);
         bar.add(themeMenu);
+        bar.add(helpMenu);
         return bar;
     }
 
@@ -634,8 +643,38 @@ public class TetrisFrame extends JFrame {
         registerAction(im, am, "pause", KeyStroke.getKeyStroke(KeyEvent.VK_P, 0), this::togglePause);
         registerAction(im, am, "restart", KeyStroke.getKeyStroke(KeyEvent.VK_R, 0), this::restartGame);
         registerAction(im, am, "leaderboard", KeyStroke.getKeyStroke(KeyEvent.VK_L, 0), this::showLeaderboard);
+        registerAction(im, am, "help", KeyStroke.getKeyStroke(KeyEvent.VK_H, 0), this::showHelp);
         registerAction(im, am, "overlayDemo", KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), this::toggleOverlayDemo);
         registerAction(im, am, "quitOrOverlayCancel", KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), this::onEscapePressed);
+    }
+
+    private void showHelp() {
+        if (overlayHost.isOverlayVisible()) {
+            return;
+        }
+        if (helpDialog != null && helpDialog.isDisplayable()) {
+            helpDialog.toFront();
+            helpDialog.requestFocus();
+            return;
+        }
+
+        clearHeldInputs();
+        pausedBeforeHelp = paused;
+        paused = true;
+        setTitle(APP_NAME + " (Paused)");
+
+        helpDialog = new HelpDialog(this);
+        helpDialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                paused = pausedBeforeHelp;
+                setTitle(APP_NAME + (paused ? " (Paused)" : ""));
+                helpDialog = null;
+                clearHeldInputs();
+                focusGame();
+            }
+        });
+        helpDialog.setVisible(true);
     }
 
     private void toggleOverlayDemo() {

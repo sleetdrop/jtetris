@@ -5,6 +5,7 @@ A lightweight JTetris clone for learning Java, Swing UI, and basic game loop/sco
 ## Features
 - Java 17 Swing desktop UI with light/dark theme support.
 - Guideline-style Tetris mechanics including 7-bag randomization, hold piece, ghost piece, SRS rotation kicks, lock delay, combo/B2B scoring, and T-spin detection.
+- Swing-native in-game Help for controls and modern Tetris scoring concepts.
 - Local best-score storage per user.
 - Replay-oriented model hooks and regression tests for core gameplay behavior.
 - Runnable jar packaging and macOS app-image packaging.

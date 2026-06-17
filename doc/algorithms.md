@@ -53,10 +53,11 @@
 
 ## Rendering
 - `GamePanel`: renders grid, locked blocks, ghost projection, and active piece; antialiased; modern dark palette.
-- `SidePanel`: stats + score breakdown (event/combo/B2B) + hold/next previews + controls list.
+- `SidePanel`: core stats, player-facing scoring feedback, combo/B2B status, hold/next previews, and controls list.
+- `HelpDialog`: Swing-native help page for controls, Hold/Next/Ghost concepts, and advanced scoring terms.
 
 ## Input
-- Swing key bindings on root pane (`WHEN_IN_FOCUSED_WINDOW`): move, rotate (CW/CCW), hard drop, hold (`C`), pause, restart, leaderboard, quit.
+- Swing key bindings on root pane (`WHEN_IN_FOCUSED_WINDOW`): move, rotate (CW/CCW), hard drop, hold (`C`), pause, restart, leaderboard, help, quit.
 - Horizontal input (`←` / `→`) uses a deterministic DAS/ARR repeater (`InputRepeater`) instead of OS key-repeat cadence.
 - Soft drop (`↓`) uses a deterministic repeat policy (`SoftDropRepeater`) with immediate first step and fixed repeat interval.
 - Modal UI states (score dialogs/leaderboard/new-game prompt) block gameplay input via a guard and clear held repeaters on enter/exit.
@@ -102,5 +103,9 @@ flowchart TD
 
 ## Extension ideas
 - Level-based fall speed.
+- Multi-piece next queue.
+- Perfect Clear detection and scoring feedback.
+- Soft drop and hard drop scoring.
+- T-Spin Mini distinction.
 - Sound effects.
 - UI scaling for high-DPI and resizable layout.
