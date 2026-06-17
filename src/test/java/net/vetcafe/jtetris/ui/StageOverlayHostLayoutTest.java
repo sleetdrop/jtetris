@@ -82,6 +82,30 @@ class StageOverlayHostLayoutTest {
     }
 
     @Test
+    void largeHelpOverlayCanUseScrollableMainWindowLayer() {
+        StageOverlayHost host = new StageOverlayHost();
+        host.setBounds(0, 0, 680, 520);
+
+        host.showOverlay(new StageOverlayHost.OverlaySpec(
+                "help",
+                "JTetris Help",
+                HelpContent.create(() -> {
+                }),
+                StageOverlayHost.largeSize()
+        ));
+        host.doLayout();
+        host.validate();
+
+        Component surface = host.getComponent(0);
+        assertTrue(surface.getWidth() > 420, "help overlay should be allowed to use the larger size policy");
+        assertTrue(surface.getHeight() > 270, "help overlay should be allowed to use the larger size policy");
+        assertTrue(surface.getX() >= 8);
+        assertTrue(surface.getY() >= 8);
+        assertTrue(surface.getX() + surface.getWidth() <= host.getWidth() - 8);
+        assertTrue(surface.getY() + surface.getHeight() <= host.getHeight() - 8);
+    }
+
+    @Test
     void enteringOverlayStillPaintsBottomBorderInsideSurfaceBounds() {
         UiTheme.setActiveMode(UiTheme.Mode.DARK);
         StageOverlayHost host = new StageOverlayHost();

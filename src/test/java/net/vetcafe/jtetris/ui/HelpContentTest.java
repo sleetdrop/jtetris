@@ -1,14 +1,15 @@
 package net.vetcafe.jtetris.ui;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.Test;
 
-class HelpDialogContentTest {
+class HelpContentTest {
 
     @Test
     void helpContentExplainsSurfacedMechanics() {
-        String html = HelpDialog.helpHtml(UiTheme.active());
+        String html = HelpContent.helpHtml(UiTheme.active());
 
         assertTrue(html.contains("Controls"));
         assertTrue(html.contains("Hold"));
@@ -17,6 +18,7 @@ class HelpDialogContentTest {
         assertTrue(html.contains("Combo"));
         assertTrue(html.contains("Back-to-Back"));
         assertTrue(html.contains("T-Spin"));
-        assertTrue(html.contains("Perfect Clear"));
+        assertFalse(html.contains("Future polish targets"));
+        assertFalse(html.contains("Perfect Clear"));
     }
 }

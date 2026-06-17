@@ -54,7 +54,7 @@
 ## Rendering
 - `GamePanel`: renders grid, locked blocks, ghost projection, and active piece; antialiased; modern dark palette.
 - `SidePanel`: core stats, player-facing scoring feedback, combo/B2B status, hold/next previews, and controls list.
-- `HelpDialog`: Swing-native help page for controls, Hold/Next/Ghost concepts, and advanced scoring terms.
+- `HelpContent`: Swing-native help overlay content for controls, Hold/Next/Ghost concepts, and advanced scoring terms.
 
 ## Input
 - Swing key bindings on root pane (`WHEN_IN_FOCUSED_WINDOW`): move, rotate (CW/CCW), hard drop, hold (`C`), pause, restart, leaderboard, help, quit.

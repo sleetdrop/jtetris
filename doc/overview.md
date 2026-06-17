@@ -13,7 +13,7 @@ A concise Swing-based JTetris for learning Java, Swing UI, and basic game loop/a
   - `SoftDropRepeater`: deterministic soft-drop repeat timing used by `TetrisFrame`.
   - `GamePanel`: renders board, ghost projection, and active piece; focuses itself on show; modern dark palette.
   - `SidePanel`: stats, scoring feedback, combo/B2B status, hold/next previews, controls cheat-sheet.
-  - `HelpDialog`: Swing-native help page for controls and modern Tetris concepts surfaced by the UI.
+  - `HelpContent`: Swing-native help overlay content for controls and modern Tetris concepts surfaced by the UI.
 - **Scores**: `net.vetcafe.jtetris.score.ScoreManager`: per-user local high scores stored in `~/.tetris_scores.properties` (best-only per user).
 
 ## Architecture at a glance
@@ -96,7 +96,7 @@ classDiagram
 
 ## UI Layout & Styling
 - `GamePanel` center; `SidePanel` on the right with Stats (Score/Level/Lines), scoring feedback, Combo/B2B status, Hold/Next previews, and Controls list.
-- Help is implemented with Swing components and pauses gameplay while the help window is open.
+- Help is implemented as a scrollable in-window Swing overlay and pauses gameplay while open.
 - UI theme supports startup override (`-Djtetris.theme=auto|light|dark`) and runtime switching via menu without restart.
 - Ghost piece uses a subtle, unified neutral shadow color (instead of piece-matched colors) to indicate hard-drop landing.
 - When a line clear happens, the cleared row area briefly flashes in a simple LCD-style overlay.

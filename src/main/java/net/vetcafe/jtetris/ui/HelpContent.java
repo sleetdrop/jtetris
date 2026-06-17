@@ -2,78 +2,61 @@ package net.vetcafe.jtetris.ui;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
-import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.KeyEvent;
 
-final class HelpDialog extends JDialog {
-    private static final int WIDTH = 520;
-    private static final int HEIGHT = 560;
+final class HelpContent {
+    private static final int PREFERRED_WIDTH = 560;
+    private static final int PREFERRED_HEIGHT = 360;
 
-    HelpDialog(JFrame owner) {
-        super(owner, "JTetris Help", false);
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setLayout(new BorderLayout());
+    private HelpContent() {
+    }
 
+    static JComponent create(Runnable closeAction) {
         UiTheme theme = UiTheme.active();
-        getContentPane().setBackground(theme.dialogBackground());
 
         JTextPane content = new JTextPane();
         content.setContentType("text/html");
         content.setEditable(false);
         content.setFocusable(false);
         content.setFont(UiFonts.regular(13f));
-        content.setBackground(theme.dialogBackground());
+        content.setBackground(theme.overlaySurface());
         content.setForeground(theme.textPrimary());
-        content.setBorder(BorderFactory.createEmptyBorder(14, 16, 14, 16));
+        content.setBorder(BorderFactory.createEmptyBorder(12, 14, 12, 14));
         content.setText(helpHtml(theme));
         content.setCaretPosition(0);
 
         JScrollPane scrollPane = new JScrollPane(content);
+        scrollPane.setPreferredSize(new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT));
         scrollPane.setBorder(BorderFactory.createLineBorder(theme.dialogBorder(), 1));
-        scrollPane.getViewport().setBackground(theme.dialogBackground());
+        scrollPane.getViewport().setBackground(theme.overlaySurface());
+        scrollPane.getVerticalScrollBar().setUnitIncrement(14);
 
         JButton close = new JButton("Close");
         StageOverlayHost.styleOverlayActionButton(close);
-        close.addActionListener(e -> dispose());
+        close.addActionListener(e -> closeAction.run());
 
         JPanel actions = StageOverlayHost.createOverlayActionRow();
-        actions.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         actions.add(close);
 
         JPanel root = new JPanel(new BorderLayout(0, 10));
         root.setOpaque(false);
-        root.setBorder(BorderFactory.createEmptyBorder(14, 14, 14, 14));
         root.add(scrollPane, BorderLayout.CENTER);
         root.add(actions, BorderLayout.SOUTH);
-        add(root, BorderLayout.CENTER);
-
-        getRootPane().setDefaultButton(close);
-        getRootPane().registerKeyboardAction(
-                e -> dispose(),
-                javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-                javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW
-        );
-
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        pack();
-        setLocationRelativeTo(owner);
+        return root;
     }
 
     static String helpHtml(UiTheme theme) {
         String text = color(theme.textPrimary());
-        String muted = color(theme.textMuted());
+        String background = color(theme.overlaySurface());
         String accent = color(theme.accent());
         return """
                 <html>
                 <body style='font-family: sans-serif; color: %s; background: %s;'>
-                <h1 style='font-size: 20px; margin: 0 0 10px 0;'>JTetris Help</h1>
                 <h2 style='font-size: 15px; color: %s;'>Controls</h2>
                 <table cellspacing='4' cellpadding='2'>
                   <tr><td><b>Left / Right</b></td><td>Move the active piece.</td></tr>
@@ -94,10 +77,9 @@ final class HelpDialog extends JDialog {
                 <p><b>Combo</b> means consecutive pieces cleared lines. It resets after a piece locks without clearing a line.</p>
                 <p><b>Back-to-Back</b> tracks consecutive difficult clears such as Tetris and T-Spin line clears. It stays ready through non-clearing pieces and breaks on ordinary line clears.</p>
                 <p><b>T-Spin</b> is awarded when a T piece locks after a rotation in a tight corner setup. JTetris currently implements baseline T-Spin scoring.</p>
-                <p style='color: %s;'>Future polish targets include multi-piece next queue, Perfect Clear scoring, drop scoring, and T-Spin Mini distinction.</p>
                 </body>
                 </html>
-                """.formatted(text, color(theme.dialogBackground()), accent, accent, accent, muted);
+                """.formatted(text, background, accent, accent, accent);
     }
 
     private static String color(java.awt.Color color) {

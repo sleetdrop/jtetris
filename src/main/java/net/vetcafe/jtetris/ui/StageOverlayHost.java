@@ -53,7 +53,15 @@ public final class StageOverlayHost extends JPanel {
         }
     }
 
-    public record OverlaySpec(String id, String title, JComponent content, OverlayLifecycle lifecycle) {
+    public record OverlaySize(int maxWidth, int maxHeight) {
+        public OverlaySize {
+            if (maxWidth < MIN_WIDTH || maxHeight < MIN_HEIGHT) {
+                throw new IllegalArgumentException("overlay size must fit minimum bounds");
+            }
+        }
+    }
+
+    public record OverlaySpec(String id, String title, JComponent content, OverlayLifecycle lifecycle, OverlaySize size) {
         public OverlaySpec {
             if (id == null || id.isBlank()) {
                 throw new IllegalArgumentException("overlay id is required");
@@ -66,11 +74,28 @@ public final class StageOverlayHost extends JPanel {
             }
             lifecycle = lifecycle == null ? new OverlayLifecycle() {
             } : lifecycle;
+            size = size == null ? compactSize() : size;
         }
 
         public OverlaySpec(String id, String title, JComponent content) {
-            this(id, title, content, null);
+            this(id, title, content, (OverlayLifecycle) null);
         }
+
+        public OverlaySpec(String id, String title, JComponent content, OverlayLifecycle lifecycle) {
+            this(id, title, content, lifecycle, null);
+        }
+
+        public OverlaySpec(String id, String title, JComponent content, OverlaySize size) {
+            this(id, title, content, null, size);
+        }
+    }
+
+    public static OverlaySize compactSize() {
+        return new OverlaySize(MAX_WIDTH, MAX_HEIGHT);
+    }
+
+    public static OverlaySize largeSize() {
+        return new OverlaySize(620, 460);
     }
 
     private final OverlaySurface surface = new OverlaySurface();
@@ -169,10 +194,11 @@ public final class StageOverlayHost extends JPanel {
         int availableWidth = Math.max(1, getWidth() - 16);
         int availableHeight = Math.max(1, getHeight() - 16);
         Dimension preferred = surface.getPreferredSize();
+        OverlaySize size = activeOverlay == null ? compactSize() : activeOverlay.size();
         int contentWidth = Math.max(MIN_WIDTH, preferred.width + 24);
         int contentHeight = Math.max(MIN_HEIGHT, preferred.height + 8);
-        int width = Math.min(clamp(contentWidth, MIN_WIDTH, MAX_WIDTH), availableWidth);
-        int height = Math.min(clamp(contentHeight, MIN_HEIGHT, MAX_HEIGHT), availableHeight);
+        int width = Math.min(clamp(contentWidth, MIN_WIDTH, size.maxWidth()), availableWidth);
+        int height = Math.min(clamp(contentHeight, MIN_HEIGHT, size.maxHeight()), availableHeight);
         int x = (getWidth() - width) / 2;
         int y = (getHeight() - height) / 2;
         surface.setBaseBounds(x, y, width, height);

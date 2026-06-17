@@ -113,7 +113,6 @@ public class TetrisFrame extends JFrame {
     private JTextField scoreEntryNewUserField;
     private String scoreEntryFeedbackMessage;
     private boolean paused;
-    private HelpDialog helpDialog;
     private boolean pausedBeforeHelp;
 
     public TetrisFrame() {
@@ -649,12 +648,11 @@ public class TetrisFrame extends JFrame {
     }
 
     private void showHelp() {
-        if (overlayHost.isOverlayVisible()) {
+        StageOverlayHost.OverlaySpec active = overlayHost.activeOverlay();
+        if (active != null && "help".equals(active.id())) {
             return;
         }
-        if (helpDialog != null && helpDialog.isDisplayable()) {
-            helpDialog.toFront();
-            helpDialog.requestFocus();
+        if (overlayHost.isOverlayVisible()) {
             return;
         }
 
@@ -663,18 +661,26 @@ public class TetrisFrame extends JFrame {
         paused = true;
         setTitle(APP_NAME + " (Paused)");
 
-        helpDialog = new HelpDialog(this);
-        helpDialog.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                paused = pausedBeforeHelp;
-                setTitle(APP_NAME + (paused ? " (Paused)" : ""));
-                helpDialog = null;
-                clearHeldInputs();
-                focusGame();
-            }
-        });
-        helpDialog.setVisible(true);
+        overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
+                "help",
+                "JTetris Help",
+                HelpContent.create(this::dismissOverlayIfVisible),
+                new StageOverlayHost.OverlayLifecycle() {
+                    @Override
+                    public void onOpened() {
+                        clearHeldInputs();
+                    }
+
+                    @Override
+                    public void onClosed() {
+                        paused = pausedBeforeHelp;
+                        setTitle(APP_NAME + (paused ? " (Paused)" : ""));
+                        clearHeldInputs();
+                        focusGame();
+                    }
+                },
+                StageOverlayHost.largeSize()
+        ));
     }
 
     private void toggleOverlayDemo() {
@@ -764,6 +770,8 @@ public class TetrisFrame extends JFrame {
         } else if (active != null && "exit-confirm".equals(active.id())) {
             dispose();
             System.exit(0);
+        } else if (active != null && "help".equals(active.id())) {
+            // Close the help overlay.
         }
         dismissOverlayIfVisible();
     }
