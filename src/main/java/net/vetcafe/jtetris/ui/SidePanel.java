@@ -138,6 +138,10 @@ public class SidePanel extends JPanel {
         return previewPanel.displayedNextTypes();
     }
 
+    static Color sectionTitleColor() {
+        return UiTheme.active().textPrimary();
+    }
+
     public void applyTheme() {
         setBackground(UiTheme.active().sidePanelBackground());
         scoreLabel.setForeground(UiTheme.active().textPrimary());
@@ -204,7 +208,7 @@ public class SidePanel extends JPanel {
         }
 
         private void drawTitle(Graphics2D g2d, String title, int baseline) {
-            g2d.setColor(UiTheme.active().textMuted());
+            g2d.setColor(sectionTitleColor());
             g2d.setFont(UiFonts.semibold(12f));
             g2d.drawString(title, 0, baseline);
         }

@@ -57,6 +57,8 @@ The permanent controls `JTextArea` and its surrounding panel are removed. Help r
 ### 5. Preserve rendering style and accessibility
 Preview cells continue using `ColorPalette.colorFor(...)` and `outlineFor(...)`, matching the flat stage rendering in both themes. Labels and dividers continue using `UiFonts` and `UiTheme` tokens. No hard-coded theme-specific colors are introduced.
 
+Regular information labels use the primary text color consistently. `Score` remains visually dominant through size, while `Hold` and `Next` use the same primary color as `Level` and `Lines`. Secondary text color is reserved for inactive state semantics such as `Combo -` and `B2B Ready`; those labels switch to primary color when active.
+
 The side panel must fit the existing 200 by 520 preferred size without clipping or overlap. Painted sections use stable vertical bounds rather than deriving positions from changing text content.
 
 ### 6. Update player-facing explanations

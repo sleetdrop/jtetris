@@ -40,6 +40,11 @@ class SidePanelLayoutTest {
         assertEquals(3, panel.displayedNextTypes().size());
     }
 
+    @Test
+    void sectionTitlesUsePrimaryTextColor() {
+        assertEquals(UiTheme.active().textPrimary(), SidePanel.sectionTitleColor());
+    }
+
     private static List<Component> descendants(Container root) {
         List<Component> result = new ArrayList<>();
         for (Component child : root.getComponents()) {

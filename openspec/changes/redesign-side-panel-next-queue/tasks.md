@@ -20,6 +20,7 @@
 - [x] Render Hold plus three vertically ordered upcoming pieces with stable bounds.
 - [x] Run focused UI tests.
 - [x] Commit the side-panel redesign as one focused change.
+- [x] Apply visual acceptance refinement: use primary text color for Hold and Next while retaining muted inactive Combo/B2B states.
 
 ## 4. Help and Documentation
 - [x] Update Help to explain the three-piece Next queue.
@@ -50,3 +51,6 @@
 - macOS package verification: `./mvnw -Pmac -Djava.awt.headless=true clean package` succeeded and produced `target/dist/JTetris.app`.
 - `git diff --check` passed.
 - Pending user verification: run `./mvnw clean test` outside the restricted GUI environment and inspect light/dark side-panel rendering in the rebuilt app.
+- Visual refinement RED: `./mvnw -Djava.awt.headless=true -Dtest=SidePanelLayoutTest test` failed at compilation because `SidePanel.sectionTitleColor()` did not exist.
+- Visual refinement focused GREEN: `./mvnw -Djava.awt.headless=true -Dtest=SidePanelLayoutTest,ThemeVisualsTest,ScoreFeedbackFormatterTest test` passed 10 tests.
+- Visual refinement full GREEN: `./mvnw -Djava.awt.headless=true clean test` passed 63 tests, and the macOS package rebuilt successfully.

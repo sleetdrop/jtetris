@@ -10,7 +10,9 @@ JTetris SHALL present side-panel game information as player-facing state using t
 - **When** the side panel refreshes
 - **Then** it displays score prominently
 - **And** it displays level, lines, meaningful scoring feedback, combo status, and back-to-back status in a compact performance section
+- **And** regular information labels including Hold and Next use the primary text color consistently
 - **And** inactive combo and back-to-back states use subdued text instead of looking like broken counters
+- **And** active combo and back-to-back states use the primary text color
 
 #### Scenario: Hold and Next use separate stable sections
 - **Given** a game is running at the default window size
