@@ -4,14 +4,14 @@
 - [x] Approve option A visual hierarchy.
 - [x] Define the model-backed three-piece queue and compatibility boundary.
 - [x] Define UI, documentation, replay, and test requirements.
-- [ ] Review and approve the written OpenSpec.
+- [x] Review and approve the written OpenSpec.
 
 ## 2. Model Queue
-- [ ] Add failing tests for queue initialization, promotion, refill, Hold behavior, reset, immutability, and replay equality.
-- [ ] Replace the single stored next piece with a Board-owned three-type queue.
-- [ ] Retain `getNext()` as a queue-head compatibility accessor and add immutable `getNextQueue()`.
-- [ ] Run focused model tests.
-- [ ] Commit the model queue as one focused change.
+- [x] Add failing tests for queue initialization, promotion, refill, Hold behavior, reset, immutability, and replay equality.
+- [x] Replace the single stored next piece with a Board-owned three-type queue.
+- [x] Retain `getNext()` as a queue-head compatibility accessor and add immutable `getNextQueue()`.
+- [x] Run focused model tests.
+- [x] Commit the model queue as one focused change.
 
 ## 3. Side Panel
 - [ ] Add/update focused UI tests for removal of the controls area and rendering data for three previews.
@@ -36,4 +36,6 @@
 - [ ] Commit the completed OpenSpec archive.
 
 ## Verification Notes
-- Not yet implemented.
+- Model RED: `./mvnw -Dtest=NextQueueTest,HoldPieceTest,ReplayHooksTest,BoardRegressionGateTest test` failed at test compilation because `Board.getNextQueue()` did not exist.
+- Model focused GREEN: `./mvnw -Dtest=NextQueueTest,HoldPieceTest,PieceBagTest,ReplayHooksTest,BoardRegressionGateTest test` passed 20 tests.
+- Model regression GREEN: `./mvnw -Djava.awt.headless=true test` passed 59 tests.

@@ -44,7 +44,7 @@ class ReplayHooksTest {
         assertEquals(source.getCurrent().getX(), replay.getCurrent().getX());
         assertEquals(source.getCurrent().getY(), replay.getCurrent().getY());
 
-        assertEquals(source.getNext().getType(), replay.getNext().getType());
+        assertEquals(source.getNextQueue(), replay.getNextQueue());
 
         if (source.getHold() == null) {
             assertNull(replay.getHold());
@@ -82,5 +82,4 @@ class ReplayHooksTest {
         assertNull(unseeded.getReplaySeed());
     }
 }
-
 

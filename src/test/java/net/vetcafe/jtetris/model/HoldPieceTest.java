@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class HoldPieceTest {
@@ -45,6 +46,31 @@ class HoldPieceTest {
         assertTrue(board.hold());
     }
 
+    @Test
+    void firstHoldAdvancesAndRefillsUpcomingQueue() {
+        Board board = new Board(7L);
+        List<TetrominoType> before = board.getNextQueue();
+
+        assertTrue(board.hold());
+
+        assertEquals(before.get(0), board.getCurrent().getType());
+        assertEquals(before.get(1), board.getNextQueue().get(0));
+        assertEquals(before.get(2), board.getNextQueue().get(1));
+        assertEquals(3, board.getNextQueue().size());
+    }
+
+    @Test
+    void populatedHoldSwapLeavesUpcomingQueueUnchanged() {
+        Board board = new Board(7L);
+        assertTrue(board.hold());
+        lockCurrent(board);
+        List<TetrominoType> beforeSwap = board.getNextQueue();
+
+        assertTrue(board.hold());
+
+        assertEquals(beforeSwap, board.getNextQueue());
+    }
+
     private static void lockCurrent(Board board) {
         while (board.move(0, 1)) {
             // descend until touching stack/floor
@@ -53,4 +79,3 @@ class HoldPieceTest {
         board.tick();
     }
 }
-

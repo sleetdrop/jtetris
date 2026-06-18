@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayDeque;
 import org.junit.jupiter.api.Test;
 
 class BoardRegressionGateTest {
@@ -98,7 +99,7 @@ class BoardRegressionGateTest {
     void topOutWhenSpawnAreaIsBlocked() throws Exception {
         Board board = new Board(7L);
         TetrominoType[][] grid = getGrid(board);
-        setNext(board, new Tetromino(TetrominoType.O, Board.WIDTH / 2 - 2, 0));
+        setNextQueue(board, TetrominoType.O, TetrominoType.I, TetrominoType.T);
 
         // O piece spawn cells at x=4,5 and y=0,1 for current spawn offset.
         grid[0][4] = TetrominoType.I;
@@ -128,10 +129,15 @@ class BoardRegressionGateTest {
         field.set(board, current);
     }
 
-    private static void setNext(Board board, Tetromino next) throws Exception {
-        Field field = Board.class.getDeclaredField("next");
+    @SuppressWarnings("unchecked")
+    private static void setNextQueue(Board board, TetrominoType... types) throws Exception {
+        Field field = Board.class.getDeclaredField("nextQueue");
         field.setAccessible(true);
-        field.set(board, next);
+        ArrayDeque<TetrominoType> queue = (ArrayDeque<TetrominoType>) field.get(board);
+        queue.clear();
+        for (TetrominoType type : types) {
+            queue.addLast(type);
+        }
     }
 
     private static void invokeClearLines(Board board) throws Exception {
@@ -146,4 +152,3 @@ class BoardRegressionGateTest {
         method.invoke(board);
     }
 }
-

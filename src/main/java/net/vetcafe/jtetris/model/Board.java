@@ -1,7 +1,8 @@
 package net.vetcafe.jtetris.model;
 
-import java.util.Arrays;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -9,13 +10,14 @@ public class Board {
     public static final int WIDTH = 10;
     public static final int HEIGHT = 22; // includes hidden rows at top
     private static final int LOCK_DELAY_TICKS = 1;
+    private static final int NEXT_QUEUE_SIZE = 3;
 
     private final TetrominoType[][] grid = new TetrominoType[HEIGHT][WIDTH];
     private final PieceBag pieceBag;
+    private final ArrayDeque<TetrominoType> nextQueue = new ArrayDeque<>(NEXT_QUEUE_SIZE);
     private final Long replaySeed;
     private final List<ReplayAction> replayActions = new ArrayList<>();
     private Tetromino current;
-    private Tetromino next;
     private Tetromino hold;
     private boolean holdUsedThisTurn;
     private boolean gameOver;
@@ -76,7 +78,8 @@ public class Board {
 
     private void spawnInitial() {
         current = new Tetromino(pieceBag.next(), WIDTH / 2 - 2, 0);
-        next = new Tetromino(pieceBag.next(), WIDTH / 2 - 2, 0);
+        nextQueue.clear();
+        fillNextQueue();
         groundedTicks = 0;
         lastActionWasRotation = false;
         lastLockWasTSpin = false;
@@ -93,7 +96,15 @@ public class Board {
     }
 
     public Tetromino getNext() {
-        return next;
+        TetrominoType type = nextQueue.peekFirst();
+        if (type == null) {
+            throw new IllegalStateException("next queue must not be empty");
+        }
+        return new Tetromino(type, WIDTH / 2 - 2, 0);
+    }
+
+    public List<TetrominoType> getNextQueue() {
+        return List.copyOf(nextQueue);
     }
 
     public Tetromino getHold() {
@@ -258,8 +269,7 @@ public class Board {
         TetrominoType currentType = current.getType();
         if (hold == null) {
             hold = new Tetromino(currentType, WIDTH / 2 - 2, 0);
-            current = new Tetromino(next.getType(), WIDTH / 2 - 2, 0);
-            next = new Tetromino(pieceBag.next(), WIDTH / 2 - 2, 0);
+            current = new Tetromino(takeNextType(), WIDTH / 2 - 2, 0);
         } else {
             TetrominoType holdType = hold.getType();
             hold = new Tetromino(currentType, WIDTH / 2 - 2, 0);
@@ -310,13 +320,24 @@ public class Board {
     }
 
     private void spawnNext() {
-        current = new Tetromino(next.getType(), WIDTH / 2 - 2, 0);
-        next = new Tetromino(pieceBag.next(), WIDTH / 2 - 2, 0);
+        current = new Tetromino(takeNextType(), WIDTH / 2 - 2, 0);
         holdUsedThisTurn = false;
         lastActionWasRotation = false;
         groundedTicks = 0;
         if (!isPositionValid(current)) {
             gameOver = true;
+        }
+    }
+
+    private TetrominoType takeNextType() {
+        TetrominoType type = nextQueue.removeFirst();
+        fillNextQueue();
+        return type;
+    }
+
+    private void fillNextQueue() {
+        while (nextQueue.size() < NEXT_QUEUE_SIZE) {
+            nextQueue.addLast(pieceBag.next());
         }
     }
 
