@@ -14,7 +14,7 @@ A concise Swing-based JTetris for learning Java, Swing UI, and basic game loop/a
   - `GamePanel`: renders board, ghost projection, and active piece; focuses itself on show; modern dark palette.
   - `SidePanel`: performance stats, scoring feedback, combo/B2B status, Hold preview, and three-piece Next queue.
   - `HelpContent`: Swing-native help overlay content for controls and modern Tetris concepts surfaced by the UI.
-- **Scores**: `net.vetcafe.jtetris.score.ScoreManager`: per-user local high scores stored in `~/.tetris_scores.properties` (best-only per user).
+- **Scores**: `net.vetcafe.jtetris.score.ScoreManager`: best-only per-user local high scores stored in a package-namespaced platform application data directory.
 
 ## Architecture at a glance
 ```mermaid
@@ -58,6 +58,7 @@ classDiagram
         +load()
         +save()
         +updateBest(user,score)
+        +deleteUser(user)
         +top()
     }
     TetrisFrame --> Board
@@ -79,7 +80,7 @@ classDiagram
 - Line clear scores (per classic Tetris style): 1/2/3/4 lines = 100/300/500/800 * level.
 - Consecutive clears add combo bonus; difficult clear chains (Tetris/T-Spin clears) use back-to-back bonus.
 - `linesCleared` total drives `level = 1 + linesCleared / 10` (speeds fall via timer delay tuning in future).
-- High score: best-per-user persists locally. On game over, prompt to pick existing or add new user; store if higher.
+- High score: best-per-user persists locally. On game over, prompt to pick existing or add new user; store if higher. The leaderboard supports single-player deletion after explicit confirmation.
 
 ## Controls (UI is English-only)
 - Move: ← / →
@@ -104,7 +105,12 @@ classDiagram
 - Modern colors: deep charcoal background with teal/amber/lavender/mint/red/indigo/coral pieces.
 
 ## Data & Persistence
-- Scores stored at `~/.tetris_scores.properties`. Keys are lowercase usernames; values are best scores. File is best-effort read/write; corrupt file is ignored and treated as empty.
+- Scores use platform application data directories:
+  - macOS: `~/Library/Application Support/net.vetcafe.jtetris/scores.properties`
+  - Linux: `${XDG_DATA_HOME:-~/.local/share}/net.vetcafe.jtetris/scores.properties`
+  - Windows: `%LOCALAPPDATA%\net.vetcafe.jtetris\scores.properties` (falling back to `~/AppData/Local/...`)
+- The legacy `~/.tetris_scores.properties` file is migrated when no new store exists, then deleted only after the new store is written successfully.
+- Keys remain lowercase usernames and values remain best scores. New-store read failures are treated as empty; an unreadable legacy file is preserved instead of being replaced.
 - Replay persistence is model-layer only in `M7.3` via `ReplayPersistence`:
   - File header: `JTETRIS_REPLAY_V1`
   - Seed line: `seed=<long>`

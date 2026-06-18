@@ -14,8 +14,8 @@
 ## Source Map
 - Main source: `src/main/java/net/vetcafe/jtetris`
   - Model: `model/` (`Board`, `Tetromino`, `TetrominoType`, `PieceBag`, `ReplayAction`, `ReplayPersistence`, `SrsKickTable`, `TSpinDetector`)
-  - UI: `ui/` (`TetrisFrame`, `GamePanel`, `SidePanel`, `InputRepeater`, `SoftDropRepeater`, `UiTheme`, `UiFonts`, `ColorPalette`)
-  - Score storage: `score/ScoreManager`
+  - UI: `ui/` (`TetrisFrame`, `GamePanel`, `SidePanel`, `LeaderboardContent`, `InputRepeater`, `SoftDropRepeater`, `UiTheme`, `UiFonts`, `ColorPalette`)
+  - Score storage: `score/` (`ScoreManager`, `ScoreDataPaths`)
 - Tests: `src/test/java/net/vetcafe/jtetris`
 - Resources: no custom font binaries are currently bundled; `UiFonts` falls back to Java/Swing logical fonts.
 - Legacy spec path note: older specs may still mention `src/tetris`; map those references to the Maven layout above when implementing.
@@ -45,7 +45,7 @@ java -jar target/jtetris-1.0-SNAPSHOT.jar
 - Preserve keyboard behavior and focus semantics in `TetrisFrame` (`focusGame()`, key bindings, repeaters, modal-dialog input clearing, and the `C` hold action).
 - Keep the theme/font pipeline intact (`UiTheme`, `UiFonts`, and `ui/ColorPalette`) unless the task explicitly changes the UI system.
 - Preserve the theme-selection contract in `UiTheme.modeOverride()` (`-Djtetris.theme=auto|light|dark`) and keep piece-color routing through `ui/ColorPalette`.
-- Keep score file compatibility at `~/.tetris_scores.properties` unless a migration is explicitly requested.
+- Keep the properties-based best-score format compatible across platform data directories and preserve one-time migration from `~/.tetris_scores.properties`.
 - Keep replay hooks (`Board.applyReplayAction(...)`, `Board.replayFromSeed(...)`) aligned with any model-behavior change.
 - Prefer small, localized changes over broad rewrites.
 - When gameplay timing changes, validate model and UI together (gravity timer, DAS/ARR, soft-drop repeaters).

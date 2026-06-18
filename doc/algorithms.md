@@ -53,9 +53,15 @@
 - On game over: prompt to record score (optional) and ask to start new game.
 
 ## Persistence
-- `ScoreManager` stores best-per-user in `~/.tetris_scores.properties`.
-- Keys are lowercase usernames; original casing is remembered for display.
-- Reads are tolerant of corrupt files (ignored).
+- `ScoreManager` stores best-per-user in `net.vetcafe.jtetris/scores.properties` under the host platform's persistent application data directory:
+  - macOS: `~/Library/Application Support`
+  - Linux: `${XDG_DATA_HOME:-~/.local/share}`
+  - Windows: `%LOCALAPPDATA%` with `~/AppData/Local` as fallback
+- If no platform store exists, `~/.tetris_scores.properties` is loaded, written to the new store, and deleted only after the new write succeeds.
+- If both files exist, the platform store is authoritative and the legacy file is not merged.
+- Keys are lowercase usernames. Original casing is remembered for display during the current process; reloaded properties use the normalized key as the display name.
+- Reads are tolerant of unreadable files. An unreadable legacy file is retained to avoid destructive migration.
+- Deleting a leaderboard player removes that user's best score only after confirmation; failed persistence restores the in-memory record.
 
 ## Rendering
 - `GamePanel`: renders grid, locked blocks, ghost projection, and active piece; antialiased; modern dark palette.

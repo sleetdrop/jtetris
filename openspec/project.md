@@ -36,7 +36,7 @@ open target/dist/JTetris.app
 - Preserve keyboard behavior and focus semantics in `TetrisFrame`, including `focusGame()`, key bindings, repeaters, modal/overlay input clearing, and the `C` hold action.
 - Keep the theme/font pipeline intact through `UiTheme`, `UiFonts`, and `ui/ColorPalette`.
 - Preserve `UiTheme.modeOverride()` behavior for `-Djtetris.theme=auto|light|dark`.
-- Keep score file compatibility at `~/.tetris_scores.properties` unless a migration is explicitly requested.
+- Keep the properties-based best-score format compatible across platform data directories, including one-time migration from `~/.tetris_scores.properties`.
 - Keep replay hooks aligned when model behavior changes: `Board.applyReplayAction(...)` and `Board.replayFromSeed(...)`.
 - Prefer small, localized changes. Treat `pom.xml`, package moves, dependency changes, and broad naming changes as standalone changes.
 

@@ -101,4 +101,12 @@ Runtime and test dependency notices are tracked in [NOTICE.md](NOTICE.md).
 - Quit: Esc (or menu)
 
 ## Scores
-Local best-per-user scores are stored in `~/.tetris_scores.properties`. On game over you can save a score to an existing or new username; only the best score per user is kept.
+Local best-per-user scores use the platform's application data directory:
+
+- macOS: `~/Library/Application Support/net.vetcafe.jtetris/scores.properties`
+- Linux: `${XDG_DATA_HOME:-~/.local/share}/net.vetcafe.jtetris/scores.properties`
+- Windows: `%LOCALAPPDATA%\net.vetcafe.jtetris\scores.properties`
+
+On game over you can save a score to an existing or new username; only the best score per user is kept. Select a leaderboard row and use `Delete` to remove that player's local score after confirmation.
+
+Existing `~/.tetris_scores.properties` data is migrated when the new store does not exist. The legacy file is removed only after the new file is written successfully.

@@ -1,4 +1,9 @@
-## ADDED Requirements
+# Score Storage Specification
+
+## Purpose
+Define where JTetris stores local best scores and how legacy score data is migrated.
+
+## Requirements
 
 ### Requirement: Scores use platform application data directories
 JTetris MUST store local score data in a package-namespaced persistent application data directory appropriate to the host platform.
@@ -37,7 +42,7 @@ JTetris MUST migrate the legacy `~/.tetris_scores.properties` store when no new-
 
 #### Scenario: Successful legacy migration
 - **Given** the new score file does not exist
-- **And** the legacy score file exists
+- **And** the legacy score file exists and is readable
 - **When** `ScoreManager` initializes
 - **Then** the legacy records are written to the new platform store
 - **And** the legacy file is deleted only after the new file is saved successfully
@@ -48,6 +53,13 @@ JTetris MUST migrate the legacy `~/.tetris_scores.properties` store when no new-
 - **When** JTetris cannot write the new platform store
 - **Then** the legacy file remains in place
 - **And** the loaded scores remain available for the current process
+
+#### Scenario: Legacy store is unreadable
+- **Given** the new score file does not exist
+- **And** the legacy score file cannot be read
+- **When** `ScoreManager` initializes
+- **Then** JTetris leaves the legacy file in place
+- **And** does not create an empty replacement store
 
 #### Scenario: Both stores exist
 - **Given** both the new score file and the legacy score file exist
