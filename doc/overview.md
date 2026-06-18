@@ -5,14 +5,14 @@ A concise Swing-based JTetris for learning Java, Swing UI, and basic game loop/a
 
 ## Architecture
 - **Model**: `net.vetcafe.jtetris.model.*`
-  - `Board`: game state (grid, active piece, hold/next piece, ghost projection, scoring, level). Handles gravity (`tick`), movement, rotation, line clearing, spawning, baseline T-Spin lock-state tracking, and seeded replay hooks. Hidden top rows keep spawn safe.
+  - `Board`: game state (grid, active piece, hold piece, three-piece upcoming queue, ghost projection, scoring, level). Handles gravity (`tick`), movement, rotation, line clearing, spawning, baseline T-Spin lock-state tracking, and seeded replay hooks. Hidden top rows keep spawn safe.
   - `Tetromino` & `TetrominoType`: piece data and rotations.
 - **UI**: `net.vetcafe.jtetris.ui.*`
   - `TetrisFrame`: main window, timer-driven loop, key bindings, menu, pause/restart/leaderboard, and in-stage prompt overlays for game-over, score entry, leaderboard, and exit confirmation.
   - `InputRepeater`: deterministic horizontal DAS/ARR state machine used by `TetrisFrame`.
   - `SoftDropRepeater`: deterministic soft-drop repeat timing used by `TetrisFrame`.
   - `GamePanel`: renders board, ghost projection, and active piece; focuses itself on show; modern dark palette.
-  - `SidePanel`: stats, scoring feedback, combo/B2B status, hold/next previews, controls cheat-sheet.
+  - `SidePanel`: performance stats, scoring feedback, combo/B2B status, Hold preview, and three-piece Next queue.
   - `HelpContent`: Swing-native help overlay content for controls and modern Tetris concepts surfaced by the UI.
 - **Scores**: `net.vetcafe.jtetris.score.ScoreManager`: per-user local high scores stored in `~/.tetris_scores.properties` (best-only per user).
 
@@ -32,17 +32,16 @@ classDiagram
         +focusGame()
     }
     class SidePanel {
-        +setStats(...)
-        +setNext(Tetromino)
-        +setControls(List)
+        +applyTheme()
     }
     class Board {
         -Tetromino current
-        -Tetromino next
+        -Deque~TetrominoType~ nextQueue
         +tick()
         +move(dx,dy)
         +rotateCW()
         +hardDrop()
+        +getNextQueue()
         +clearLines()
     }
     class Tetromino {
@@ -95,7 +94,8 @@ classDiagram
 - Theme: choose `Theme -> Auto/Light/Dark` from the menu bar (applies immediately)
 
 ## UI Layout & Styling
-- `GamePanel` center; `SidePanel` on the right with Stats (Score/Level/Lines), scoring feedback, Combo/B2B status, Hold/Next previews, and Controls list.
+- `GamePanel` is centered; `SidePanel` uses a clear information hierarchy with prominent Score, compact Level/Lines, scoring feedback, Combo/B2B status, a separate Hold section, and three vertically ordered Next previews.
+- The permanent controls cheat-sheet was removed from the side panel; controls remain available in Help through `H` or the menu.
 - Help is implemented as a scrollable in-window Swing overlay and pauses gameplay while open.
 - UI theme supports startup override (`-Djtetris.theme=auto|light|dark`) and runtime switching via menu without restart.
 - Ghost piece uses a subtle, unified neutral shadow color (instead of piece-matched colors) to indicate hard-drop landing.

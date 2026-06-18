@@ -14,6 +14,7 @@ class HelpContentTest {
         assertTrue(html.contains("Controls"));
         assertTrue(html.contains("Hold"));
         assertTrue(html.contains("Next"));
+        assertTrue(html.contains("next three pieces"));
         assertTrue(html.contains("ghost piece"));
         assertTrue(html.contains("Combo"));
         assertTrue(html.contains("Back-to-Back"));

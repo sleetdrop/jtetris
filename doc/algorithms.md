@@ -2,8 +2,14 @@
 
 ## Board representation
 - Grid: `TetrominoType[HEIGHT][WIDTH]`, with HEIGHT=22 (top 2 rows hidden for spawn).
-- Active piece: `Tetromino current`; Next: `Tetromino next`.
+- Active piece: `Tetromino current`; upcoming pieces: an ordered three-entry `ArrayDeque<TetrominoType>`.
 - Piece generation uses `PieceBag` (7-bag randomizer) to keep distribution fair.
+
+## Next queue
+- `Board` owns exactly three upcoming tetromino types and exposes them as an immutable snapshot through `getNextQueue()`.
+- Normal spawn removes the queue head, makes it active at spawn orientation, and appends one new type from `PieceBag`.
+- `getNext()` remains a compatibility accessor for the queue head; new consumers should use `getNextQueue()` when complete preview state matters.
+- Seeded replay verification compares the complete queue so future-piece state is reproducible.
 
 ## Movement & rotation
 - Movement uses `Board.move(dx, dy)`; validates against bounds and occupied cells.
@@ -18,7 +24,7 @@
 
 ## Hold piece
 - `Board.hold()` supports one hold per active piece lifecycle.
-- First hold stores current and promotes `next`; subsequent hold swaps with stored piece.
+- First hold stores current, promotes the upcoming queue head, and refills the queue; subsequent hold swaps with the stored piece without changing the queue.
 - Hold is reset only after lock/spawn, preserving the per-turn hold guard.
 
 ## T-Spin detection (baseline)
@@ -53,8 +59,8 @@
 
 ## Rendering
 - `GamePanel`: renders grid, locked blocks, ghost projection, and active piece; antialiased; modern dark palette.
-- `SidePanel`: core stats, player-facing scoring feedback, combo/B2B status, hold/next previews, and controls list.
-- `HelpContent`: Swing-native help overlay content for controls, Hold/Next/Ghost concepts, and advanced scoring terms.
+- `SidePanel`: structured hierarchy with core stats, player-facing scoring feedback, combo/B2B status, Hold, and three vertically ordered Next previews.
+- `HelpContent`: authoritative Swing-native controls reference plus Hold/Next/Ghost concepts and advanced scoring terms.
 
 ## Input
 - Swing key bindings on root pane (`WHEN_IN_FOCUSED_WINDOW`): move, rotate (CW/CCW), hard drop, hold (`C`), pause, restart, leaderboard, help, quit.
@@ -103,7 +109,6 @@ flowchart TD
 
 ## Extension ideas
 - Level-based fall speed.
-- Multi-piece next queue.
 - Perfect Clear detection and scoring feedback.
 - Soft drop and hard drop scoring.
 - T-Spin Mini distinction.

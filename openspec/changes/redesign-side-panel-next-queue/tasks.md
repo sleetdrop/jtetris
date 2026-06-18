@@ -22,10 +22,10 @@
 - [x] Commit the side-panel redesign as one focused change.
 
 ## 4. Help and Documentation
-- [ ] Update Help to explain the three-piece Next queue.
-- [ ] Update `doc/overview.md` and `doc/algorithms.md`.
-- [ ] Update focused Help-content tests.
-- [ ] Commit documentation and Help wording as one focused change.
+- [x] Update Help to explain the three-piece Next queue.
+- [x] Update `doc/overview.md` and `doc/algorithms.md`.
+- [x] Update focused Help-content tests.
+- [x] Commit documentation and Help wording as one focused change.
 
 ## 5. Verify and Archive
 - [ ] Run `./mvnw clean test`.
@@ -43,3 +43,6 @@
 - UI focused GREEN: `./mvnw -Djava.awt.headless=true -Dtest=SidePanelLayoutTest,ThemeVisualsTest,ScoreFeedbackFormatterTest test` passed 9 tests.
 - UI regression GREEN: `./mvnw -Djava.awt.headless=true test` passed 62 tests.
 - Environment note: running the new Swing construction test without headless mode aborted the Java 26/macOS AWT process before JUnit execution; all Swing test commands use `-Djava.awt.headless=true`.
+- Help RED: `./mvnw -Djava.awt.headless=true -Dtest=HelpContentTest test` failed because the content did not describe the `next three pieces`.
+- Help/docs focused GREEN: `./mvnw -Djava.awt.headless=true -Dtest=HelpContentTest,SidePanelLayoutTest,ReplayHooksTest test` passed 7 tests.
+- Help/docs regression GREEN: `./mvnw -Djava.awt.headless=true test` passed 62 tests.

@@ -71,7 +71,7 @@ final class HelpContent {
                   <tr><td><b>Esc</b></td><td>Quit or close the active prompt.</td></tr>
                 </table>
                 <h2 style='font-size: 15px; color: %s;'>Playfield</h2>
-                <p>The ghost piece shows where the active piece will land. The Next preview shows the upcoming piece. Hold stores one piece for later; after you use Hold, it is unavailable until the current piece locks.</p>
+                <p>The ghost piece shows where the active piece will land. Next shows the next three pieces in play order. Hold stores one piece for later; after you use Hold, it is unavailable until the current piece locks.</p>
                 <h2 style='font-size: 15px; color: %s;'>Scoring Feedback</h2>
                 <p><b>Single</b>, <b>Double</b>, <b>Triple</b>, and <b>Tetris</b> describe clearing 1, 2, 3, or 4 lines at once.</p>
                 <p><b>Combo</b> means consecutive pieces cleared lines. It resets after a piece locks without clearing a line.</p>
