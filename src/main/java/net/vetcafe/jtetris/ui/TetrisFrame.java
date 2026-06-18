@@ -26,11 +26,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.ButtonGroup;
-import javax.swing.table.DefaultTableModel;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import java.awt.Component;
@@ -45,6 +42,13 @@ public class TetrisFrame extends JFrame {
     private static final int DAS_MS = 130;
     private static final int ARR_MS = 35;
     private static final int SOFT_DROP_REPEAT_MS = 40;
+
+    private enum LeaderboardTransition {
+        NONE,
+        DELETE_CONFIRM,
+        REFRESH,
+        DELETE_FAILURE
+    }
 
     static {
         // On macOS this merges the menu bar into the system bar when supported
@@ -112,6 +116,8 @@ public class TetrisFrame extends JFrame {
     private JComboBox<String> scoreEntryExistingUsers;
     private JTextField scoreEntryNewUserField;
     private String scoreEntryFeedbackMessage;
+    private String pendingLeaderboardDeleteUser;
+    private LeaderboardTransition leaderboardTransition = LeaderboardTransition.NONE;
     private boolean paused;
     private boolean pausedBeforeHelp;
 
@@ -502,59 +508,16 @@ public class TetrisFrame extends JFrame {
             return;
         }
 
-        UiTheme theme = UiTheme.active();
-        var entries = scoreManager.getLeaderboard();
-
-        JPanel panel = new JPanel(new BorderLayout(0, 10));
-        panel.setOpaque(false);
-
-        if (entries.isEmpty()) {
-            JLabel empty = new JLabel("No scores yet");
-            StageOverlayHost.styleOverlayBodyLabel(empty);
-            empty.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
-            panel.add(empty, BorderLayout.CENTER);
-        } else {
-            DefaultTableModel model = new DefaultTableModel(new Object[]{"User", "Best"}, 0) {
-                @Override public boolean isCellEditable(int row, int column) { return false; }
-            };
-            for (var entry : entries) {
-                model.addRow(new Object[]{entry.user(), entry.score()});
-            }
-            JTable table = new JTable(model);
-            table.setBackground(theme.dialogBackground());
-            table.setForeground(theme.textPrimary());
-            table.setGridColor(theme.tableGrid());
-            table.setRowHeight(26);
-            table.setIntercellSpacing(new Dimension(1, 1));
-            table.setFont(UiFonts.regular(14f));
-            table.getTableHeader().setBackground(theme.tableHeaderBackground());
-            table.getTableHeader().setForeground(theme.tableHeaderText());
-            table.getTableHeader().setFont(UiFonts.semibold(14f));
-            table.getTableHeader().setBorder(BorderFactory.createLineBorder(theme.dialogBorder(), 1));
-            table.getTableHeader().setReorderingAllowed(false);
-            table.setFillsViewportHeight(true);
-            table.setEnabled(false);
-            int visibleRows = Math.max(1, Math.min(entries.size(), 8));
-            int preferredHeight = (visibleRows * table.getRowHeight()) + table.getTableHeader().getPreferredSize().height + 8;
-            table.setPreferredScrollableViewportSize(new Dimension(360, preferredHeight));
-
-            JScrollPane scroll = new JScrollPane(table);
-            scroll.getViewport().setBackground(theme.dialogBackground());
-            scroll.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-            panel.add(scroll, BorderLayout.CENTER);
-        }
-
-        JButton close = new JButton("Close");
-        StageOverlayHost.styleOverlayActionButton(close);
-        close.addActionListener(e -> dismissOverlayIfVisible());
-        JPanel actions = StageOverlayHost.createOverlayActionRow();
-        actions.add(close);
-        panel.add(actions, BorderLayout.SOUTH);
+        LeaderboardContent content = new LeaderboardContent(
+                scoreManager.getLeaderboard(),
+                this::requestLeaderboardDelete,
+                this::dismissOverlayIfVisible
+        );
 
         overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
                 "leaderboard",
                 "Leaderboard",
-                panel,
+                content,
                 new StageOverlayHost.OverlayLifecycle() {
                     @Override
                     public void onOpened() {
@@ -564,7 +527,105 @@ public class TetrisFrame extends JFrame {
                     @Override
                     public void onClosed() {
                         clearHeldInputs();
+                        if (leaderboardTransition == LeaderboardTransition.DELETE_CONFIRM) {
+                            leaderboardTransition = LeaderboardTransition.NONE;
+                            showLeaderboardDeleteConfirm();
+                            return;
+                        }
                         focusGame();
+                    }
+                }
+        ));
+    }
+
+    private void requestLeaderboardDelete(String user) {
+        pendingLeaderboardDeleteUser = user;
+        leaderboardTransition = LeaderboardTransition.DELETE_CONFIRM;
+        dismissOverlayIfVisible();
+    }
+
+    private void showLeaderboardDeleteConfirm() {
+        String user = pendingLeaderboardDeleteUser;
+        if (user == null || user.isBlank()) {
+            showLeaderboard();
+            return;
+        }
+
+        JLabel message = new JLabel("Delete all score data for \"" + user + "\"?");
+        StageOverlayHost.styleOverlayBodyLabel(message);
+        message.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
+
+        JButton delete = new JButton("Delete");
+        StageOverlayHost.styleOverlayActionButton(delete);
+        delete.addActionListener(event -> confirmOverlayIfVisible());
+
+        JButton cancel = new JButton("Cancel");
+        StageOverlayHost.styleOverlayActionButton(cancel);
+        cancel.addActionListener(event -> cancelOverlayIfVisible());
+
+        JPanel actions = StageOverlayHost.createOverlayActionRow();
+        actions.add(delete);
+        actions.add(cancel);
+
+        overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
+                "score-delete-confirm",
+                "Delete score",
+                createSimpleOverlayContent(message, actions),
+                new StageOverlayHost.OverlayLifecycle() {
+                    @Override
+                    public void onOpened() {
+                        clearHeldInputs();
+                    }
+
+                    @Override
+                    public void onClosed() {
+                        clearHeldInputs();
+                        LeaderboardTransition next = leaderboardTransition;
+                        leaderboardTransition = LeaderboardTransition.NONE;
+                        if (next == LeaderboardTransition.DELETE_FAILURE) {
+                            showLeaderboardDeleteFailure();
+                            return;
+                        }
+                        showLeaderboard();
+                    }
+                }
+        ));
+    }
+
+    private void confirmLeaderboardDelete() {
+        boolean deleted = scoreManager.deleteUser(pendingLeaderboardDeleteUser);
+        pendingLeaderboardDeleteUser = null;
+        leaderboardTransition = deleted
+                ? LeaderboardTransition.REFRESH
+                : LeaderboardTransition.DELETE_FAILURE;
+    }
+
+    private void showLeaderboardDeleteFailure() {
+        JLabel message = new JLabel("Score data could not be deleted.");
+        StageOverlayHost.styleOverlayBodyLabel(message);
+        message.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
+
+        JButton close = new JButton("Close");
+        StageOverlayHost.styleOverlayActionButton(close);
+        close.addActionListener(event -> dismissOverlayIfVisible());
+
+        JPanel actions = StageOverlayHost.createOverlayActionRow();
+        actions.add(close);
+
+        overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
+                "score-delete-failure",
+                "Delete score",
+                createSimpleOverlayContent(message, actions),
+                new StageOverlayHost.OverlayLifecycle() {
+                    @Override
+                    public void onOpened() {
+                        clearHeldInputs();
+                    }
+
+                    @Override
+                    public void onClosed() {
+                        clearHeldInputs();
+                        showLeaderboard();
                     }
                 }
         ));
@@ -770,6 +831,8 @@ public class TetrisFrame extends JFrame {
         } else if (active != null && "exit-confirm".equals(active.id())) {
             dispose();
             System.exit(0);
+        } else if (active != null && "score-delete-confirm".equals(active.id())) {
+            confirmLeaderboardDelete();
         } else if (active != null && "help".equals(active.id())) {
             // Close the help overlay.
         }
@@ -783,6 +846,9 @@ public class TetrisFrame extends JFrame {
         StageOverlayHost.OverlaySpec active = overlayHost.activeOverlay();
         if (active != null && "score-entry".equals(active.id())) {
             finalizeScoreEntryFromOverlay(false);
+        } else if (active != null && "score-delete-confirm".equals(active.id())) {
+            pendingLeaderboardDeleteUser = null;
+            leaderboardTransition = LeaderboardTransition.REFRESH;
         }
         dismissOverlayIfVisible();
     }

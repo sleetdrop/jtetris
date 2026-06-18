@@ -6,8 +6,8 @@
 - [x] Implement safe legacy score migration and parent-directory creation.
 - [x] Add failing tests for durable player deletion and save-failure rollback.
 - [x] Implement the `ScoreManager` deletion contract.
-- [ ] Add failing tests for leaderboard selection and deletion interaction.
-- [ ] Implement leaderboard delete, confirmation, feedback, and refresh overlays.
+- [x] Add failing tests for leaderboard selection and deletion interaction.
+- [x] Implement leaderboard delete, confirmation, feedback, and refresh overlays.
 - [ ] Update `doc/overview.md`, `doc/algorithms.md`, and relevant OpenSpec documentation.
 - [ ] Run `./mvnw -Djava.awt.headless=true clean test` and record verification evidence.
 - [ ] Review the complete diff, update canonical specs, and archive this change.
