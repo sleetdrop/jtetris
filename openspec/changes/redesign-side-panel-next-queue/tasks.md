@@ -46,3 +46,7 @@
 - Help RED: `./mvnw -Djava.awt.headless=true -Dtest=HelpContentTest test` failed because the content did not describe the `next three pieces`.
 - Help/docs focused GREEN: `./mvnw -Djava.awt.headless=true -Dtest=HelpContentTest,SidePanelLayoutTest,ReplayHooksTest test` passed 7 tests.
 - Help/docs regression GREEN: `./mvnw -Djava.awt.headless=true test` passed 62 tests.
+- Final automated verification: `./mvnw -Djava.awt.headless=true clean test` passed 62 tests, 0 failures, 0 errors, 0 skipped.
+- macOS package verification: `./mvnw -Pmac -Djava.awt.headless=true clean package` succeeded and produced `target/dist/JTetris.app`.
+- `git diff --check` passed.
+- Pending user verification: run `./mvnw clean test` outside the restricted GUI environment and inspect light/dark side-panel rendering in the rebuilt app.
