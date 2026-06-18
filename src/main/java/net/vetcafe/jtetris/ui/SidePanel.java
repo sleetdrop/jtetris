@@ -10,7 +10,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -18,6 +17,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.List;
 
 public class SidePanel extends JPanel {
     private final Board board;
@@ -27,10 +27,9 @@ public class SidePanel extends JPanel {
     private JLabel feedbackLabel;
     private JLabel comboLabel;
     private JLabel b2bLabel;
-    private JTextArea controlsArea;
     private final JPanel statsPanel;
     private final JPanel statusPanel;
-    private final NextPanel nextPanel;
+    private final PreviewPanel previewPanel;
 
     public SidePanel(Board board) {
         this.board = board;
@@ -49,10 +48,8 @@ public class SidePanel extends JPanel {
         topPanel.add(statusPanel);
         add(topPanel, BorderLayout.NORTH);
 
-        nextPanel = new NextPanel(board);
-        add(nextPanel, BorderLayout.CENTER);
-
-        add(createControlsPanel(), BorderLayout.SOUTH);
+        previewPanel = new PreviewPanel(board);
+        add(previewPanel, BorderLayout.CENTER);
 
         Timer timer = new Timer(200, e -> refreshLabels());
         timer.start();
@@ -63,10 +60,11 @@ public class SidePanel extends JPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setOpaque(false);
         scoreLabel = createLabel("Score: 0");
-        levelLabel = createLabel("Level: 1");
-        linesLabel = createLabel("Lines: 0");
-        addStacked(panel, scoreLabel, 5);
-        addStacked(panel, levelLabel, 5);
+        scoreLabel.setFont(UiFonts.semibold(18f));
+        levelLabel = createCompactLabel("Level: 1");
+        linesLabel = createCompactLabel("Lines: 0");
+        addStacked(panel, scoreLabel, 8);
+        addStacked(panel, levelLabel, 4);
         addStacked(panel, linesLabel, 0);
         return panel;
     }
@@ -100,6 +98,12 @@ public class SidePanel extends JPanel {
         return label;
     }
 
+    private JLabel createCompactLabel(String text) {
+        JLabel label = createLabel(text);
+        label.setFont(UiFonts.semibold(13f));
+        return label;
+    }
+
     private JLabel createStatusLabel(String text) {
         JLabel label = new JLabel(text);
         label.setForeground(UiTheme.active().textMuted());
@@ -126,33 +130,12 @@ public class SidePanel extends JPanel {
         b2bLabel.setForeground(ScoreFeedbackFormatter.activeBackToBack(b2b)
                 ? UiTheme.active().textPrimary()
                 : UiTheme.active().textMuted());
-        nextPanel.repaint();
+        previewPanel.repaint();
         repaint();
     }
 
-    private JPanel createControlsPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setOpaque(false);
-
-        controlsArea = new JTextArea();
-        controlsArea.setEditable(false);
-        controlsArea.setOpaque(false);
-        controlsArea.setForeground(UiTheme.active().textMuted());
-        controlsArea.setFont(UiFonts.mono(11f));
-        controlsArea.setText("Controls:\n" +
-                "← / →  move\n" +
-                "↓       soft drop\n" +
-                "↑ or Z  rotate\n" +
-                "␣       hard drop\n" +
-                "C       hold\n" +
-                "P       pause/resume\n" +
-                "R       restart\n" +
-                "H       help\n" +
-                "Esc     quit");
-        controlsArea.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
-
-        panel.add(controlsArea, BorderLayout.CENTER);
-        return panel;
+    List<TetrominoType> displayedNextTypes() {
+        return previewPanel.displayedNextTypes();
     }
 
     public void applyTheme() {
@@ -167,19 +150,28 @@ public class SidePanel extends JPanel {
         b2bLabel.setForeground(ScoreFeedbackFormatter.activeBackToBack(board.isBackToBackActive())
                 ? UiTheme.active().textPrimary()
                 : UiTheme.active().textMuted());
-        if (controlsArea != null) {
-            controlsArea.setForeground(UiTheme.active().textMuted());
-        }
         repaint();
     }
 
-    private static class NextPanel extends JPanel {
+    private static class PreviewPanel extends JPanel {
+        private static final int HOLD_TITLE_Y = 28;
+        private static final int HOLD_PIECE_Y = 42;
+        private static final int NEXT_DIVIDER_Y = 104;
+        private static final int NEXT_TITLE_Y = 134;
+        private static final int PRIMARY_NEXT_Y = 150;
+        private static final int SECONDARY_NEXT_Y = 216;
+        private static final int TERTIARY_NEXT_Y = 274;
+
         private final Board board;
 
-        NextPanel(Board board) {
+        PreviewPanel(Board board) {
             this.board = board;
-            setPreferredSize(new Dimension(200, 200));
+            setPreferredSize(new Dimension(200, 320));
             setOpaque(false);
+        }
+
+        List<TetrominoType> displayedNextTypes() {
+            return board.getNextQueue();
         }
 
         @Override
@@ -188,9 +180,21 @@ public class SidePanel extends JPanel {
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             drawDivider(g2d, 0);
-            drawPreview(g2d, "Hold", board.getHold(), 26, board.isHoldAvailable());
-            drawDivider(g2d, 106);
-            drawPreview(g2d, "Next", board.getNext(), 132, true);
+            drawTitle(g2d, "Hold", HOLD_TITLE_Y);
+            drawHold(g2d, board.getHold(), HOLD_PIECE_Y, board.isHoldAvailable());
+            drawDivider(g2d, NEXT_DIVIDER_Y);
+            drawTitle(g2d, "Next", NEXT_TITLE_Y);
+
+            List<TetrominoType> nextTypes = displayedNextTypes();
+            if (!nextTypes.isEmpty()) {
+                drawPiece(g2d, nextTypes.get(0), PRIMARY_NEXT_Y, 18, true);
+            }
+            if (nextTypes.size() > 1) {
+                drawPiece(g2d, nextTypes.get(1), SECONDARY_NEXT_Y, 15, true);
+            }
+            if (nextTypes.size() > 2) {
+                drawPiece(g2d, nextTypes.get(2), TERTIARY_NEXT_Y, 15, true);
+            }
             g2d.dispose();
         }
 
@@ -199,24 +203,35 @@ public class SidePanel extends JPanel {
             g2d.drawLine(0, y, getWidth(), y);
         }
 
-        private void drawPreview(Graphics2D g2d, String title, Tetromino piece, int top, boolean available) {
+        private void drawTitle(Graphics2D g2d, String title, int baseline) {
             g2d.setColor(UiTheme.active().textMuted());
             g2d.setFont(UiFonts.semibold(12f));
-            g2d.drawString(title, 0, top);
+            g2d.drawString(title, 0, baseline);
+        }
 
+        private void drawHold(Graphics2D g2d, Tetromino piece, int top, boolean available) {
             if (piece == null) {
                 drawEmptyPreview(g2d, top);
                 return;
             }
-            TetrominoType type = piece.getType();
+            drawPiece(g2d, piece.getType(), top, 18, available);
+        }
+
+        private void drawPiece(Graphics2D g2d, TetrominoType type, int top, int cell, boolean available) {
             Color color = ColorPalette.colorFor(type);
             Color edge = ColorPalette.outlineFor(type);
-            int cell = 18;
-            int offsetX = 22;
-            int offsetY = top + 16;
+            var cells = type.cells(0);
+            int minX = Integer.MAX_VALUE;
+            int maxX = Integer.MIN_VALUE;
+            for (var cellPos : cells) {
+                minX = Math.min(minX, cellPos.x);
+                maxX = Math.max(maxX, cellPos.x);
+            }
+            int pieceWidth = (maxX - minX + 1) * cell;
+            int offsetX = ((getWidth() - pieceWidth) / 2) - (minX * cell);
             for (var cellPos : type.cells(0)) {
                 int x = offsetX + (cellPos.x * cell);
-                int y = offsetY + (cellPos.y * cell);
+                int y = top + (cellPos.y * cell);
                 g2d.setColor(available ? color : muted(color));
                 g2d.fillRect(x + 1, y + 1, cell - 2, cell - 2);
                 g2d.setColor(available ? edge : muted(edge));
@@ -226,13 +241,12 @@ public class SidePanel extends JPanel {
 
         private void drawEmptyPreview(Graphics2D g2d, int top) {
             int cell = 18;
-            int offsetX = 40;
-            int offsetY = top + 24;
+            int offsetX = (getWidth() - (cell * 2)) / 2;
             Color grid = UiTheme.active().boardGrid();
             g2d.setColor(grid);
             for (int y = 0; y < 2; y++) {
                 for (int x = 0; x < 2; x++) {
-                    g2d.drawRect(offsetX + (x * cell) + 1, offsetY + (y * cell) + 1, cell - 3, cell - 3);
+                    g2d.drawRect(offsetX + (x * cell) + 1, top + (y * cell) + 1, cell - 3, cell - 3);
                 }
             }
         }
