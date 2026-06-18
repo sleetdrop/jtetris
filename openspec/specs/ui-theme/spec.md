@@ -20,14 +20,29 @@ JTetris SHALL render stage cells, grid lines, ghost cells, and preview cells wit
 - **Then** its cells use the same flat color and outline rule as stage cells
 
 ### Requirement: Side panel preserves content with improved hierarchy
-JTetris SHALL present side-panel game information as player-facing state, keeping professional Tetris mechanics visible without showing inactive debug-style placeholders.
+JTetris SHALL present side-panel game information as player-facing state using a clear hierarchy, without duplicating the full controls reference already available in Help.
 
 #### Scenario: Side panel shows core stats and advanced status clearly
 - **Given** a game is running in either theme
 - **When** the side panel refreshes
-- **Then** it displays score, level, lines, hold preview, next preview, combo status, back-to-back status, and controls
+- **Then** it displays score prominently
+- **And** it displays level, lines, meaningful scoring feedback, combo status, and back-to-back status in a compact performance section
+- **And** regular information labels including Hold and Next use the primary text color consistently
 - **And** combo and back-to-back inactive states use subdued text instead of looking like broken counters
-- **And** no gameplay input, scoring, or model state behavior changes as part of the side-panel rendering
+- **And** active combo and back-to-back states use the primary text color
+
+#### Scenario: Hold and Next use separate stable sections
+- **Given** a game is running at the default window size
+- **When** the side panel renders
+- **Then** Hold appears in a section separated from performance state by a divider
+- **And** Next appears in a section separated from Hold by a divider
+- **And** neither section shifts or clips when its piece state changes
+
+#### Scenario: Side panel omits persistent controls reference
+- **Given** controls are documented in the in-app Help overlay
+- **When** the side panel renders
+- **Then** it does not display the permanent keyboard controls cheat-sheet
+- **And** the Help menu action and Help keyboard shortcut remain available
 
 #### Scenario: Scoring feedback appears only when meaningful
 - **Given** the most recent locked piece cleared one or more lines
@@ -41,6 +56,22 @@ JTetris SHALL present side-panel game information as player-facing state, keepin
 - **When** the side panel renders the Hold preview
 - **Then** it shows a subdued empty state
 - **And** after hold is used for the current piece, the held piece preview is visually marked as temporarily unavailable until the piece locks
+
+### Requirement: Side panel shows three upcoming pieces
+JTetris SHALL render the three model-owned upcoming pieces vertically in promotion order.
+
+#### Scenario: First upcoming piece is visually primary
+- **Given** the Board upcoming queue contains three types
+- **When** the Next section renders
+- **Then** all three types are visible in queue order
+- **And** the first upcoming piece uses the primary preview size and full theme color
+- **And** the second and third pieces remain readable as visually secondary previews
+
+#### Scenario: Upcoming previews match flat theme styling
+- **Given** either the light or dark theme is active
+- **When** the three upcoming pieces are rendered
+- **Then** each cell uses `ColorPalette` fill and outline routing
+- **And** the previews do not introduce bevel, shadow, or theme-specific hard-coded colors
 
 ### Requirement: In-app Help explains controls and scoring concepts
 JTetris SHALL provide a Swing-native Help page inside the main window overlay layer that explains controls and the modern Tetris concepts surfaced by the UI.

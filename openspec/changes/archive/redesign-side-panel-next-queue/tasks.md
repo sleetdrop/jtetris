@@ -29,12 +29,12 @@
 - [x] Commit documentation and Help wording as one focused change.
 
 ## 5. Verify and Archive
-- [ ] Run `./mvnw clean test`.
-- [ ] Manually verify light and dark themes at the default window size.
-- [ ] Record verification evidence below.
-- [ ] Merge the spec deltas into canonical OpenSpec specs.
-- [ ] Archive this change.
-- [ ] Commit the completed OpenSpec archive.
+- [x] Run the complete automated test suite in the supported headless environment.
+- [x] Manually verify light and dark themes at the default window size.
+- [x] Record verification evidence below.
+- [x] Merge the spec deltas into canonical OpenSpec specs.
+- [x] Archive this change.
+- [x] Commit the completed OpenSpec archive.
 
 ## Verification Notes
 - Model RED: `./mvnw -Dtest=NextQueueTest,HoldPieceTest,ReplayHooksTest,BoardRegressionGateTest test` failed at test compilation because `Board.getNextQueue()` did not exist.
@@ -54,3 +54,4 @@
 - Visual refinement RED: `./mvnw -Djava.awt.headless=true -Dtest=SidePanelLayoutTest test` failed at compilation because `SidePanel.sectionTitleColor()` did not exist.
 - Visual refinement focused GREEN: `./mvnw -Djava.awt.headless=true -Dtest=SidePanelLayoutTest,ThemeVisualsTest,ScoreFeedbackFormatterTest test` passed 10 tests.
 - Visual refinement full GREEN: `./mvnw -Djava.awt.headless=true clean test` passed 63 tests, and the macOS package rebuilt successfully.
+- Manual visual verification: user-provided light and dark screenshots on 2026-06-18 confirm the default-size side panel has no clipping or overlap, uses the intended label hierarchy, and renders Hold plus all three Next previews clearly.
