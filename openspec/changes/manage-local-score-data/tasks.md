@@ -1,7 +1,7 @@
 # Tasks
 
-- [ ] Add failing tests for platform-specific score data path resolution.
-- [ ] Implement the score data path resolver without external dependencies.
+- [x] Add failing tests for platform-specific score data path resolution.
+- [x] Implement the score data path resolver without external dependencies.
 - [ ] Add failing tests for legacy migration and new-store precedence.
 - [ ] Implement safe legacy score migration and parent-directory creation.
 - [ ] Add failing tests for durable player deletion and save-failure rollback.
@@ -15,4 +15,3 @@
 ## Verification Notes
 
 - Pending implementation.
-
