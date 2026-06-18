@@ -84,6 +84,19 @@ class ScoreManagerTest {
     }
 
     @Test
+    void malformedPropertiesFileIsTreatedAsUnreadable() throws IOException {
+        Path store = tempDir.resolve("data/net.vetcafe.jtetris/scores.properties");
+        Path legacy = tempDir.resolve(".tetris_scores.properties");
+        Files.createDirectories(store.getParent());
+        Files.writeString(store, "alice=\\uZZZZ\n");
+
+        ScoreManager manager = new ScoreManager(store, legacy);
+
+        assertTrue(manager.getLeaderboard().isEmpty());
+        assertTrue(Files.exists(store));
+    }
+
+    @Test
     void deletesExistingPlayerCaseInsensitivelyAndPersistsRemoval() {
         Path store = tempDir.resolve("data/net.vetcafe.jtetris/scores.properties");
         Path legacy = tempDir.resolve(".tetris_scores.properties");

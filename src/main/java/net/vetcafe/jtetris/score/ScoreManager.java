@@ -39,7 +39,7 @@ public class ScoreManager {
             Properties loaded = new Properties();
             try (InputStream input = Files.newInputStream(path)) {
                 loaded.load(input);
-            } catch (IOException ignored) {
+            } catch (IOException | IllegalArgumentException ignored) {
                 return null;
             }
             return loaded;
