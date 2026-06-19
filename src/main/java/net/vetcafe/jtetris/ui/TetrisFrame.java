@@ -104,7 +104,8 @@ public class TetrisFrame extends JFrame {
     private final Board board = new Board();
     private final GamePanel gamePanel = new GamePanel(board);
     private final StageOverlayHost overlayHost = new StageOverlayHost();
-    private final SidePanel sidePanel = new SidePanel(board);
+    private final GameSessionTimer sessionTimer = new GameSessionTimer();
+    private final SidePanel sidePanel = new SidePanel(board, sessionTimer::elapsedMillis);
     private final ScoreManager scoreManager = new ScoreManager();
     private final InputRepeater horizontalRepeater = new InputRepeater(DAS_MS, ARR_MS);
     private final SoftDropRepeater softDropRepeater = new SoftDropRepeater(SOFT_DROP_REPEAT_MS);
@@ -119,7 +120,6 @@ public class TetrisFrame extends JFrame {
     private String pendingLeaderboardDeleteUser;
     private LeaderboardTransition leaderboardTransition = LeaderboardTransition.NONE;
     private boolean paused;
-    private boolean pausedBeforeHelp;
 
     public TetrisFrame() {
         super(APP_NAME);
@@ -132,6 +132,7 @@ public class TetrisFrame extends JFrame {
         add(sidePanel, BorderLayout.EAST);
         setGlassPane(overlayHost);
         overlayHost.setVisible(false);
+        overlayHost.setBlockingVisibilityListener(visible -> syncSessionTimer());
         setJMenuBar(createMenuBar());
         pack();
         setResizable(false);
@@ -162,9 +163,9 @@ public class TetrisFrame extends JFrame {
         inputTimer.start();
 
         Timer timer = new Timer(GRAVITY_TICK_MS, e -> {
-            if (paused) return;
             boolean over = board.isGameOver();
             if (over) {
+                syncSessionTimer();
                 if (!scorePrompted || !lastGameOverProcessed) {
                     scorePrompted = true;
                     lastGameOverProcessed = true;
@@ -175,11 +176,15 @@ public class TetrisFrame extends JFrame {
             } else {
                 lastGameOverProcessed = false;
             }
+            syncSessionTimer();
+            if (!shouldRunSessionTimer(paused, isModalLayerActive(), false)) return;
             if (!board.tick()) return;
+            syncSessionTimer();
             gamePanel.repaint();
         });
         timer.start();
 
+        syncSessionTimer();
         focusGame();
     }
 
@@ -277,6 +282,7 @@ public class TetrisFrame extends JFrame {
 
     private void togglePause() {
         paused = !paused;
+        syncSessionTimer();
         clearHeldInputs();
         setTitle(APP_NAME + (paused ? " (Paused)" : ""));
     }
@@ -288,6 +294,8 @@ public class TetrisFrame extends JFrame {
         lastGameOverProcessed = false;
         setTitle(APP_NAME);
         board.reset();
+        sessionTimer.resetAndStart();
+        syncSessionTimer();
         gamePanel.repaint();
         focusGame();
     }
@@ -718,9 +726,6 @@ public class TetrisFrame extends JFrame {
         }
 
         clearHeldInputs();
-        pausedBeforeHelp = paused;
-        paused = true;
-        setTitle(APP_NAME + " (Paused)");
 
         overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
                 "help",
@@ -734,8 +739,6 @@ public class TetrisFrame extends JFrame {
 
                     @Override
                     public void onClosed() {
-                        paused = pausedBeforeHelp;
-                        setTitle(APP_NAME + (paused ? " (Paused)" : ""));
                         clearHeldInputs();
                         focusGame();
                     }
@@ -913,6 +916,18 @@ public class TetrisFrame extends JFrame {
         return !paused && !isModalLayerActive() && !board.isGameOver();
     }
 
+    static boolean shouldRunSessionTimer(boolean paused, boolean overlayVisible, boolean gameOver) {
+        return !paused && !overlayVisible && !gameOver;
+    }
+
+    private void syncSessionTimer() {
+        sessionTimer.syncRunning(shouldRunSessionTimer(
+                paused,
+                isModalLayerActive(),
+                board.isGameOver()
+        ));
+    }
+
     private long nowMs() {
         return System.currentTimeMillis();
     }
@@ -961,12 +976,14 @@ public class TetrisFrame extends JFrame {
     private void hardDropIfActive() {
         if (!isGameplayInputEnabled()) return;
         board.hardDrop();
+        syncSessionTimer();
         gamePanel.repaint();
     }
 
     private void holdIfActive() {
         if (!isGameplayInputEnabled()) return;
         board.hold();
+        syncSessionTimer();
         gamePanel.repaint();
     }
 

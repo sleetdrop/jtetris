@@ -14,6 +14,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.FlowLayout;
 import java.awt.Insets;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * In-stage overlay host that manages HUD-style panel lifecycle and basic enter/exit motion.
@@ -104,6 +106,8 @@ public final class StageOverlayHost extends JPanel {
     private State state = State.HIDDEN;
     private OverlaySpec activeOverlay;
     private long animationStartAtMs;
+    private Consumer<Boolean> blockingVisibilityListener = visible -> {
+    };
 
     public StageOverlayHost() {
         setOpaque(false);
@@ -126,6 +130,7 @@ public final class StageOverlayHost extends JPanel {
     }
 
     public void showOverlay(OverlaySpec spec) {
+        boolean wasVisible = isOverlayVisible();
         activeOverlay = spec;
         surface.setContent(spec.content());
         titleLabel.setText(spec.title());
@@ -135,6 +140,9 @@ public final class StageOverlayHost extends JPanel {
         surface.setVisual(1f, ENTER_SLIDE_PX);
         updateSurfaceBounds();
         animationTimer.start();
+        if (!wasVisible) {
+            blockingVisibilityListener.accept(true);
+        }
     }
 
     public void dismissOverlay() {
@@ -152,6 +160,10 @@ public final class StageOverlayHost extends JPanel {
 
     public boolean isOverlayVisible() {
         return state != State.HIDDEN;
+    }
+
+    public void setBlockingVisibilityListener(Consumer<Boolean> listener) {
+        blockingVisibilityListener = Objects.requireNonNull(listener, "listener");
     }
 
     public static void styleOverlayBodyLabel(JLabel label) {
@@ -234,7 +246,10 @@ public final class StageOverlayHost extends JPanel {
                 if (closing != null) {
                     closing.lifecycle().onClosed();
                 }
-                animationTimer.stop();
+                if (state == State.HIDDEN) {
+                    blockingVisibilityListener.accept(false);
+                    animationTimer.stop();
+                }
             }
         }
         repaint();

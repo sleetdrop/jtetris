@@ -1,6 +1,7 @@
 package net.vetcafe.jtetris.ui;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -12,9 +13,36 @@ import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 
 class StageOverlayHostLayoutTest {
+
+    @Test
+    void overlayVisibilityListenerCoversTheWholeBlockingLifetime() throws Exception {
+        StageOverlayHost host = new StageOverlayHost();
+        List<Boolean> states = new CopyOnWriteArrayList<>();
+        CountDownLatch hidden = new CountDownLatch(1);
+        host.setBlockingVisibilityListener(visible -> {
+            states.add(visible);
+            if (!visible) {
+                hidden.countDown();
+            }
+        });
+
+        host.showOverlay(new StageOverlayHost.OverlaySpec(
+                "blocking",
+                "Blocking",
+                new JPanel()
+        ));
+        host.dismissOverlay();
+
+        assertTrue(hidden.await(1, TimeUnit.SECONDS));
+        assertEquals(List.of(true, false), states);
+    }
 
     @Test
     void simpleOverlayKeepsActionButtonsAwayFromSurfaceBottom() {
