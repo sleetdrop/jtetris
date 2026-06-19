@@ -14,7 +14,7 @@
 ## Source Map
 - Main source: `src/main/java/net/vetcafe/jtetris`
   - Model: `model/` (`Board`, `Tetromino`, `TetrominoType`, `PieceBag`, `ReplayAction`, `ReplayPersistence`, `SrsKickTable`, `TSpinDetector`)
-  - UI: `ui/` (`TetrisFrame`, `GamePanel`, `SidePanel`, `LeaderboardContent`, `InputRepeater`, `SoftDropRepeater`, `UiTheme`, `UiFonts`, `ColorPalette`)
+  - UI: `ui/` (`TetrisFrame`, `GamePanel`, `SidePanel`, `GameSessionTimer`, `ElapsedTimeFormatter`, `LeaderboardContent`, `InputRepeater`, `SoftDropRepeater`, `UiTheme`, `UiFonts`, `ColorPalette`)
   - Score storage: `score/` (`ScoreManager`, `ScoreDataPaths`)
 - Tests: `src/test/java/net/vetcafe/jtetris`
 - Resources: no custom font binaries are currently bundled; `UiFonts` falls back to Java/Swing logical fonts.
@@ -47,6 +47,7 @@ java -jar target/jtetris-1.0-SNAPSHOT.jar
 - Preserve the theme-selection contract in `UiTheme.modeOverride()` (`-Djtetris.theme=auto|light|dark`) and keep piece-color routing through `ui/ColorPalette`.
 - Keep the properties-based best-score format compatible across platform data directories and preserve one-time migration from `~/.tetris_scores.properties`.
 - Keep replay hooks (`Board.applyReplayAction(...)`, `Board.replayFromSeed(...)`) aligned with any model-behavior change.
+- Keep active session time in the UI layer; it must not enter deterministic `Board` or replay state.
 - Prefer small, localized changes over broad rewrites.
 - When gameplay timing changes, validate model and UI together (gravity timer, DAS/ARR, soft-drop repeaters).
 

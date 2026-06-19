@@ -26,7 +26,9 @@ JTetris SHALL present side-panel game information as player-facing state using a
 - **Given** a game is running in either theme
 - **When** the side panel refreshes
 - **Then** it displays score prominently
-- **And** it displays level, lines, meaningful scoring feedback, combo status, and back-to-back status in a compact performance section
+- **And** it displays level, lines, active session time, meaningful scoring feedback, combo status, and back-to-back status in a compact performance section
+- **And** the core statistic order is Score, Level, Lines, Time
+- **And** Time uses the same visual style as Level and Lines
 - **And** regular information labels including Hold and Next use the primary text color consistently
 - **And** combo and back-to-back inactive states use subdued text instead of looking like broken counters
 - **And** active combo and back-to-back states use the primary text color

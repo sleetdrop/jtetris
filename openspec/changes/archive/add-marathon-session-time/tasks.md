@@ -7,9 +7,9 @@
 - [x] Add overlay blocking and session lifecycle policy tests.
 - [x] Integrate timer lifecycle with pause, overlays, restart, and game over.
 - [x] Update README, Help, and future-mode backlog.
-- [ ] Update canonical specs.
-- [ ] Verify focused tests, full test suite, and both visual themes.
-- [ ] Archive the completed OpenSpec change.
+- [x] Update canonical specs.
+- [x] Verify focused tests, full test suite, and both visual themes.
+- [x] Archive the completed OpenSpec change.
 
 ## Verification Notes
 - `GameSessionTimerTest` RED: compilation failed because the timer did not exist.
@@ -30,3 +30,7 @@
 - Help GREEN: the focused Help test passed with the Endless Marathon and active
   time explanation.
 - Documentation checkpoint: `git diff --check` passed.
+- macOS package checkpoint: `./mvnw -Pmac -Djava.awt.headless=true clean package`
+  passed with 92 tests and produced `target/dist/JTetris.app`.
+- Manual light/dark layout confirmation: user screenshots on 2026-06-19 show
+  Time aligned with Level/Lines, stable status spacing, and unclipped Hold/Next.
