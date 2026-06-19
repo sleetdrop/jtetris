@@ -1,9 +1,12 @@
 package net.vetcafe.jtetris.ui;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
 import net.vetcafe.jtetris.model.TetrominoType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +42,29 @@ class ThemeVisualsTest {
                 assertNotEquals(fill, outline);
                 assertTrue(luminanceDistance(fill, outline) <= 0.22);
             }
+        }
+    }
+
+    @Test
+    void autoRestoresLightSystemThemeAfterManualDarkSelection() throws Exception {
+        LookAndFeel originalLookAndFeel = UIManager.getLookAndFeel();
+        try {
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            UIManager.put("Panel.background", Color.WHITE);
+            UiTheme.setActiveMode(UiTheme.Mode.AUTO);
+            UiTheme.refreshFromSystem();
+            assertFalse(UiTheme.active().isDark());
+
+            UIManager.put("Panel.background", null);
+            UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarkLaf");
+            UiTheme.setActiveMode(UiTheme.Mode.DARK);
+            UiTheme.setActiveMode(UiTheme.Mode.AUTO);
+            UiTheme.refreshFromSystem();
+
+            assertFalse(UiTheme.active().isDark());
+        } finally {
+            UIManager.setLookAndFeel(originalLookAndFeel);
+            UiTheme.refreshFromSystem();
         }
     }
 

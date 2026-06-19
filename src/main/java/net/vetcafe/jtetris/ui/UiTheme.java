@@ -2,6 +2,7 @@ package net.vetcafe.jtetris.ui;
 
 import java.awt.Color;
 import java.util.Locale;
+import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 
 public final class UiTheme {
@@ -48,6 +49,7 @@ public final class UiTheme {
     );
 
     private static volatile Mode activeMode = modeOverride();
+    private static volatile boolean systemDark = isLikelyDarkSystemTheme();
     private static volatile UiTheme active = detectInitialTheme();
 
     private final Mode mode;
@@ -114,6 +116,9 @@ public final class UiTheme {
     }
 
     public static void refreshFromSystem() {
+        if (!isFlatLafActive()) {
+            systemDark = isLikelyDarkSystemTheme();
+        }
         active = themeFor(activeMode);
     }
 
@@ -134,8 +139,14 @@ public final class UiTheme {
         return switch (mode) {
             case LIGHT -> LIGHT;
             case DARK -> DARK;
-            case AUTO -> isLikelyDarkSystemTheme() ? DARK : LIGHT;
+            case AUTO -> systemDark ? DARK : LIGHT;
         };
+    }
+
+    private static boolean isFlatLafActive() {
+        LookAndFeel lookAndFeel = UIManager.getLookAndFeel();
+        return lookAndFeel != null
+                && lookAndFeel.getClass().getName().startsWith("com.formdev.flatlaf.");
     }
 
     private static boolean isLikelyDarkSystemTheme() {
