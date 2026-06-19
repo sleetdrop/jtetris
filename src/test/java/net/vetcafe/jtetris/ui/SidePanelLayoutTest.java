@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.FutureTask;
 import java.util.function.Supplier;
+import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import net.vetcafe.jtetris.model.Board;
@@ -29,6 +30,23 @@ class SidePanelLayoutTest {
         SidePanel panel = onEdt(() -> new SidePanel(new Board(7L)));
 
         assertEquals(new Dimension(200, 520), panel.getPreferredSize());
+    }
+
+    @Test
+    void sidePanelPlacesElapsedTimeAfterLines() throws Exception {
+        SidePanel panel = onEdt(() -> new SidePanel(new Board(7L), () -> 3_600_000L));
+
+        List<String> coreStats = descendants(panel).stream()
+                .filter(JLabel.class::isInstance)
+                .map(JLabel.class::cast)
+                .map(JLabel::getText)
+                .filter(text -> text.startsWith("Score:")
+                        || text.startsWith("Level:")
+                        || text.startsWith("Lines:")
+                        || text.startsWith("Time:"))
+                .toList();
+
+        assertEquals(List.of("Score: 0", "Level: 1", "Lines: 0", "Time: 1:00:00"), coreStats);
     }
 
     @Test

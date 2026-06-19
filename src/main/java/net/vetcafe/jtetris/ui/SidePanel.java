@@ -18,12 +18,16 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.LongSupplier;
 
 public class SidePanel extends JPanel {
     private final Board board;
+    private final LongSupplier elapsedMillis;
     private JLabel scoreLabel;
     private JLabel levelLabel;
     private JLabel linesLabel;
+    private JLabel timeLabel;
     private JLabel feedbackLabel;
     private JLabel comboLabel;
     private JLabel b2bLabel;
@@ -32,7 +36,12 @@ public class SidePanel extends JPanel {
     private final PreviewPanel previewPanel;
 
     public SidePanel(Board board) {
-        this.board = board;
+        this(board, () -> 0L);
+    }
+
+    SidePanel(Board board, LongSupplier elapsedMillis) {
+        this.board = Objects.requireNonNull(board, "board");
+        this.elapsedMillis = Objects.requireNonNull(elapsedMillis, "elapsedMillis");
         setPreferredSize(new Dimension(200, 520));
         setBackground(UiTheme.active().sidePanelBackground());
         setBorder(BorderFactory.createEmptyBorder(18, 18, 16, 18));
@@ -63,9 +72,11 @@ public class SidePanel extends JPanel {
         scoreLabel.setFont(UiFonts.semibold(18f));
         levelLabel = createCompactLabel("Level: 1");
         linesLabel = createCompactLabel("Lines: 0");
+        timeLabel = createCompactLabel("Time: " + ElapsedTimeFormatter.format(elapsedMillis.getAsLong()));
         addStacked(panel, scoreLabel, 8);
         addStacked(panel, levelLabel, 4);
-        addStacked(panel, linesLabel, 0);
+        addStacked(panel, linesLabel, 4);
+        addStacked(panel, timeLabel, 0);
         return panel;
     }
 
@@ -115,6 +126,7 @@ public class SidePanel extends JPanel {
         scoreLabel.setText("Score: " + board.getScore());
         levelLabel.setText("Level: " + board.getLevel());
         linesLabel.setText("Lines: " + board.getLinesCleared());
+        timeLabel.setText("Time: " + ElapsedTimeFormatter.format(elapsedMillis.getAsLong()));
         String feedback = ScoreFeedbackFormatter.eventText(board.getLastScoreEvent());
         feedbackLabel.setText(feedback);
         feedbackLabel.setVisible(!feedback.isBlank());
@@ -147,6 +159,7 @@ public class SidePanel extends JPanel {
         scoreLabel.setForeground(UiTheme.active().textPrimary());
         levelLabel.setForeground(UiTheme.active().textPrimary());
         linesLabel.setForeground(UiTheme.active().textPrimary());
+        timeLabel.setForeground(UiTheme.active().textPrimary());
         feedbackLabel.setForeground(UiTheme.active().textPrimary());
         comboLabel.setForeground(ScoreFeedbackFormatter.activeCombo(board.getComboStreak())
                 ? UiTheme.active().textPrimary()
