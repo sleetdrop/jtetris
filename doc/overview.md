@@ -95,9 +95,11 @@ classDiagram
 - Theme: choose `Theme -> Auto/Light/Dark` from the menu bar (applies immediately)
 
 ## UI Layout & Styling
-- `GamePanel` is centered; `SidePanel` uses a clear information hierarchy with prominent Score, compact Level/Lines, scoring feedback, Combo/B2B status, a separate Hold section, and three vertically ordered Next previews.
+- `GamePanel` is centered; `SidePanel` uses a clear information hierarchy with prominent Score, compact Level/Lines/Time, scoring feedback, Combo/B2B status, a separate Hold section, and three vertically ordered Next previews.
 - The permanent controls cheat-sheet was removed from the side panel; controls remain available in Help through `H` or the menu.
-- Help is implemented as a scrollable in-window Swing overlay and pauses gameplay while open.
+- The current mode is Endless Marathon: play continues until top-out, and Time tracks active gameplay rather than wall-clock time.
+- Every blocking in-window overlay pauses gravity and session time; closing the final overlay resumes only when the game is not manually paused or over.
+- Help is implemented as a scrollable in-window Swing overlay.
 - UI theme supports startup override (`-Djtetris.theme=auto|light|dark`) and runtime switching via menu without restart.
 - Ghost piece uses a subtle, unified neutral shadow color (instead of piece-matched colors) to indicate hard-drop landing.
 - When a line clear happens, the cleared row area briefly flashes in a simple LCD-style overlay.

@@ -19,6 +19,9 @@ class HelpContentTest {
         assertTrue(html.contains("Combo"));
         assertTrue(html.contains("Back-to-Back"));
         assertTrue(html.contains("T-Spin"));
+        assertTrue(html.contains("Endless Marathon"));
+        assertTrue(html.contains("top-out"));
+        assertTrue(html.contains("excludes pauses and blocking prompts"));
         assertFalse(html.contains("Future polish targets"));
         assertFalse(html.contains("Perfect Clear"));
     }

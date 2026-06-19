@@ -70,6 +70,8 @@ final class HelpContent {
                   <tr><td><b>H</b></td><td>Show this Help page.</td></tr>
                   <tr><td><b>Esc</b></td><td>Quit or close the active prompt.</td></tr>
                 </table>
+                <h2 style='font-size: 15px; color: %s;'>Endless Marathon</h2>
+                <p>A run continues until top-out. Score is the primary result; Level and Lines show progression. Time measures active play and excludes pauses and blocking prompts.</p>
                 <h2 style='font-size: 15px; color: %s;'>Playfield</h2>
                 <p>The ghost piece shows where the active piece will land. Next shows the next three pieces in play order. Hold stores one piece for later; after you use Hold, it is unavailable until the current piece locks.</p>
                 <h2 style='font-size: 15px; color: %s;'>Scoring Feedback</h2>
@@ -79,7 +81,7 @@ final class HelpContent {
                 <p><b>T-Spin</b> is awarded when a T piece locks after a rotation in a tight corner setup. JTetris currently implements baseline T-Spin scoring.</p>
                 </body>
                 </html>
-                """.formatted(text, background, accent, accent, accent);
+                """.formatted(text, background, accent, accent, accent, accent);
     }
 
     private static String color(java.awt.Color color) {

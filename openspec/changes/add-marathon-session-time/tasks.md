@@ -6,9 +6,8 @@
 - [x] Add `Time` below `Lines` without changing the side panel's fixed size.
 - [x] Add overlay blocking and session lifecycle policy tests.
 - [x] Integrate timer lifecycle with pause, overlays, restart, and game over.
-- [ ] Integrate timer lifecycle with pause, overlays, restart, and game over.
-- [ ] Add `Time` below `Lines` without changing the side panel's fixed size.
-- [ ] Update README, Help, canonical specs, and future-mode backlog.
+- [x] Update README, Help, and future-mode backlog.
+- [ ] Update canonical specs.
 - [ ] Verify focused tests, full test suite, and both visual themes.
 - [ ] Archive the completed OpenSpec change.
 
@@ -26,3 +25,8 @@
   pause/overlay/game-over policy.
 - Integration checkpoint: full suite passed with 92 tests, 0 failures, 0 errors,
   and 0 skipped.
+- Help RED: the player-facing content did not identify Endless Marathon or
+  explain active-time exclusions.
+- Help GREEN: the focused Help test passed with the Endless Marathon and active
+  time explanation.
+- Documentation checkpoint: `git diff --check` passed.

@@ -51,3 +51,10 @@ open target/dist/JTetris.app
 
 ## Historical Notes
 The previous workflow lives in `doc/specs`. Those files remain useful project memory, especially `doc/specs/context-pack.md`, but they are no longer the starting point for new work after the OpenSpec migration.
+
+## Game Mode Direction
+- Current focus: Endless Marathon, continuing until top-out with score as the primary result and active elapsed time as session context.
+- Future candidate: Sprint / 40 Lines, ranked by completion time.
+- Future candidate: Ultra / Time Trial, maximizing score within a fixed duration.
+- Future candidates: Score Attack and Versus, each requiring a separate match and result model.
+- Do not introduce a mode-selection system until the Endless Marathon rules, timing, feedback, and quality are mature.

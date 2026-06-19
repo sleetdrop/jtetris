@@ -4,6 +4,7 @@ A lightweight JTetris clone for learning Java, Swing UI, and basic game loop/sco
 
 ## Features
 - Java 17 Swing desktop UI with light/dark theme support.
+- Endless Marathon play that continues until top-out, with active session time shown alongside score, level, and lines.
 - Guideline-style Tetris mechanics including 7-bag randomization, hold piece, ghost piece, SRS rotation kicks, lock delay, combo/B2B scoring, and T-spin detection.
 - Swing-native in-game Help for controls and modern Tetris scoring concepts.
 - Local best-score storage per user.
@@ -36,6 +37,12 @@ java -jar target/jtetris-1.0.0-standalone.jar
 ```bash
 ./mvnw clean test
 ```
+
+## Game mode
+JTetris currently focuses on **Endless Marathon**. A run continues until
+top-out, with Score as the primary result and Level, Lines, and Time as session
+context. Time measures active gameplay and excludes manual pauses and blocking
+in-window prompts.
 
 ## Packaging
 Build the standalone runnable jar:
