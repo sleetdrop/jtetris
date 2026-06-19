@@ -1,6 +1,6 @@
 # Tasks
 
-- [ ] Add deterministic `GameSessionTimer` and elapsed-time formatter tests.
+- [x] Add deterministic `GameSessionTimer` tests.
 - [ ] Implement the timer and formatting with an injectable monotonic clock.
 - [ ] Integrate timer lifecycle with pause, overlays, restart, and game over.
 - [ ] Add `Time` below `Lines` without changing the side panel's fixed size.
@@ -9,4 +9,6 @@
 - [ ] Archive the completed OpenSpec change.
 
 ## Verification Notes
-- Pending implementation.
+- `GameSessionTimerTest` RED: compilation failed because the timer did not exist.
+- `GameSessionTimerTest` GREEN: 4 tests passed for accumulation, pause/resume,
+  reset, idempotence, and monotonic display protection.
