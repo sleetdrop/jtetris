@@ -3,7 +3,7 @@
 - [x] Add a failing regression test for `light system -> dark -> auto`.
 - [x] Preserve the pre-FlatLaf system appearance when resolving Auto.
 - [x] Run focused and full automated verification.
-- [ ] Update the canonical UI theme specification and archive this change.
+- [x] Update the canonical UI theme specification and archive this change.
 
 ## Verification Notes
 - RED: `./mvnw -Djava.awt.headless=true -Dtest=ThemeVisualsTest test`

@@ -99,6 +99,22 @@ JTetris SHALL disable unused FlatLaf native helper loading by default so startup
 - **Then** `flatlaf.useNativeLibrary` defaults to `false`
 - **And** Java does not print restricted native-access warnings from FlatLaf native helper loading during normal startup
 
+### Requirement: Runtime Auto theme reflects system appearance
+JTetris SHALL resolve Auto from system appearance rather than from a manually
+selected FlatLaf light or dark look and feel.
+
+#### Scenario: Auto restores light after manual dark selection
+- **Given** JTetris observed a light system appearance before installing FlatLaf
+- **And** the player manually selected Dark
+- **When** the player selects Auto
+- **Then** JTetris activates the light application theme
+- **And** the currently installed FlatDarkLaf does not override the system signal
+
+#### Scenario: Explicit modes remain deterministic
+- **Given** either Light or Dark is selected explicitly
+- **When** JTetris resolves the active theme
+- **Then** it uses the selected explicit theme without consulting Auto detection
+
 ### Requirement: Stage overlays fit content without clipping actions
 JTetris SHALL render auxiliary stage overlays with content-sized surfaces and action rows that remain fully visible inside the overlay bounds.
 
