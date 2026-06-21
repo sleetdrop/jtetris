@@ -1,5 +1,7 @@
 package net.vetcafe.jtetris.ui;
 
+import net.vetcafe.jtetris.logging.InputLog;
+
 /**
  * Handles deterministic horizontal key repeat (DAS/ARR) independent from OS keyboard repeat settings.
  */
@@ -22,29 +24,39 @@ public class InputRepeater {
     }
 
     public int pressLeft(long nowMs) {
+        boolean duplicate = leftHeld;
         if (!leftHeld) {
             leftHeld = true;
             leftPressOrder = ++pressSequence;
         }
-        return syncDirectionAndMaybeStep(nowMs);
+        int step = syncDirectionAndMaybeStep(nowMs);
+        trace("pressLeft", nowMs, step, duplicate ? "duplicate-press" : "press");
+        return step;
     }
 
     public int releaseLeft(long nowMs) {
         leftHeld = false;
-        return syncDirectionAndMaybeStep(nowMs);
+        int step = syncDirectionAndMaybeStep(nowMs);
+        trace("releaseLeft", nowMs, step, "release");
+        return step;
     }
 
     public int pressRight(long nowMs) {
+        boolean duplicate = rightHeld;
         if (!rightHeld) {
             rightHeld = true;
             rightPressOrder = ++pressSequence;
         }
-        return syncDirectionAndMaybeStep(nowMs);
+        int step = syncDirectionAndMaybeStep(nowMs);
+        trace("pressRight", nowMs, step, duplicate ? "duplicate-press" : "press");
+        return step;
     }
 
     public int releaseRight(long nowMs) {
         rightHeld = false;
-        return syncDirectionAndMaybeStep(nowMs);
+        int step = syncDirectionAndMaybeStep(nowMs);
+        trace("releaseRight", nowMs, step, "release");
+        return step;
     }
 
     public int poll(long nowMs) {
@@ -52,20 +64,25 @@ public class InputRepeater {
         if (desired != activeDirection) {
             activeDirection = desired;
             if (activeDirection == 0) {
+                trace("poll", nowMs, 0, "idle");
                 return 0;
             }
             nextRepeatAt = nowMs + dasMs;
+            trace("poll", nowMs, activeDirection, "direction-change");
             return activeDirection;
         }
 
         if (activeDirection == 0) {
+            trace("poll", nowMs, 0, "idle");
             return 0;
         }
 
         if (nowMs < nextRepeatAt) {
+            trace("poll", nowMs, 0, "before-deadline");
             return 0;
         }
         nextRepeatAt = nowMs + arrMs;
+        trace("poll", nowMs, activeDirection, "repeat");
         return activeDirection;
     }
 
@@ -77,6 +94,7 @@ public class InputRepeater {
         pressSequence = 0;
         leftPressOrder = 0;
         rightPressOrder = 0;
+        trace("reset", -1, 0, "reset");
     }
 
     private int syncDirectionAndMaybeStep(long nowMs) {
@@ -104,6 +122,21 @@ public class InputRepeater {
         }
         return 0;
     }
-}
 
+    private void trace(String event, long nowMs, int step, String reason) {
+        InputLog.repeaterDecision(
+                "horizontal",
+                event,
+                nowMs,
+                leftHeld,
+                rightHeld,
+                activeDirection,
+                nextRepeatAt,
+                step,
+                reason,
+                leftPressOrder,
+                rightPressOrder
+        );
+    }
+}
 

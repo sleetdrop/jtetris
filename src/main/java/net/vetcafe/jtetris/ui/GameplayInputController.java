@@ -1,5 +1,6 @@
 package net.vetcafe.jtetris.ui;
 
+import net.vetcafe.jtetris.logging.InputLog;
 import net.vetcafe.jtetris.model.Board;
 
 import java.util.Objects;
@@ -10,6 +11,12 @@ final class GameplayInputController {
     private final InputRepeater horizontalRepeater;
     private final SoftDropRepeater softDropRepeater;
     private final LongSupplier nowMs;
+    private boolean leftHeld;
+    private boolean rightHeld;
+    private boolean softDropHeld;
+    private long leftPressedAt;
+    private long rightPressedAt;
+    private long softDropPressedAt;
 
     GameplayInputController(
             Board board,
@@ -28,55 +35,185 @@ final class GameplayInputController {
     }
 
     boolean pressLeft() {
-        return applyHorizontalSteps(horizontalRepeater.pressLeft(nowMs.getAsLong()));
+        long now = nowMs.getAsLong();
+        if (!leftHeld) {
+            leftHeld = true;
+            leftPressedAt = now;
+        }
+        return applyAndLogHorizontal("pressLeft", now, horizontalRepeater.pressLeft(now), -1);
     }
 
     boolean releaseLeft() {
-        return applyHorizontalSteps(horizontalRepeater.releaseLeft(nowMs.getAsLong()));
+        long now = nowMs.getAsLong();
+        long holdMs = leftHeld ? Math.max(0, now - leftPressedAt) : -1;
+        leftHeld = false;
+        return applyAndLogHorizontal("releaseLeft", now, horizontalRepeater.releaseLeft(now), holdMs);
     }
 
     boolean pressRight() {
-        return applyHorizontalSteps(horizontalRepeater.pressRight(nowMs.getAsLong()));
+        long now = nowMs.getAsLong();
+        if (!rightHeld) {
+            rightHeld = true;
+            rightPressedAt = now;
+        }
+        return applyAndLogHorizontal("pressRight", now, horizontalRepeater.pressRight(now), -1);
     }
 
     boolean releaseRight() {
-        return applyHorizontalSteps(horizontalRepeater.releaseRight(nowMs.getAsLong()));
+        long now = nowMs.getAsLong();
+        long holdMs = rightHeld ? Math.max(0, now - rightPressedAt) : -1;
+        rightHeld = false;
+        return applyAndLogHorizontal("releaseRight", now, horizontalRepeater.releaseRight(now), holdMs);
     }
 
     boolean pressSoftDrop() {
-        return applySoftDropSteps(softDropRepeater.press(nowMs.getAsLong()));
+        long now = nowMs.getAsLong();
+        if (!softDropHeld) {
+            softDropHeld = true;
+            softDropPressedAt = now;
+        }
+        return applyAndLogSoftDrop("pressSoftDrop", now, softDropRepeater.press(now), -1);
     }
 
     void releaseSoftDrop() {
+        long now = nowMs.getAsLong();
+        long holdMs = softDropHeld ? Math.max(0, now - softDropPressedAt) : -1;
+        int beforeX = currentX();
+        int beforeY = currentY();
+        softDropHeld = false;
         softDropRepeater.release();
+        InputLog.controllerOperation(
+                "releaseSoftDrop",
+                now,
+                0,
+                0,
+                beforeX,
+                beforeY,
+                currentX(),
+                currentY(),
+                false,
+                holdMs
+        );
     }
 
     boolean poll() {
         long now = nowMs.getAsLong();
-        boolean movedHorizontally = applyHorizontalSteps(horizontalRepeater.poll(now));
-        boolean movedDown = applySoftDropSteps(softDropRepeater.poll(now));
-        return movedHorizontally || movedDown;
+        int horizontalSteps = horizontalRepeater.poll(now);
+        int softDropSteps = softDropRepeater.poll(now);
+        int beforeX = currentX();
+        int beforeY = currentY();
+        boolean movedHorizontally = applyHorizontalSteps(horizontalSteps);
+        boolean movedDown = applySoftDropSteps(softDropSteps);
+        boolean changed = movedHorizontally || movedDown;
+        if (horizontalSteps != 0 || softDropSteps != 0 || changed) {
+            InputLog.controllerOperation(
+                    "poll",
+                    now,
+                    horizontalSteps,
+                    softDropSteps,
+                    beforeX,
+                    beforeY,
+                    currentX(),
+                    currentY(),
+                    changed,
+                    -1
+            );
+        }
+        return changed;
     }
 
     boolean rotateClockwise() {
-        return board.rotateCW();
+        return applyAndLogDiscrete("rotateClockwise", board::rotateCW);
     }
 
     boolean rotateCounterclockwise() {
-        return board.rotateCCW();
+        return applyAndLogDiscrete("rotateCounterclockwise", board::rotateCCW);
     }
 
     boolean hardDrop() {
-        return board.hardDrop();
+        return applyAndLogDiscrete("hardDrop", board::hardDrop);
     }
 
     boolean hold() {
-        return board.hold();
+        return applyAndLogDiscrete("hold", board::hold);
     }
 
     void reset() {
         horizontalRepeater.reset();
         softDropRepeater.reset();
+        leftHeld = false;
+        rightHeld = false;
+        softDropHeld = false;
+        InputLog.controllerOperation(
+                "reset",
+                nowMs.getAsLong(),
+                0,
+                0,
+                currentX(),
+                currentY(),
+                currentX(),
+                currentY(),
+                false,
+                -1
+        );
+    }
+
+    private boolean applyAndLogHorizontal(String operation, long now, int steps, long holdMs) {
+        int beforeX = currentX();
+        int beforeY = currentY();
+        boolean changed = applyHorizontalSteps(steps);
+        InputLog.controllerOperation(
+                operation,
+                now,
+                steps,
+                0,
+                beforeX,
+                beforeY,
+                currentX(),
+                currentY(),
+                changed,
+                holdMs
+        );
+        return changed;
+    }
+
+    private boolean applyAndLogSoftDrop(String operation, long now, int steps, long holdMs) {
+        int beforeX = currentX();
+        int beforeY = currentY();
+        boolean changed = applySoftDropSteps(steps);
+        InputLog.controllerOperation(
+                operation,
+                now,
+                0,
+                steps,
+                beforeX,
+                beforeY,
+                currentX(),
+                currentY(),
+                changed,
+                holdMs
+        );
+        return changed;
+    }
+
+    private boolean applyAndLogDiscrete(String operation, BooleanOperation action) {
+        long now = nowMs.getAsLong();
+        int beforeX = currentX();
+        int beforeY = currentY();
+        boolean changed = action.run();
+        InputLog.controllerOperation(
+                operation,
+                now,
+                0,
+                0,
+                beforeX,
+                beforeY,
+                currentX(),
+                currentY(),
+                changed,
+                -1
+        );
+        return changed;
     }
 
     private boolean applyHorizontalSteps(int signedSteps) {
@@ -104,5 +241,18 @@ final class GameplayInputController {
             moved = true;
         }
         return moved;
+    }
+
+    private int currentX() {
+        return board.getCurrent() == null ? -1 : board.getCurrent().getX();
+    }
+
+    private int currentY() {
+        return board.getCurrent() == null ? -1 : board.getCurrent().getY();
+    }
+
+    @FunctionalInterface
+    private interface BooleanOperation {
+        boolean run();
     }
 }

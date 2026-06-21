@@ -1,6 +1,7 @@
 package net.vetcafe.jtetris.ui;
 
 import net.vetcafe.jtetris.logging.EdtWatchdog;
+import net.vetcafe.jtetris.logging.InputLog;
 import net.vetcafe.jtetris.logging.LoggingBootstrap;
 import net.vetcafe.jtetris.model.Board;
 import net.vetcafe.jtetris.score.ScoreManager;
@@ -33,6 +34,7 @@ import javax.swing.ButtonGroup;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import java.awt.Component;
+import java.util.function.BooleanSupplier;
 
 public class TetrisFrame extends JFrame {
     private static final String APP_NAME = "JTetris";
@@ -908,32 +910,40 @@ public class TetrisFrame extends JFrame {
     }
 
     private void onLeftPressed() {
-        if (!isGameplayInputEnabled()) return;
-        repaintGameIfChanged(inputController.pressLeft());
+        handleGameplayInputAction("leftPressed", inputController::pressLeft);
     }
 
     private void onLeftReleased() {
-        if (!isGameplayInputEnabled()) return;
-        repaintGameIfChanged(inputController.releaseLeft());
+        handleGameplayInputAction("leftReleased", inputController::releaseLeft);
     }
 
     private void onRightPressed() {
-        if (!isGameplayInputEnabled()) return;
-        repaintGameIfChanged(inputController.pressRight());
+        handleGameplayInputAction("rightPressed", inputController::pressRight);
     }
 
     private void onRightReleased() {
-        if (!isGameplayInputEnabled()) return;
-        repaintGameIfChanged(inputController.releaseRight());
+        handleGameplayInputAction("rightReleased", inputController::releaseRight);
     }
 
     private void onDownPressed() {
-        if (!isGameplayInputEnabled()) return;
-        repaintGameIfChanged(inputController.pressSoftDrop());
+        handleGameplayInputAction("downPressed", inputController::pressSoftDrop);
     }
 
     private void onDownReleased() {
+        long now = monotonicNowMs();
+        int beforeX = currentPieceX();
+        int beforeY = currentPieceY();
         inputController.releaseSoftDrop();
+        InputLog.swingAction(
+                "downReleased",
+                now,
+                isGameplayInputEnabled(),
+                beforeX,
+                beforeY,
+                currentPieceX(),
+                currentPieceY(),
+                false
+        );
     }
 
     private void processHeldInput() {
@@ -965,6 +975,39 @@ public class TetrisFrame extends JFrame {
         if (changed) {
             gamePanel.repaint();
         }
+    }
+
+    private void handleGameplayInputAction(String action, BooleanSupplier operation) {
+        long now = monotonicNowMs();
+        boolean eligible = isGameplayInputEnabled();
+        int beforeX = currentPieceX();
+        int beforeY = currentPieceY();
+        boolean changed = eligible && operation.getAsBoolean();
+        int afterX = currentPieceX();
+        int afterY = currentPieceY();
+        InputLog.swingAction(
+                action,
+                now,
+                eligible,
+                beforeX,
+                beforeY,
+                afterX,
+                afterY,
+                changed
+        );
+        repaintGameIfChanged(changed);
+    }
+
+    private long monotonicNowMs() {
+        return System.nanoTime() / 1_000_000L;
+    }
+
+    private int currentPieceX() {
+        return board.getCurrent() == null ? -1 : board.getCurrent().getX();
+    }
+
+    private int currentPieceY() {
+        return board.getCurrent() == null ? -1 : board.getCurrent().getY();
     }
 
     private void rotateIfActive(boolean cw) {
