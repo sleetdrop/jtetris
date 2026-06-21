@@ -48,6 +48,8 @@ java -jar target/jtetris-1.0-SNAPSHOT.jar
 - Keep the properties-based best-score format compatible across platform data directories and preserve one-time migration from `~/.tetris_scores.properties`.
 - Keep replay hooks (`Board.applyReplayAction(...)`, `Board.replayFromSeed(...)`) aligned with any model-behavior change.
 - Keep active session time in the UI layer; it must not enter deterministic `Board` or replay state.
+- Keep committed OpenSpec, Superpowers, and other agent-generated documents concise without omitting necessary decisions, constraints, acceptance criteria, or verification evidence. Prefer references over duplicated explanation and avoid oversized templates or code examples that do not improve implementation safety.
+- When major project structure or workflow changes, or guidance drift is discovered, audit `AGENTS.md` and other agent-facing documents against the repository. Remove stale or duplicate rules, add only practices validated by recent work, and keep entry-point guidance compact enough to preserve working context.
 - Prefer small, localized changes over broad rewrites.
 - When gameplay timing changes, validate model and UI together (gravity timer, DAS/ARR, soft-drop repeaters).
 
