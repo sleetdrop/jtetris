@@ -33,6 +33,10 @@ void reset();
 
 Boolean results mean that visible board state changed and Swing should repaint. `poll()` applies at most one horizontal and one soft-drop step using one clock sample. `reset()` clears held input state only; board reset remains an explicit `TetrisFrame` responsibility.
 
+Horizontal release methods return a boolean because releasing the active direction
+can immediately switch to and move in the opposite direction when that key remains
+held.
+
 ### `TetrisFrame`
 The frame retains:
 - Swing key bindings and timers;
