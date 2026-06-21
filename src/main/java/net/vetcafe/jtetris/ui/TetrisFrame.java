@@ -1,5 +1,6 @@
 package net.vetcafe.jtetris.ui;
 
+import net.vetcafe.jtetris.logging.EdtWatchdog;
 import net.vetcafe.jtetris.logging.LoggingBootstrap;
 import net.vetcafe.jtetris.model.Board;
 import net.vetcafe.jtetris.score.ScoreManager;
@@ -126,6 +127,7 @@ public class TetrisFrame extends JFrame {
     private String pendingLeaderboardDeleteUser;
     private LeaderboardTransition leaderboardTransition = LeaderboardTransition.NONE;
     private boolean paused;
+    private EdtWatchdog edtWatchdog;
 
     public TetrisFrame() {
         super(APP_NAME);
@@ -160,6 +162,11 @@ public class TetrisFrame extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 requestExit();
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                stopDiagnostics();
             }
         });
 
@@ -874,6 +881,19 @@ public class TetrisFrame extends JFrame {
         showExitConfirmOverlay();
     }
 
+    private void startDiagnostics() {
+        if (LoggingBootstrap.edtWatchdogEnabled()) {
+            edtWatchdog = EdtWatchdog.start(LoggingBootstrap.edtWatchdogThresholdMs());
+        }
+    }
+
+    private void stopDiagnostics() {
+        if (edtWatchdog != null) {
+            edtWatchdog.close();
+            edtWatchdog = null;
+        }
+    }
+
     private void registerAction(javax.swing.InputMap im, javax.swing.ActionMap am, String name, KeyStroke key, Runnable action) {
         im.put(key, name);
         am.put(name, new AbstractAction() {
@@ -971,6 +991,10 @@ public class TetrisFrame extends JFrame {
 
     public static void main(String[] args) {
         LoggingBootstrap.initialize();
-        javax.swing.SwingUtilities.invokeLater(() -> new TetrisFrame().setVisible(true));
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            TetrisFrame frame = new TetrisFrame();
+            frame.setVisible(true);
+            frame.startDiagnostics();
+        });
     }
 }
