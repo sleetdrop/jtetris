@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.err</target>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %-5level [%thread] %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${jtetris.log.dir.resolved}/jtetris.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${jtetris.log.dir.resolved}/jtetris.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>${jtetris.log.maxFileSize.resolved}</maxFileSize>
+            <maxHistory>${jtetris.log.maxHistory.resolved}</maxHistory>
+            <totalSizeCap>${jtetris.log.totalSizeCap.resolved}</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %-5level [%thread] %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="net.vetcafe.jtetris.input"
+            level="${jtetris.log.input.level.resolved}"
+            additivity="true"/>
+
+    <root level="${jtetris.log.level.resolved}">
+        <appender-ref ref="STDERR"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

@@ -1,5 +1,6 @@
 package net.vetcafe.jtetris.ui;
 
+import net.vetcafe.jtetris.logging.LoggingBootstrap;
 import net.vetcafe.jtetris.model.Board;
 import net.vetcafe.jtetris.score.ScoreManager;
 
@@ -969,6 +970,7 @@ public class TetrisFrame extends JFrame {
     }
 
     public static void main(String[] args) {
+        LoggingBootstrap.initialize();
         javax.swing.SwingUtilities.invokeLater(() -> new TetrisFrame().setVisible(true));
     }
 }

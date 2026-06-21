@@ -3,7 +3,7 @@
 - [x] Add SLF4J 2 and Logback dependencies as a standalone dependency change.
 - [x] Add shared platform application-data path resolution for score and log directories.
 - [x] Add tested logging property parsing, defaults, precedence, and validation.
-- [ ] Add bundled rolling Logback configuration and stderr fallback bootstrap.
+- [x] Add bundled rolling Logback configuration and stderr fallback bootstrap.
 - [ ] Add uncaught-exception capture and debug-only EDT watchdog.
 - [ ] Add Swing input-boundary `DEBUG` diagnostics.
 - [ ] Add controller `DEBUG` diagnostics and stable movement fields.
