@@ -29,7 +29,7 @@
 **Files:**
 - Create: `src/test/java/net/vetcafe/jtetris/ui/GamePanelGhostRenderingTest.java`
 
-- [ ] **Step 1: Write tests for double-outline pixels and transparent interior**
+- [x] **Step 1: Write tests for double-outline pixels and transparent interior**
 
 Create the test file with:
 
@@ -78,9 +78,15 @@ class GamePanelGhostRenderingTest {
             Color board = UiTheme.active().boardBackground();
             Color outer = GamePanel.ghostOuterColor();
             Color inner = GamePanel.ghostInnerColor();
-            Color piece = ColorPalette.colorFor(TetrominoType.T);
+            double minimumPieceDistance = Double.MAX_VALUE;
+            for (TetrominoType type : TetrominoType.values()) {
+                minimumPieceDistance = Math.min(
+                        minimumPieceDistance,
+                        colorDistance(ColorPalette.colorFor(type), board)
+                );
+            }
 
-            assertTrue(colorDistance(outer, board) < colorDistance(piece, board));
+            assertTrue(colorDistance(outer, board) < minimumPieceDistance);
             assertTrue(colorDistance(inner, board) < colorDistance(outer, board));
         }
     }
@@ -121,7 +127,7 @@ class GamePanelGhostRenderingTest {
 }
 ```
 
-- [ ] **Step 2: Run the focused test and verify the RED state**
+- [x] **Step 2: Run the focused test and verify the RED state**
 
 Run:
 
@@ -133,7 +139,7 @@ Expected: compilation fails because `GamePanel.ghostOuterColor()`,
 `ghostInnerColor()`, `drawGhostCell(Graphics2D, int, int, int)`, and
 `overlapsCurrentCell(...)` do not exist.
 
-- [ ] **Step 3: Record the RED result**
+- [x] **Step 3: Record the RED result**
 
 Append the exact failure summary and date to
 `openspec/changes/refine-ghost-piece-visibility/tasks.md` under
@@ -146,7 +152,7 @@ Append the exact failure summary and date to
 - Test: `src/test/java/net/vetcafe/jtetris/ui/GamePanelGhostRenderingTest.java`
 - Modify: `openspec/changes/refine-ghost-piece-visibility/tasks.md`
 
-- [ ] **Step 1: Replace translucent fill setup with overlap-aware outline drawing**
+- [x] **Step 1: Replace translucent fill setup with overlap-aware outline drawing**
 
 Replace `drawGhostPiece(...)` with:
 
@@ -166,21 +172,21 @@ private void drawGhostPiece(Graphics2D g2d) {
 }
 ```
 
-- [ ] **Step 2: Add package-private theme color helpers**
+- [x] **Step 2: Add package-private theme color helpers**
 
 Add these methods near `drawGhostPiece(...)`:
 
 ```java
 static Color ghostOuterColor() {
     return UiTheme.active().isDark()
-            ? new Color(139, 150, 174)
-            : new Color(108, 120, 140);
+            ? new Color(118, 128, 150)
+            : new Color(155, 164, 178);
 }
 
 static Color ghostInnerColor() {
     return UiTheme.active().isDark()
-            ? new Color(76, 87, 110)
-            : new Color(183, 190, 202);
+            ? new Color(68, 78, 99)
+            : new Color(200, 205, 214);
 }
 ```
 
@@ -188,7 +194,7 @@ These values are intentionally neutral and opaque. Their hierarchy comes from
 color distance to the board rather than alpha blending, keeping rendered
 pixels deterministic for tests and screenshots.
 
-- [ ] **Step 3: Add active-cell overlap detection**
+- [x] **Step 3: Add active-cell overlap detection**
 
 Add:
 
@@ -204,7 +210,7 @@ static boolean overlapsCurrentCell(Tetromino current, int gridX, int modelY) {
 }
 ```
 
-- [ ] **Step 4: Replace filled ghost cells with double-outline geometry**
+- [x] **Step 4: Replace filled ghost cells with double-outline geometry**
 
 Replace the existing instance `drawGhostCell(...)` with:
 
@@ -228,7 +234,7 @@ static void drawGhostCell(Graphics2D g2d, int gridX, int gridY, int cellSize) {
 }
 ```
 
-- [ ] **Step 5: Run the focused test and verify the GREEN state**
+- [x] **Step 5: Run the focused test and verify the GREEN state**
 
 Run:
 
@@ -238,7 +244,7 @@ Run:
 
 Expected: 4 tests pass with 0 failures and 0 errors.
 
-- [ ] **Step 6: Run existing theme and ghost model regression tests**
+- [x] **Step 6: Run existing theme and ghost model regression tests**
 
 Run:
 
@@ -250,7 +256,7 @@ Run:
 Expected: all selected tests pass; model landing projection behavior remains
 unchanged.
 
-- [ ] **Step 7: Update task evidence and checklist**
+- [x] **Step 7: Update task evidence and checklist**
 
 In `openspec/changes/refine-ghost-piece-visibility/tasks.md`:
 

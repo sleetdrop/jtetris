@@ -152,27 +152,54 @@ public class GamePanel extends JPanel {
         Tetromino ghost = board.getGhost();
         if (ghost == null) return;
 
-        UiTheme theme = UiTheme.active();
-        Color shadowBase = theme.isDark() ? new Color(190, 198, 214) : new Color(77, 88, 104);
-        int fillAlpha = theme.isDark() ? 34 : 26;
-        int strokeAlpha = theme.isDark() ? 78 : 66;
-        Color fill = new Color(shadowBase.getRed(), shadowBase.getGreen(), shadowBase.getBlue(), fillAlpha);
-        Color stroke = new Color(shadowBase.getRed(), shadowBase.getGreen(), shadowBase.getBlue(), strokeAlpha);
+        Tetromino current = board.getCurrent();
         for (var cell : ghost.getCells()) {
             int gx = ghost.getX() + cell.x;
-            int gy = ghost.getY() + cell.y - 2;
-            if (gy < 0) continue; // skip hidden rows
-            drawGhostCell(g2d, gx, gy, fill, stroke);
+            int modelY = ghost.getY() + cell.y;
+            int gy = modelY - 2;
+            if (gy < 0 || overlapsCurrentCell(current, gx, modelY)) continue;
+            drawGhostCell(g2d, gx, gy, cellSize);
         }
     }
 
-    private void drawGhostCell(Graphics2D g2d, int gridX, int gridY, Color fill, Color stroke) {
+    static Color ghostOuterColor() {
+        return UiTheme.active().isDark()
+                ? new Color(118, 128, 150)
+                : new Color(155, 164, 178);
+    }
+
+    static Color ghostInnerColor() {
+        return UiTheme.active().isDark()
+                ? new Color(68, 78, 99)
+                : new Color(200, 205, 214);
+    }
+
+    static boolean overlapsCurrentCell(Tetromino current, int gridX, int modelY) {
+        if (current == null) return false;
+        for (var cell : current.getCells()) {
+            if (current.getX() + cell.x == gridX && current.getY() + cell.y == modelY) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static void drawGhostCell(Graphics2D g2d, int gridX, int gridY, int cellSize) {
         int x = gridX * cellSize;
         int y = gridY * cellSize;
-        g2d.setColor(fill);
-        g2d.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
-        g2d.setColor(stroke);
-        g2d.drawRect(x + 1, y + 1, cellSize - 3, cellSize - 3);
+        int outerInset = 1;
+        int outerSize = cellSize - (outerInset * 2);
+        if (outerSize <= 1) return;
+
+        g2d.setColor(ghostOuterColor());
+        g2d.drawRect(x + outerInset, y + outerInset, outerSize - 1, outerSize - 1);
+
+        int innerInset = cellSize >= 10 ? 3 : -1;
+        int innerSize = cellSize - (innerInset * 2);
+        if (innerInset > outerInset && innerSize > 1) {
+            g2d.setColor(ghostInnerColor());
+            g2d.drawRect(x + innerInset, y + innerInset, innerSize - 1, innerSize - 1);
+        }
     }
 
     private void syncLineClearFlash() {
