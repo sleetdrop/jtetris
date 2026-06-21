@@ -16,6 +16,7 @@ A concise Swing-based JTetris for learning Java, Swing UI, and basic game loop/a
   - `SidePanel`: performance stats, scoring feedback, combo/B2B status, Hold preview, and three-piece Next queue.
   - `HelpContent`: Swing-native help overlay content for controls and modern Tetris concepts surfaced by the UI.
 - **Scores**: `net.vetcafe.jtetris.score.ScoreManager`: best-only per-user local high scores stored in a package-namespaced platform application data directory.
+- **Logging**: SLF4J application API with bundled Logback rolling files, configurable levels, input-domain diagnostics, uncaught-exception capture, and a debug-only EDT watchdog.
 
 ## Architecture at a glance
 ```mermaid
@@ -88,6 +89,15 @@ classDiagram
 - A second short-interval timer asks `GameplayInputController` to poll held horizontal and soft-drop input using monotonic elapsed time. Each poll emits at most one step per held input, so delayed Swing callbacks discard stale repeat intervals instead of causing movement bursts.
 - Core gameplay operations can be executed headlessly against a seeded real `Board` with a fake clock; Swing remains responsible for eligibility, repainting, overlays, focus, and session timing.
 - In-stage overlays (score entry/leaderboard/new game prompt/exit confirmation) temporarily block gameplay input and clear held repeaters to prevent post-overlay drift.
+- In debug mode, an optional daemon watchdog posts markers to the EDT and logs rate-limited warnings when acknowledgement exceeds the configured threshold.
+
+## Logging
+- Default global and input levels are `ERROR`; normal gameplay does not emit informational or input-detail logs.
+- `jtetris.debug=true` defaults the global level to `DEBUG` and enables the EDT watchdog.
+- `jtetris.log.input.level=TRACE` enables high-frequency repeater decisions for deep input diagnosis.
+- Input file writes use an asynchronous Logback appender so diagnostic I/O does not block the EDT.
+- Rolling defaults are 10 MB per file, 7 days of history, and a 100 MB total cap.
+- `jtetris.log.dir` accepts an absolute directory override; `logback.configurationFile` replaces the bundled backend configuration.
 
 ## Scoring & Levels
 - Line clear scores (per classic Tetris style): 1/2/3/4 lines = 100/300/500/800 * level.

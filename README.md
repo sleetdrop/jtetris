@@ -35,8 +35,49 @@ java -jar target/jtetris-1.0.0-standalone.jar
 
 ## Development
 ```bash
-./mvnw clean test
+./mvnw -Djava.awt.headless=true clean test
 ```
+
+## Logging and diagnostics
+
+Normal play logs only `ERROR` events. The default rolling log directory is:
+
+- macOS: `~/Library/Application Support/net.vetcafe.jtetris/logs`
+- Linux: `${XDG_DATA_HOME:-~/.local/share}/net.vetcafe.jtetris/logs`
+- Windows: `%LOCALAPPDATA%\net.vetcafe.jtetris\logs`
+
+Enable general diagnostics:
+
+```bash
+java -Djtetris.debug=true \
+  -jar target/jtetris-1.0.0-standalone.jar
+```
+
+Enable detailed gameplay-input tracing:
+
+```bash
+java -Djtetris.debug=true \
+  -Djtetris.log.input.level=TRACE \
+  -jar target/jtetris-1.0.0-standalone.jar
+```
+
+Use a custom absolute directory:
+
+```bash
+java -Djtetris.debug=true \
+  -Djtetris.log.input.level=TRACE \
+  -Djtetris.log.dir=/absolute/path/to/logs \
+  -jar target/jtetris-1.0.0-standalone.jar
+```
+
+The default rolling policy uses 10 MB files, 7 days of history, and a 100 MB
+total cap. Override these with `jtetris.log.maxFileSize`,
+`jtetris.log.maxHistory`, and `jtetris.log.totalSizeCap`. A complete external
+Logback configuration can be selected with `-Dlogback.configurationFile=...`.
+
+Input diagnostics contain key names, monotonic timing, movement results, piece
+coordinates, and thread information. They do not contain usernames, arbitrary
+text input, screenshots, or score-file contents.
 
 ## Game mode
 JTetris currently focuses on **Endless Marathon**. A run continues until
@@ -96,6 +137,7 @@ Runtime and test dependency notices are tracked in [NOTICE.md](NOTICE.md).
 - Read `AGENTS.md`, `openspec/project.md`, and `openspec/AGENTS.md` before editing.
 - Historical specs under `doc/specs` remain useful context, but new feature specs should use OpenSpec.
 - Validate with `./mvnw clean test` before finishing.
+- For headless verification, use `./mvnw -Djava.awt.headless=true clean test`.
 
 ## Controls
 - Move: ← / →

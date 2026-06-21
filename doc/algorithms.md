@@ -77,6 +77,13 @@
 - Modal UI states (score dialogs/leaderboard/new-game prompt) block gameplay input via a guard and clear held repeaters on enter/exit.
 - Window focus listener nudges focus back to game panel.
 
+## Input diagnostics
+- All input diagnostics use the functional logger category `net.vetcafe.jtetris.input`.
+- `DEBUG` events cross the Swing action and controller boundaries with monotonic timestamps, gameplay eligibility, hold duration, emitted steps, movement result, and before/after coordinates.
+- `TRACE` events expose DAS/ARR and soft-drop repeater decisions, held state, active direction, deadlines, press order, emitted steps, and decision reasons.
+- Input events are queued through an asynchronous file appender to minimize timing perturbation during diagnosis.
+- The debug-only EDT watchdog logs a rate-limited `WARN` with observed delay and EDT stack when the event thread misses its response threshold.
+
 ## Mechanics flow
 ```mermaid
 flowchart TD

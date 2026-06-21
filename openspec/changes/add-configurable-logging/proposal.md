@@ -49,6 +49,7 @@ JTetris instead needs a small conventional logging system that is quiet during n
 - `src/test/java/net/vetcafe/jtetris/ui/InputRepeaterTest.java`
 - `src/test/java/net/vetcafe/jtetris/ui/SoftDropRepeaterTest.java`
 - `README.md`
+- `NOTICE.md`
 - `doc/overview.md`
 - `doc/algorithms.md`
 - `doc/quality-gates.md`

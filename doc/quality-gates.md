@@ -25,6 +25,8 @@ Pass condition:
 ```
 
 Recommended focus after run:
+- `LoggingSettingsTest`, `LoggingBootstrapTest`, and `EdtWatchdogTest` for diagnostic infrastructure.
+- `InputLogTest` for stable input fields and DEBUG/TRACE gating.
 - `GameplayInputControllerTest` for production input orchestration against a real seeded board.
 - `BoardRegressionGateTest` for model invariants.
 - `ReplayHooksTest` for deterministic replay reconstruction.
@@ -80,12 +82,37 @@ timing and board transitions:
 This gate verifies objective state transitions. Player testing remains responsible
 for subjective DAS/ARR feel, visual responsiveness, and presentation quality.
 
+## Real input reproduction flow
+
+For a problem that occurs only during real Swing interaction:
+
+1. Build with `./mvnw -Djava.awt.headless=true clean package`.
+2. Launch with:
+
+   ```bash
+   java -Djtetris.debug=true \
+     -Djtetris.log.input.level=TRACE \
+     -jar target/jtetris-1.0.0-standalone.jar
+   ```
+
+3. Reproduce the issue once, then exit normally.
+4. Preserve `jtetris.log` and relevant rolled files from the platform `logs`
+   directory.
+5. Compare Swing action count/timestamps, controller `holdMs`, repeater decision
+   reasons and emitted steps, coordinate changes, and any `event=edt_delay`
+   warnings.
+
+Do not change DAS/ARR behavior until this evidence identifies whether the extra
+movement came from actual hold duration, duplicate Swing actions, repeater
+output, controller application, or EDT delay.
+
 ## Failure triage order
 
-1. `GameplayInputControllerTest` for input and operation sequencing.
-2. `BoardRegressionGateTest` for model invariants.
-3. `ReplayHooksTest` for deterministic reconstruction.
-4. Mechanic-focused tests (`LockDelayTest`, `SrsRotationTest`, `HoldPieceTest`, `GhostPieceTest`).
-5. Scoring tests (`ScoringRulesTest`, `TSpinDetectorTest`).
+1. Input trace boundary comparison for real-interaction-only defects.
+2. `GameplayInputControllerTest` for input and operation sequencing.
+3. `BoardRegressionGateTest` for model invariants.
+4. `ReplayHooksTest` for deterministic reconstruction.
+5. Mechanic-focused tests (`LockDelayTest`, `SrsRotationTest`, `HoldPieceTest`, `GhostPieceTest`).
+6. Scoring tests (`ScoringRulesTest`, `TSpinDetectorTest`).
 
 This order usually narrows root cause fastest.

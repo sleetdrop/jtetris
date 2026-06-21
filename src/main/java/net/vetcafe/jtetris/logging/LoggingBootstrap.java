@@ -35,11 +35,10 @@ public final class LoggingBootstrap {
         currentSettings = settings;
         installUncaughtExceptionHandler();
         logger.info(
-                "event=application_start debug={} globalLevel={} inputLevel={} logDir={} externalConfig={}",
+                "event=application_start debug={} globalLevel={} inputLevel={} externalConfig={}",
                 settings.debug(),
                 settings.globalLevel(),
                 settings.inputLevel(),
-                settings.logDirectory(),
                 settings.externalConfiguration()
         );
     }
