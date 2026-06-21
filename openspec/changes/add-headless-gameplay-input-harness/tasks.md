@@ -1,7 +1,7 @@
 # Tasks
 
-- [ ] Add failing controller integration tests for horizontal taps, DAS/ARR, delayed polling, and dual-direction priority.
-- [ ] Implement `GameplayInputController` with injected board, repeaters, and monotonic clock.
+- [x] Add failing controller integration tests for horizontal taps, DAS/ARR, delayed polling, and dual-direction priority.
+- [x] Implement `GameplayInputController` with injected board, repeaters, and monotonic clock.
 - [ ] Add failing controller integration tests for soft drop, rotation, hard drop, hold, and mixed operation scenarios.
 - [ ] Complete controller discrete-operation delegation and repaint-result semantics.
 - [ ] Replace `TetrisFrame` core gameplay input orchestration with controller delegation while preserving eligibility and repaint policy.
