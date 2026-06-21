@@ -58,6 +58,22 @@ final class GameplayInputController {
         return movedHorizontally || movedDown;
     }
 
+    boolean rotateClockwise() {
+        return board.rotateCW();
+    }
+
+    boolean rotateCounterclockwise() {
+        return board.rotateCCW();
+    }
+
+    boolean hardDrop() {
+        return board.hardDrop();
+    }
+
+    boolean hold() {
+        return board.hold();
+    }
+
     void reset() {
         horizontalRepeater.reset();
         softDropRepeater.reset();
