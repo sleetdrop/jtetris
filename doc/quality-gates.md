@@ -11,7 +11,7 @@ This document defines practical quality gates for local development, OpenSpec ch
 ## Gate 0: Fast local check
 
 ```bash
-mvn -q test
+./mvnw -q -Djava.awt.headless=true test
 ```
 
 Pass condition:
@@ -21,10 +21,11 @@ Pass condition:
 ## Gate 1: Local completion check
 
 ```bash
-mvn -q clean test
+./mvnw -q -Djava.awt.headless=true clean test
 ```
 
 Recommended focus after run:
+- `GameplayInputControllerTest` for production input orchestration against a real seeded board.
 - `BoardRegressionGateTest` for model invariants.
 - `ReplayHooksTest` for deterministic replay reconstruction.
 - `ScoringRulesTest` and `TSpinDetectorTest` for scoring semantics.
@@ -38,7 +39,7 @@ Pass condition:
 For this project, CI should execute:
 
 ```bash
-mvn -q clean test
+./mvnw -q -Djava.awt.headless=true clean test
 ```
 
 And enforce a lightweight docs checklist:
@@ -65,11 +66,26 @@ original.applyReplayAction(ReplayAction.ROTATE_CW);
 Board replay = Board.replayFromSeed(42L, original.getReplayActions());
 ```
 
+## Headless gameplay input flow
+
+Use `GameplayInputControllerTest` for operation-level bugs that involve both
+timing and board transitions:
+
+1. Construct a seeded `Board`.
+2. Inject a mutable fake millisecond clock into `GameplayInputController`.
+3. Call press/release, polling, rotation, drop, and hold methods directly.
+4. Assert controller results and the active piece, hold, queue, or board snapshot.
+5. Do not sleep, create a `JFrame`, synthesize native input, or inspect screenshots.
+
+This gate verifies objective state transitions. Player testing remains responsible
+for subjective DAS/ARR feel, visual responsiveness, and presentation quality.
+
 ## Failure triage order
 
-1. `BoardRegressionGateTest`
-2. `ReplayHooksTest`
-3. Mechanic-focused tests (`LockDelayTest`, `SrsRotationTest`, `HoldPieceTest`, `GhostPieceTest`)
-4. Scoring tests (`ScoringRulesTest`, `TSpinDetectorTest`)
+1. `GameplayInputControllerTest` for input and operation sequencing.
+2. `BoardRegressionGateTest` for model invariants.
+3. `ReplayHooksTest` for deterministic reconstruction.
+4. Mechanic-focused tests (`LockDelayTest`, `SrsRotationTest`, `HoldPieceTest`, `GhostPieceTest`).
+5. Scoring tests (`ScoringRulesTest`, `TSpinDetectorTest`).
 
 This order usually narrows root cause fastest.

@@ -70,6 +70,7 @@
 
 ## Input
 - Swing key bindings on root pane (`WHEN_IN_FOCUSED_WINDOW`): move, rotate (CW/CCW), hard drop, hold (`C`), pause, restart, leaderboard, help, quit.
+- `GameplayInputController` is the shared production boundary for core game operations. Swing delegates eligible actions to it, while headless tests drive the same methods against a seeded `Board` and fake monotonic clock.
 - Horizontal input (`←` / `→`) uses a deterministic DAS/ARR repeater (`InputRepeater`) instead of OS key-repeat cadence; the latest genuinely pressed direction wins when both are held.
 - Soft drop (`↓`) uses a deterministic repeat policy (`SoftDropRepeater`) with immediate first step and fixed repeat interval.
 - Repeat timing uses monotonic elapsed time. Each input poll emits at most one step and rebases its deadline after UI delays instead of replaying stale missed intervals.
@@ -98,6 +99,7 @@ flowchart TD
 
 ## Regression gates
 - `BoardRegressionGateTest` enforces core model invariants: boundary/occupied-cell collisions, blocked rotation failure, line-clear state consistency, and blocked-spawn top-out.
+- `GameplayInputControllerTest` verifies real board transitions for taps, held input timing, delayed polling, dual-direction priority, soft drop, rotation, hard drop, hold, and mixed seeded scenarios without creating a native window.
 - Existing focused tests (`SrsRotationTest`, `LockDelayTest`, `ScoringRulesTest`, etc.) remain the baseline safety net for mechanics evolution.
 
 ## Seeded replay hooks

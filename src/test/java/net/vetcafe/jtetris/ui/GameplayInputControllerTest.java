@@ -76,6 +76,19 @@ class GameplayInputControllerTest {
     }
 
     @Test
+    void softDropReleaseStopsFurtherMovement() {
+        TestRig rig = new TestRig();
+        int startY = rig.board.getCurrent().getY();
+
+        assertTrue(rig.controller.pressSoftDrop());
+        rig.controller.releaseSoftDrop();
+        rig.clock.advance(1_000);
+
+        assertFalse(rig.controller.poll());
+        assertEquals(startY + 1, rig.board.getCurrent().getY());
+    }
+
+    @Test
     void resetStopsHeldInputWithoutMovingBoard() {
         TestRig rig = new TestRig();
 
@@ -149,6 +162,32 @@ class GameplayInputControllerTest {
 
         assertFalse(rig.controller.pressLeft());
         assertEquals(wallX, rig.board.getCurrent().getX());
+    }
+
+    @Test
+    void seededMixedScenarioIsReproducible() {
+        TestRig first = new TestRig();
+        TestRig second = new TestRig();
+
+        runMixedScenario(first);
+        runMixedScenario(second);
+
+        assertEquals(first.board.getCurrent().getType(), second.board.getCurrent().getType());
+        assertEquals(first.board.getCurrent().getRotation(), second.board.getCurrent().getRotation());
+        assertEquals(first.board.getCurrent().getX(), second.board.getCurrent().getX());
+        assertEquals(first.board.getCurrent().getY(), second.board.getCurrent().getY());
+        assertEquals(first.board.getHold().getType(), second.board.getHold().getType());
+        assertEquals(first.board.getNextQueue(), second.board.getNextQueue());
+    }
+
+    private static void runMixedScenario(TestRig rig) {
+        rig.controller.pressLeft();
+        rig.controller.pressSoftDrop();
+        rig.clock.advance(120);
+        rig.controller.poll();
+        rig.controller.rotateClockwise();
+        rig.controller.hold();
+        rig.controller.hardDrop();
     }
 
     private static final class TestRig {

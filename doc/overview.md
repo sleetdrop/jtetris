@@ -9,8 +9,9 @@ A concise Swing-based JTetris for learning Java, Swing UI, and basic game loop/a
   - `Tetromino` & `TetrominoType`: piece data and rotations.
 - **UI**: `net.vetcafe.jtetris.ui.*`
   - `TetrisFrame`: main window, timer-driven loop, key bindings, menu, pause/restart/leaderboard, and in-stage prompt overlays for game-over, score entry, leaderboard, and exit confirmation.
-  - `InputRepeater`: deterministic horizontal DAS/ARR state machine used by `TetrisFrame`.
-  - `SoftDropRepeater`: deterministic soft-drop repeat timing used by `TetrisFrame`.
+  - `GameplayInputController`: window-independent production input orchestration shared by `TetrisFrame` and headless integration tests.
+  - `InputRepeater`: deterministic horizontal DAS/ARR state machine owned by `GameplayInputController`.
+  - `SoftDropRepeater`: deterministic soft-drop repeat timing owned by `GameplayInputController`.
   - `GamePanel`: renders board, ghost projection, and active piece; focuses itself on show; modern dark palette.
   - `SidePanel`: performance stats, scoring feedback, combo/B2B status, Hold preview, and three-piece Next queue.
   - `HelpContent`: Swing-native help overlay content for controls and modern Tetris concepts surfaced by the UI.
@@ -30,6 +31,15 @@ classDiagram
     class GamePanel {
         +paintComponent(g)
         +focusGame()
+    }
+    class GameplayInputController {
+        +pressLeft()
+        +pressRight()
+        +pressSoftDrop()
+        +poll()
+        +rotateClockwise()
+        +hardDrop()
+        +hold()
     }
     class SidePanel {
         +applyTheme()
@@ -62,6 +72,8 @@ classDiagram
         +top()
     }
     TetrisFrame --> Board
+    TetrisFrame --> GameplayInputController
+    GameplayInputController --> Board
     TetrisFrame --> ScoreManager
     TetrisFrame --> GamePanel
     TetrisFrame --> SidePanel
@@ -73,7 +85,8 @@ classDiagram
 
 ## Game Loop & Timing
 - Swing `Timer` in `TetrisFrame` ticks every ~700 ms (speeds up by level). On each tick: if not paused and not game over, call `Board.tick()` (gravity); repaint board.
-- A second short-interval timer polls held horizontal and soft-drop input via repeaters using monotonic elapsed time. Each poll emits at most one step, so delayed Swing callbacks discard stale repeat intervals instead of causing movement bursts.
+- A second short-interval timer asks `GameplayInputController` to poll held horizontal and soft-drop input using monotonic elapsed time. Each poll emits at most one step per held input, so delayed Swing callbacks discard stale repeat intervals instead of causing movement bursts.
+- Core gameplay operations can be executed headlessly against a seeded real `Board` with a fake clock; Swing remains responsible for eligibility, repainting, overlays, focus, and session timing.
 - In-stage overlays (score entry/leaderboard/new game prompt/exit confirmation) temporarily block gameplay input and clear held repeaters to prevent post-overlay drift.
 
 ## Scoring & Levels
