@@ -264,7 +264,7 @@ In `openspec/changes/refine-ghost-piece-visibility/tasks.md`:
 - record the focused and regression command results;
 - leave manual screenshot review and archive unchecked.
 
-- [ ] **Step 8: Commit the implementation**
+- [x] **Step 8: Commit the implementation**
 
 ```bash
 git add src/main/java/net/vetcafe/jtetris/ui/GamePanel.java \
@@ -281,7 +281,7 @@ git commit -m "fix: distinguish ghost piece from solid blocks"
 - Move: `openspec/changes/refine-ghost-piece-visibility/` to
   `openspec/changes/archive/refine-ghost-piece-visibility/`
 
-- [ ] **Step 1: Run the full automated quality gate**
+- [x] **Step 1: Run the full automated quality gate**
 
 Run:
 
@@ -291,7 +291,7 @@ Run:
 
 Expected: all project tests pass with 0 failures and 0 errors.
 
-- [ ] **Step 2: Check patch hygiene**
+- [x] **Step 2: Check patch hygiene**
 
 Run:
 

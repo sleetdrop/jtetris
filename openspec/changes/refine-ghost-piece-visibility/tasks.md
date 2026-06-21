@@ -5,7 +5,7 @@
 - [x] Add focused rendering tests for light/dark ghost cells and active-piece
   overlap.
 - [x] Implement theme-aware double-outline ghost rendering in `GamePanel`.
-- [ ] Run focused tests and `./mvnw -Djava.awt.headless=true clean test`.
+- [x] Run focused tests and `./mvnw -Djava.awt.headless=true clean test`.
 - [ ] Review user-supplied light/dark screenshots.
 - [ ] Update the canonical UI theme specification and archive this change.
 
@@ -23,3 +23,9 @@
   `./mvnw -Djava.awt.headless=true
   -Dtest=GamePanelGhostRenderingTest,ThemeVisualsTest,GhostPieceTest test`
   passed with 9 tests, 0 failures, and 0 errors.
+- Full verification on 2026-06-21:
+  `./mvnw -Djava.awt.headless=true clean test` passed with 96 tests,
+  0 failures, and 0 errors.
+- Runnable artifact verification on 2026-06-21:
+  `./mvnw -Djava.awt.headless=true clean package` passed with 96 tests and
+  produced `target/jtetris-1.0.0.jar`.
