@@ -1,7 +1,7 @@
 # Tasks
 
 - [x] Add SLF4J 2 and Logback dependencies as a standalone dependency change.
-- [ ] Add shared platform application-data path resolution for score and log directories.
+- [x] Add shared platform application-data path resolution for score and log directories.
 - [ ] Add tested logging property parsing, defaults, precedence, and validation.
 - [ ] Add bundled rolling Logback configuration and stderr fallback bootstrap.
 - [ ] Add uncaught-exception capture and debug-only EDT watchdog.
