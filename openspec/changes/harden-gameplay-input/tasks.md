@@ -1,7 +1,7 @@
 # Tasks
 
-- [ ] Add failing horizontal-input regression tests for delayed polling, deadline rebasing, duplicate press events, and equal-timestamp direction priority.
-- [ ] Harden `InputRepeater` to emit at most one step per poll and use explicit press-order priority.
+- [x] Add failing horizontal-input regression tests for delayed polling, deadline rebasing, duplicate press events, and equal-timestamp direction priority.
+- [x] Harden `InputRepeater` to emit at most one step per poll and use explicit press-order priority.
 - [ ] Commit the horizontal repeater test and implementation step.
 - [ ] Add failing soft-drop regression tests for delayed polling and deadline rebasing.
 - [ ] Harden `SoftDropRepeater` to emit at most one step per poll.

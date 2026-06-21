@@ -9,8 +9,9 @@ public class InputRepeater {
 
     private boolean leftHeld;
     private boolean rightHeld;
-    private long leftPressedAt;
-    private long rightPressedAt;
+    private long pressSequence;
+    private long leftPressOrder;
+    private long rightPressOrder;
 
     private int activeDirection; // -1 left, 0 idle, 1 right
     private long nextRepeatAt;
@@ -23,7 +24,7 @@ public class InputRepeater {
     public int pressLeft(long nowMs) {
         if (!leftHeld) {
             leftHeld = true;
-            leftPressedAt = nowMs;
+            leftPressOrder = ++pressSequence;
         }
         return syncDirectionAndMaybeStep(nowMs);
     }
@@ -36,7 +37,7 @@ public class InputRepeater {
     public int pressRight(long nowMs) {
         if (!rightHeld) {
             rightHeld = true;
-            rightPressedAt = nowMs;
+            rightPressOrder = ++pressSequence;
         }
         return syncDirectionAndMaybeStep(nowMs);
     }
@@ -61,12 +62,11 @@ public class InputRepeater {
             return 0;
         }
 
-        int steps = 0;
-        while (nowMs >= nextRepeatAt) {
-            steps += activeDirection;
-            nextRepeatAt += arrMs;
+        if (nowMs < nextRepeatAt) {
+            return 0;
         }
-        return steps;
+        nextRepeatAt = nowMs + arrMs;
+        return activeDirection;
     }
 
     public void reset() {
@@ -74,8 +74,9 @@ public class InputRepeater {
         rightHeld = false;
         activeDirection = 0;
         nextRepeatAt = 0;
-        leftPressedAt = 0;
-        rightPressedAt = 0;
+        pressSequence = 0;
+        leftPressOrder = 0;
+        rightPressOrder = 0;
     }
 
     private int syncDirectionAndMaybeStep(long nowMs) {
@@ -93,7 +94,7 @@ public class InputRepeater {
 
     private int desiredDirection() {
         if (leftHeld && rightHeld) {
-            return leftPressedAt >= rightPressedAt ? -1 : 1;
+            return leftPressOrder > rightPressOrder ? -1 : 1;
         }
         if (leftHeld) {
             return -1;
@@ -104,6 +105,5 @@ public class InputRepeater {
         return 0;
     }
 }
-
 
 
