@@ -19,6 +19,17 @@ JTetris SHALL render stage cells, grid lines, ghost cells, and preview cells wit
 - **When** the preview is rendered
 - **Then** its cells use the same flat color and outline rule as stage cells
 
+#### Scenario: Ghost projection is structurally distinct from real blocks
+- **Given** either the light or dark theme is active
+- **And** the active tetromino has a visible landing projection
+- **When** the ghost cells are rendered
+- **Then** each ghost cell has a transparent interior
+- **And** each normally sized ghost cell uses nested neutral outlines
+- **And** the outlines do not inherit the active tetromino color
+- **And** ghost outlines are not drawn over overlapping active cells
+- **And** the ghost remains lower in visual priority than active and locked
+  pieces
+
 ### Requirement: Side panel preserves content with improved hierarchy
 JTetris SHALL present side-panel game information as player-facing state using a clear hierarchy, without duplicating the full controls reference already available in Help.
 

@@ -6,8 +6,8 @@
   overlap.
 - [x] Implement theme-aware double-outline ghost rendering in `GamePanel`.
 - [x] Run focused tests and `./mvnw -Djava.awt.headless=true clean test`.
-- [ ] Review user-supplied light/dark screenshots.
-- [ ] Update the canonical UI theme specification and archive this change.
+- [x] Review user-supplied light/dark screenshots.
+- [x] Update the canonical UI theme specification and archive this change.
 
 ## Verification Notes
 
@@ -29,3 +29,7 @@
 - Runnable artifact verification on 2026-06-21:
   `./mvnw -Djava.awt.headless=true clean package` passed with 96 tests and
   produced `target/jtetris-1.0.0.jar`.
+- Manual visual verification on 2026-06-21 reviewed user-supplied light and
+  dark screenshots. In both themes the board remains visible through the ghost
+  cells, the nested outlines stay continuous beside locked blocks, and the
+  ghost remains visually secondary to the active and locked pieces.

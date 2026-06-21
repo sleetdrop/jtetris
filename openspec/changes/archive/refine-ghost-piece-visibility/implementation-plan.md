@@ -303,7 +303,7 @@ git status --short
 Expected: `git diff --check` produces no output; status contains only files
 belonging to this OpenSpec change and its implementation.
 
-- [ ] **Step 3: Request user screenshots**
+- [x] **Step 3: Request user screenshots**
 
 Build the runnable artifact:
 
@@ -321,7 +321,7 @@ Review for transparent interiors, unambiguous distinction from real blocks,
 continuous outlines, and lower visual priority than the active piece. Do not
 take screenshots automatically.
 
-- [ ] **Step 4: Merge the approved requirement into the canonical spec**
+- [x] **Step 4: Merge the approved requirement into the canonical spec**
 
 Add this scenario under
 `Requirement: Theme visuals use deliberate flat contrast` in
@@ -339,7 +339,7 @@ Add this scenario under
 - **And** the ghost remains lower in visual priority than active and locked pieces
 ```
 
-- [ ] **Step 5: Complete verification notes and archive the change**
+- [x] **Step 5: Complete verification notes and archive the change**
 
 Mark every task complete and record:
 
@@ -357,7 +357,7 @@ mv openspec/changes/refine-ghost-piece-visibility \
   openspec/changes/archive/refine-ghost-piece-visibility
 ```
 
-- [ ] **Step 6: Commit canonical spec and archive**
+- [x] **Step 6: Commit canonical spec and archive**
 
 ```bash
 git add openspec/specs/ui-theme/spec.md \
@@ -365,7 +365,7 @@ git add openspec/specs/ui-theme/spec.md \
 git commit -m "docs: archive ghost piece visibility spec"
 ```
 
-- [ ] **Step 7: Confirm final repository state**
+- [x] **Step 7: Confirm final repository state**
 
 Run:
 
