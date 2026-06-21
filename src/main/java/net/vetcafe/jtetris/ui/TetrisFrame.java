@@ -107,8 +107,13 @@ public class TetrisFrame extends JFrame {
     private final GameSessionTimer sessionTimer = new GameSessionTimer();
     private final SidePanel sidePanel = new SidePanel(board, sessionTimer::elapsedMillis);
     private final ScoreManager scoreManager = new ScoreManager();
-    private final InputRepeater horizontalRepeater = new InputRepeater(DAS_MS, ARR_MS);
-    private final SoftDropRepeater softDropRepeater = new SoftDropRepeater(SOFT_DROP_REPEAT_MS);
+    private final GameplayInputController inputController = new GameplayInputController(
+            board,
+            DAS_MS,
+            ARR_MS,
+            SOFT_DROP_REPEAT_MS,
+            () -> System.nanoTime() / 1_000_000L
+    );
     // ensure score dialog is shown once per game
     private boolean scorePrompted;
     private boolean lastGameOverProcessed;
@@ -882,34 +887,37 @@ public class TetrisFrame extends JFrame {
     }
 
     private void onLeftPressed() {
-        applyHorizontalSteps(horizontalRepeater.pressLeft(nowMs()));
+        if (!isGameplayInputEnabled()) return;
+        repaintGameIfChanged(inputController.pressLeft());
     }
 
     private void onLeftReleased() {
-        applyHorizontalSteps(horizontalRepeater.releaseLeft(nowMs()));
+        if (!isGameplayInputEnabled()) return;
+        repaintGameIfChanged(inputController.releaseLeft());
     }
 
     private void onRightPressed() {
-        applyHorizontalSteps(horizontalRepeater.pressRight(nowMs()));
+        if (!isGameplayInputEnabled()) return;
+        repaintGameIfChanged(inputController.pressRight());
     }
 
     private void onRightReleased() {
-        applyHorizontalSteps(horizontalRepeater.releaseRight(nowMs()));
+        if (!isGameplayInputEnabled()) return;
+        repaintGameIfChanged(inputController.releaseRight());
     }
 
     private void onDownPressed() {
-        applySoftDropSteps(softDropRepeater.press(nowMs()));
+        if (!isGameplayInputEnabled()) return;
+        repaintGameIfChanged(inputController.pressSoftDrop());
     }
 
     private void onDownReleased() {
-        softDropRepeater.release();
+        inputController.releaseSoftDrop();
     }
 
     private void processHeldInput() {
         if (!isGameplayInputEnabled()) return;
-        long now = nowMs();
-        applyHorizontalSteps(horizontalRepeater.poll(now));
-        applySoftDropSteps(softDropRepeater.poll(now));
+        repaintGameIfChanged(inputController.poll());
     }
 
     private boolean isGameplayInputEnabled() {
@@ -928,63 +936,36 @@ public class TetrisFrame extends JFrame {
         ));
     }
 
-    private long nowMs() {
-        return System.nanoTime() / 1_000_000L;
-    }
-
     private void clearHeldInputs() {
-        horizontalRepeater.reset();
-        softDropRepeater.reset();
+        inputController.reset();
     }
 
-    private void applyHorizontalSteps(int signedSteps) {
-        if (signedSteps == 0 || !isGameplayInputEnabled()) return;
-        int direction = signedSteps > 0 ? 1 : -1;
-        int steps = Math.abs(signedSteps);
-        boolean moved = false;
-        for (int i = 0; i < steps; i++) {
-            if (!board.move(direction, 0)) {
-                break;
-            }
-            moved = true;
-        }
-        if (moved) {
-            gamePanel.repaint();
-        }
-    }
-
-    private void applySoftDropSteps(int steps) {
-        if (steps <= 0 || !isGameplayInputEnabled()) return;
-        boolean moved = false;
-        for (int i = 0; i < steps; i++) {
-            if (!board.move(0, 1)) {
-                break;
-            }
-            moved = true;
-        }
-        if (moved) {
+    private void repaintGameIfChanged(boolean changed) {
+        if (changed) {
             gamePanel.repaint();
         }
     }
 
     private void rotateIfActive(boolean cw) {
         if (!isGameplayInputEnabled()) return;
-        if (cw) board.rotateCW(); else board.rotateCCW();
-        gamePanel.repaint();
+        boolean changed = cw
+                ? inputController.rotateClockwise()
+                : inputController.rotateCounterclockwise();
+        repaintGameIfChanged(changed);
     }
 
     private void hardDropIfActive() {
         if (!isGameplayInputEnabled()) return;
-        board.hardDrop();
+        boolean changed = inputController.hardDrop();
         syncSessionTimer();
-        gamePanel.repaint();
+        repaintGameIfChanged(changed);
     }
 
     private void holdIfActive() {
         if (!isGameplayInputEnabled()) return;
-        board.hold();
+        boolean changed = inputController.hold();
         syncSessionTimer();
-        gamePanel.repaint();
+        repaintGameIfChanged(changed);
     }
 
     public static void main(String[] args) {
