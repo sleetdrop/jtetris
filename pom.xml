@@ -44,6 +44,8 @@
         <jpackage.vendor>Yuan Jiang</jpackage.vendor>
         <junit.jupiter.version>5.10.2</junit.jupiter.version>
         <flatlaf.version>3.4.1</flatlaf.version>
+        <slf4j.version>2.0.18</slf4j.version>
+        <logback.version>1.5.33</logback.version>
     </properties>
 
     <dependencies>
@@ -51,6 +53,17 @@
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
             <version>${flatlaf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
