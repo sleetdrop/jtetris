@@ -43,7 +43,7 @@ public class TetrisFrame extends JFrame {
     private static final String FLATLAF_BASE = "com.formdev.flatlaf.FlatLaf";
     private static final int GRAVITY_TICK_MS = 700;
     private static final int INPUT_POLL_MS = 16;
-    private static final int DAS_MS = 130;
+    private static final int DAS_MS = 180;
     private static final int ARR_MS = 35;
     private static final int SOFT_DROP_REPEAT_MS = 40;
 

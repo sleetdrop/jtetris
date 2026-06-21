@@ -10,7 +10,7 @@
 - [x] Commit the clock and documentation step.
 - [x] Run targeted input tests and `./mvnw clean test`.
 - [x] Add a failing regression test for the application default DAS boundary observed in the player trace.
-- [ ] Tune default horizontal DAS from 130ms to 180ms while preserving 35ms ARR.
+- [x] Tune default horizontal DAS from 130ms to 180ms while preserving 35ms ARR.
 - [ ] Update algorithm documentation and run focused plus full verification.
 - [ ] Complete the manual verification checklist and record results below.
 
@@ -25,3 +25,4 @@
 - Automated GUI interaction was not accepted as manual evidence because the available screenshot/computer-control path cannot reliably target and exercise real-time Swing gameplay. Player experience verification remains pending.
 - Player trace on 2026-06-21: 48 presses and 48 releases paired exactly; no duplicate presses or EDT delays occurred. Hold duration was median 121ms, p75 135ms, and maximum 176ms. The 130ms DAS caused 13 taps to emit one repeat step.
 - DAS tuning RED on 2026-06-22: `TetrisFrameInputTimingTest` failed as expected because polling at 176ms emitted a repeat under the 130ms application default.
+- DAS tuning GREEN on 2026-06-22: the application default is 180ms, ARR remains 35ms, and 21 focused timing/controller tests passed.
