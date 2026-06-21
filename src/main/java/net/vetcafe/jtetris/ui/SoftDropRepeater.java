@@ -29,12 +29,11 @@ public class SoftDropRepeater {
         if (!held) {
             return 0;
         }
-        int steps = 0;
-        while (nowMs >= nextRepeatAt) {
-            steps++;
-            nextRepeatAt += repeatMs;
+        if (nowMs < nextRepeatAt) {
+            return 0;
         }
-        return steps;
+        nextRepeatAt = nowMs + repeatMs;
+        return 1;
     }
 
     public void reset() {
@@ -42,6 +41,5 @@ public class SoftDropRepeater {
         nextRepeatAt = 0;
     }
 }
-
 
 

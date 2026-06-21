@@ -15,12 +15,19 @@ class SoftDropRepeaterTest {
 	}
 
 	@Test
-	void pollCanEmitMultipleStepsAfterLongFrameGap() {
+	void delayedPollEmitsOneStepAndRebasesDeadline() {
 		SoftDropRepeater repeater = new SoftDropRepeater(40);
 		repeater.press(0);
-		assertEquals(3, repeater.poll(120));
-		assertEquals(0, repeater.poll(121));
+		assertEquals(1, repeater.poll(120));
+		assertEquals(0, repeater.poll(159));
 		assertEquals(1, repeater.poll(160));
+	}
+
+	@Test
+	void duplicatePressDoesNotEmitAnotherImmediateStep() {
+		SoftDropRepeater repeater = new SoftDropRepeater(40);
+		assertEquals(1, repeater.press(0));
+		assertEquals(0, repeater.press(10));
 	}
 
 	@Test
@@ -40,6 +47,5 @@ class SoftDropRepeaterTest {
 		assertEquals(1, repeater.press(101));
 	}
 }
-
 
 
