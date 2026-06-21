@@ -2,13 +2,73 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Prevent delayed Swing input polling from causing burst movement while preserving existing DAS/ARR controls and transition clearing.
+**Goal:** Prevent delayed Swing input polling from causing burst movement and tune the default DAS so observed taps remain single-cell actions.
 
 **Architecture:** Keep key bindings and Swing timer polling in `TetrisFrame`. Harden the two small repeater state machines so a poll emits at most one current-intent step, use explicit horizontal press order, and supply monotonic elapsed time from the frame.
 
 **Tech Stack:** Java 17, Swing, JUnit 5, Maven
 
 ---
+
+### Task 0: Tune the application DAS boundary from player evidence
+
+**Files:**
+- Create: `src/test/java/net/vetcafe/jtetris/ui/TetrisFrameInputTimingTest.java`
+- Modify: `src/main/java/net/vetcafe/jtetris/ui/TetrisFrame.java`
+- Modify: `doc/algorithms.md`
+- Modify: `openspec/changes/harden-gameplay-input/tasks.md`
+
+- [ ] **Step 1: Write a failing application-default boundary test**
+
+Construct `InputRepeater` with the application timing constants. Verify the
+press moves immediately, polling at 176ms emits zero, and polling at 180ms emits
+one repeat.
+
+- [ ] **Step 2: Run the focused test and verify RED**
+
+Run:
+
+```bash
+./mvnw -Djava.awt.headless=true -Dtest=TetrisFrameInputTimingTest test
+```
+
+Expected: failure because the current application DAS is 130ms.
+
+- [ ] **Step 3: Apply the minimal parameter change**
+
+Make the existing timing constants package-visible for the test and change only
+`DAS_MS` from `130` to `180`. Keep `ARR_MS` at `35`.
+
+- [ ] **Step 4: Run focused tests and verify GREEN**
+
+Run:
+
+```bash
+./mvnw -Djava.awt.headless=true -Dtest=TetrisFrameInputTimingTest,InputRepeaterTest,GameplayInputControllerTest test
+```
+
+Expected: all focused tests pass.
+
+- [ ] **Step 5: Document and verify**
+
+Record the 180ms/35ms default and evidence basis in `doc/algorithms.md`, update
+the task verification notes, and run:
+
+```bash
+./mvnw -Djava.awt.headless=true clean test
+```
+
+Expected: all tests pass.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add src/main/java/net/vetcafe/jtetris/ui/TetrisFrame.java \
+  src/test/java/net/vetcafe/jtetris/ui/TetrisFrameInputTimingTest.java \
+  doc/algorithms.md \
+  openspec/changes/harden-gameplay-input/tasks.md
+git commit -m "fix: tune horizontal DAS for reliable taps"
+```
 
 ### Task 1: Harden horizontal DAS/ARR state
 

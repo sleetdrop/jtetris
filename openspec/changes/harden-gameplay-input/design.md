@@ -17,6 +17,16 @@ while (nowMs >= nextRepeatAt) {
 
 When the Swing event dispatch thread is delayed, one callback emits the full backlog. The frame then applies all returned steps synchronously, producing a visible multi-cell burst. The apparent pause before the burst is the same event-dispatch delay.
 
+The first hardening pass removed that backlog, but a real player trace exposed a
+second cause. The application default DAS was 130ms while observed taps had a
+121ms median, 135ms 75th percentile, and 176ms maximum. Twenty of 48 taps
+crossed 130ms and 13 emitted one repeat step. Press/release events paired exactly
+and the EDT watchdog reported no stalls.
+
+Tune the default DAS to 180ms. The immediate press step remains unchanged, so
+tap latency does not increase. ARR remains 35ms so deliberate holds still move
+quickly after DAS activation.
+
 ## Repeat Semantics
 - A new eligible press emits one immediate step.
 - Repeated press notifications for an already-held key emit no additional immediate step.
@@ -50,6 +60,7 @@ Soft drop has the same backlog problem and shares the same event-dispatch constr
 - equal-timestamp opposite presses preserve actual event order;
 - active-key release falls back immediately to the other held direction;
 - reset clears all state.
+- the application default emits no repeat at 176ms and begins repeat at 180ms.
 
 `SoftDropRepeaterTest` will cover:
 - immediate press and normal repeat cadence;

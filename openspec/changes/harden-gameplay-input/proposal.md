@@ -1,7 +1,7 @@
 # Harden Gameplay Input
 
 ## Summary
-Harden JTetris horizontal and soft-drop repeat handling so delayed Swing event processing cannot produce burst movement, while preserving deterministic DAS/ARR behavior and existing controls.
+Harden JTetris horizontal and soft-drop repeat handling so delayed Swing event processing cannot produce burst movement, and tune horizontal DAS so normal taps do not cross into auto-repeat.
 
 ## Motivation
 Horizontal movement can occasionally feel unresponsive and then move two or three columns at once. The repeaters currently accumulate every missed repeat interval and emit the backlog in one Swing timer callback. Because input, rendering, overlays, and other UI work share the event dispatch thread, ordinary UI delays can therefore become visible movement bursts.
@@ -19,7 +19,8 @@ The input review also found two boundary weaknesses: simultaneous-timestamp dire
 
 ## Out Of Scope
 - No changes to `Board`, replay data, scoring, gravity, lock delay, rotation, or hold rules.
-- No changes to DAS, ARR, soft-drop interval, or input polling constants.
+- No changes to ARR, soft-drop interval, or input polling constants.
+- No configurable handling settings in this change.
 - No configurable handling menu, instant ARR, input buffering, IRS, or IHS.
 - No dependency, package, or broad `TetrisFrame` refactor.
 
@@ -29,6 +30,7 @@ The input review also found two boundary weaknesses: simultaneous-timestamp dire
 - `src/main/java/net/vetcafe/jtetris/ui/SoftDropRepeater.java`
 - `src/main/java/net/vetcafe/jtetris/ui/TetrisFrame.java`
 - `src/test/java/net/vetcafe/jtetris/ui/InputRepeaterTest.java`
+- `src/test/java/net/vetcafe/jtetris/ui/TetrisFrameInputTimingTest.java`
 - `src/test/java/net/vetcafe/jtetris/ui/SoftDropRepeaterTest.java`
 - `doc/algorithms.md`
 - `doc/overview.md`

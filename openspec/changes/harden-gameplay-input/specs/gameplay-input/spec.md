@@ -46,8 +46,23 @@ JTetris SHALL schedule DAS, ARR, and soft-drop repeats from a monotonic elapsed-
 - **When** the operating system adjusts wall-clock time
 - **Then** held-input repeat scheduling remains based only on elapsed time
 
-### Requirement: Existing handling constants and transition clearing must remain compatible
-The input hardening change SHALL preserve the existing key bindings, DAS value, ARR value, soft-drop interval, input polling interval, and held-input clearing on pause, restart, overlay transitions, and focus loss.
+### Requirement: Default horizontal handling must distinguish observed taps from deliberate holds
+JTetris SHALL use a default horizontal DAS of 180ms and ARR of 35ms. A new press
+SHALL move immediately, and automatic horizontal repeat SHALL not begin before
+the DAS deadline.
+
+#### Scenario: An observed-duration tap remains one cell
+- **Given** a horizontal press moved one cell immediately
+- **When** input is polled 176ms after the press
+- **Then** no automatic repeat step is emitted
+
+#### Scenario: A deliberate hold reaches DAS
+- **Given** a horizontal direction remains held
+- **When** input is polled 180ms after the press
+- **Then** exactly one automatic repeat step is emitted
+
+### Requirement: Existing handling transitions must remain compatible
+The input hardening change SHALL preserve the existing key bindings, ARR value, soft-drop interval, input polling interval, and held-input clearing on pause, restart, overlay transitions, and focus loss.
 
 #### Scenario: A held direction crosses a blocked gameplay transition
 - **Given** a horizontal direction or soft drop is held
