@@ -929,7 +929,7 @@ public class TetrisFrame extends JFrame {
     }
 
     private long nowMs() {
-        return System.currentTimeMillis();
+        return System.nanoTime() / 1_000_000L;
     }
 
     private void clearHeldInputs() {

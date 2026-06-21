@@ -70,8 +70,9 @@
 
 ## Input
 - Swing key bindings on root pane (`WHEN_IN_FOCUSED_WINDOW`): move, rotate (CW/CCW), hard drop, hold (`C`), pause, restart, leaderboard, help, quit.
-- Horizontal input (`←` / `→`) uses a deterministic DAS/ARR repeater (`InputRepeater`) instead of OS key-repeat cadence.
+- Horizontal input (`←` / `→`) uses a deterministic DAS/ARR repeater (`InputRepeater`) instead of OS key-repeat cadence; the latest genuinely pressed direction wins when both are held.
 - Soft drop (`↓`) uses a deterministic repeat policy (`SoftDropRepeater`) with immediate first step and fixed repeat interval.
+- Repeat timing uses monotonic elapsed time. Each input poll emits at most one step and rebases its deadline after UI delays instead of replaying stale missed intervals.
 - Modal UI states (score dialogs/leaderboard/new-game prompt) block gameplay input via a guard and clear held repeaters on enter/exit.
 - Window focus listener nudges focus back to game panel.
 

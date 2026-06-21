@@ -73,7 +73,7 @@ classDiagram
 
 ## Game Loop & Timing
 - Swing `Timer` in `TetrisFrame` ticks every ~700 ms (speeds up by level). On each tick: if not paused and not game over, call `Board.tick()` (gravity); repaint board.
-- A second short-interval timer polls held horizontal and soft-drop input via repeaters; movement/rotation/drop actions apply to model and rendering pulls from model snapshot.
+- A second short-interval timer polls held horizontal and soft-drop input via repeaters using monotonic elapsed time. Each poll emits at most one step, so delayed Swing callbacks discard stale repeat intervals instead of causing movement bursts.
 - In-stage overlays (score entry/leaderboard/new game prompt/exit confirmation) temporarily block gameplay input and clear held repeaters to prevent post-overlay drift.
 
 ## Scoring & Levels

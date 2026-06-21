@@ -5,8 +5,8 @@
 - [x] Commit the horizontal repeater test and implementation step.
 - [x] Add failing soft-drop regression tests for delayed polling and deadline rebasing.
 - [x] Harden `SoftDropRepeater` to emit at most one step per poll.
-- [ ] Commit the soft-drop repeater test and implementation step.
-- [ ] Switch `TetrisFrame` input scheduling to monotonic elapsed time and update concise algorithm documentation.
+- [x] Commit the soft-drop repeater test and implementation step.
+- [x] Switch `TetrisFrame` input scheduling to monotonic elapsed time and update concise algorithm documentation.
 - [ ] Commit the clock and documentation step.
 - [ ] Run targeted input tests and `./mvnw clean test`.
 - [ ] Complete the manual verification checklist and record results below.
