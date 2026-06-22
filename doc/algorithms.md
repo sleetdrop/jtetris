@@ -71,7 +71,7 @@
 ## Input
 - Swing key bindings on root pane (`WHEN_IN_FOCUSED_WINDOW`): move, rotate (CW/CCW), hard drop, hold (`C`), pause, restart, leaderboard, help, quit.
 - `GameplayInputController` is the shared production boundary for core game operations. Swing delegates eligible actions to it, while headless tests drive the same methods against a seeded `Board` and fake monotonic clock.
-- Horizontal input (`←` / `→`) uses a deterministic DAS/ARR repeater (`InputRepeater`) instead of OS key-repeat cadence; the latest genuinely pressed direction wins when both are held.
+- Horizontal input (`←` / `→`) uses a deterministic DAS/ARR repeater (`InputRepeater`) instead of OS key-repeat cadence. A press moves immediately, the default 180ms DAS separates observed taps from deliberate holds, and held movement then repeats every 35ms. The latest genuinely pressed direction wins when both are held.
 - Soft drop (`↓`) uses a deterministic repeat policy (`SoftDropRepeater`) with immediate first step and fixed repeat interval.
 - Repeat timing uses monotonic elapsed time. Each input poll emits at most one step and rebases its deadline after UI delays instead of replaying stale missed intervals.
 - Modal UI states (score dialogs/leaderboard/new-game prompt) block gameplay input via a guard and clear held repeaters on enter/exit.

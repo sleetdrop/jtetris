@@ -18,13 +18,13 @@
 - Modify: `doc/algorithms.md`
 - Modify: `openspec/changes/harden-gameplay-input/tasks.md`
 
-- [ ] **Step 1: Write a failing application-default boundary test**
+- [x] **Step 1: Write a failing application-default boundary test**
 
 Construct `InputRepeater` with the application timing constants. Verify the
 press moves immediately, polling at 176ms emits zero, and polling at 180ms emits
 one repeat.
 
-- [ ] **Step 2: Run the focused test and verify RED**
+- [x] **Step 2: Run the focused test and verify RED**
 
 Run:
 
@@ -34,12 +34,13 @@ Run:
 
 Expected: failure because the current application DAS is 130ms.
 
-- [ ] **Step 3: Apply the minimal parameter change**
+- [x] **Step 3: Apply the minimal parameter change**
 
-Make the existing timing constants package-visible for the test and change only
-`DAS_MS` from `130` to `180`. Keep `ARR_MS` at `35`.
+Read the private application timing constants reflectively in the focused
+contract test, then change only `DAS_MS` from `130` to `180`. Keep `ARR_MS` at
+`35` and keep both constants private.
 
-- [ ] **Step 4: Run focused tests and verify GREEN**
+- [x] **Step 4: Run focused tests and verify GREEN**
 
 Run:
 
@@ -49,7 +50,7 @@ Run:
 
 Expected: all focused tests pass.
 
-- [ ] **Step 5: Document and verify**
+- [x] **Step 5: Document and verify**
 
 Record the 180ms/35ms default and evidence basis in `doc/algorithms.md`, update
 the task verification notes, and run:
@@ -60,7 +61,7 @@ the task verification notes, and run:
 
 Expected: all tests pass.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/main/java/net/vetcafe/jtetris/ui/TetrisFrame.java \
