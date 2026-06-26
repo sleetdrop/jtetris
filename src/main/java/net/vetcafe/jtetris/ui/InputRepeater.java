@@ -135,8 +135,6 @@ public class InputRepeater {
                 step,
                 reason,
                 leftPressOrder,
-                rightPressOrder
-        );
+                rightPressOrder);
     }
 }
-

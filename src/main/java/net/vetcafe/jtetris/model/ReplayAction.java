@@ -13,6 +13,3 @@ public enum ReplayAction {
     HOLD,
     TICK
 }
-
-
-

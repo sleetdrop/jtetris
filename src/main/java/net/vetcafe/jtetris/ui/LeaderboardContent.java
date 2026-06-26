@@ -1,7 +1,9 @@
 package net.vetcafe.jtetris.ui;
 
-import net.vetcafe.jtetris.score.ScoreManager;
-
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.List;
+import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -10,10 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.List;
-import java.util.function.Consumer;
+import net.vetcafe.jtetris.score.ScoreManager;
 
 final class LeaderboardContent extends JPanel {
     private final JTable table;
@@ -21,11 +20,7 @@ final class LeaderboardContent extends JPanel {
     private final JButton deleteButton = new JButton("Delete");
     private final JButton closeButton = new JButton("Close");
 
-    LeaderboardContent(
-            List<ScoreManager.ScoreEntry> entries,
-            Consumer<String> deleteAction,
-            Runnable closeAction
-    ) {
+    LeaderboardContent(List<ScoreManager.ScoreEntry> entries, Consumer<String> deleteAction, Runnable closeAction) {
         super(new BorderLayout(0, 10));
         setOpaque(false);
 
@@ -38,14 +33,14 @@ final class LeaderboardContent extends JPanel {
             add(emptyLabel, BorderLayout.CENTER);
         } else {
             emptyLabel = null;
-            DefaultTableModel model = new DefaultTableModel(new Object[]{"User", "Best"}, 0) {
+            DefaultTableModel model = new DefaultTableModel(new Object[] {"User", "Best"}, 0) {
                 @Override
                 public boolean isCellEditable(int row, int column) {
                     return false;
                 }
             };
             for (ScoreManager.ScoreEntry entry : entries) {
-                model.addRow(new Object[]{entry.user(), entry.score()});
+                model.addRow(new Object[] {entry.user(), entry.score()});
             }
 
             table = new JTable(model);

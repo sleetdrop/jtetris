@@ -1,20 +1,19 @@
 package net.vetcafe.jtetris.ui;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 
 final class HelpContent {
     private static final int PREFERRED_WIDTH = 560;
     private static final int PREFERRED_HEIGHT = 360;
 
-    private HelpContent() {
-    }
+    private HelpContent() {}
 
     static JComponent create(Runnable closeAction) {
         UiTheme theme = UiTheme.active();
@@ -81,7 +80,8 @@ final class HelpContent {
                 <p><b>T-Spin</b> is awarded when a T piece locks after a rotation in a tight corner setup. JTetris currently implements baseline T-Spin scoring.</p>
                 </body>
                 </html>
-                """.formatted(text, background, accent, accent, accent, accent);
+                """
+                .formatted(text, background, accent, accent, accent, accent);
     }
 
     private static String color(java.awt.Color color) {

@@ -1,11 +1,5 @@
 package net.vetcafe.jtetris.ui;
 
-import net.vetcafe.jtetris.model.Board;
-import net.vetcafe.jtetris.model.Tetromino;
-import net.vetcafe.jtetris.model.TetrominoType;
-
-import javax.swing.JPanel;
-import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -15,6 +9,11 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.HierarchyEvent;
 import java.util.Arrays;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import net.vetcafe.jtetris.model.Board;
+import net.vetcafe.jtetris.model.Tetromino;
+import net.vetcafe.jtetris.model.TetrominoType;
 
 public class GamePanel extends JPanel {
     private static final int DEFAULT_CLEAR_FLASH_TOTAL_MS = 180;
@@ -24,42 +23,18 @@ public class GamePanel extends JPanel {
     private static final int DEFAULT_CLEAR_FLASH_DARK_EDGE_ALPHA = 178;
     private static final int DEFAULT_CLEAR_FLASH_LIGHT_EDGE_ALPHA = 196;
 
-    private static final int clearFlashTotalMs = boundedIntProperty(
-            "jtetris.flash.duration.ms",
-            DEFAULT_CLEAR_FLASH_TOTAL_MS,
-            60,
-            1000
-    );
-    private static final int clearFlashStepMs = boundedIntProperty(
-            "jtetris.flash.step.ms",
-            DEFAULT_CLEAR_FLASH_STEP_MS,
-            15,
-            250
-    );
-    private static final int clearFlashDarkFillAlpha = boundedIntProperty(
-            "jtetris.flash.dark.fill.alpha",
-            DEFAULT_CLEAR_FLASH_DARK_FILL_ALPHA,
-            20,
-            255
-    );
-    private static final int clearFlashLightFillAlpha = boundedIntProperty(
-            "jtetris.flash.light.fill.alpha",
-            DEFAULT_CLEAR_FLASH_LIGHT_FILL_ALPHA,
-            20,
-            255
-    );
-    private static final int clearFlashDarkEdgeAlpha = boundedIntProperty(
-            "jtetris.flash.dark.edge.alpha",
-            DEFAULT_CLEAR_FLASH_DARK_EDGE_ALPHA,
-            20,
-            255
-    );
-    private static final int clearFlashLightEdgeAlpha = boundedIntProperty(
-            "jtetris.flash.light.edge.alpha",
-            DEFAULT_CLEAR_FLASH_LIGHT_EDGE_ALPHA,
-            20,
-            255
-    );
+    private static final int clearFlashTotalMs =
+            boundedIntProperty("jtetris.flash.duration.ms", DEFAULT_CLEAR_FLASH_TOTAL_MS, 60, 1000);
+    private static final int clearFlashStepMs =
+            boundedIntProperty("jtetris.flash.step.ms", DEFAULT_CLEAR_FLASH_STEP_MS, 15, 250);
+    private static final int clearFlashDarkFillAlpha =
+            boundedIntProperty("jtetris.flash.dark.fill.alpha", DEFAULT_CLEAR_FLASH_DARK_FILL_ALPHA, 20, 255);
+    private static final int clearFlashLightFillAlpha =
+            boundedIntProperty("jtetris.flash.light.fill.alpha", DEFAULT_CLEAR_FLASH_LIGHT_FILL_ALPHA, 20, 255);
+    private static final int clearFlashDarkEdgeAlpha =
+            boundedIntProperty("jtetris.flash.dark.edge.alpha", DEFAULT_CLEAR_FLASH_DARK_EDGE_ALPHA, 20, 255);
+    private static final int clearFlashLightEdgeAlpha =
+            boundedIntProperty("jtetris.flash.light.edge.alpha", DEFAULT_CLEAR_FLASH_LIGHT_EDGE_ALPHA, 20, 255);
 
     private final Board board;
     private final Timer clearFlashTimer;
@@ -163,15 +138,11 @@ public class GamePanel extends JPanel {
     }
 
     static Color ghostOuterColor() {
-        return UiTheme.active().isDark()
-                ? new Color(118, 128, 150)
-                : new Color(155, 164, 178);
+        return UiTheme.active().isDark() ? new Color(118, 128, 150) : new Color(155, 164, 178);
     }
 
     static Color ghostInnerColor() {
-        return UiTheme.active().isDark()
-                ? new Color(68, 78, 99)
-                : new Color(200, 205, 214);
+        return UiTheme.active().isDark() ? new Color(68, 78, 99) : new Color(200, 205, 214);
     }
 
     static boolean overlapsCurrentCell(Tetromino current, int gridX, int modelY) {

@@ -42,5 +42,3 @@ class GhostPieceTest {
         assertNull(board.getGhost());
     }
 }
-
-

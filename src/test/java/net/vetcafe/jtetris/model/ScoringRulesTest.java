@@ -59,7 +59,10 @@ class ScoringRulesTest {
 
         setFilledRows(board, 4);
         invokeClearLines(board);
-        assertEquals(1850, board.getScore(), "Second tetris after chain break should not get B2B bonus but still keeps combo bonus");
+        assertEquals(
+                1850,
+                board.getScore(),
+                "Second tetris after chain break should not get B2B bonus but still keeps combo bonus");
     }
 
     @Test
@@ -117,5 +120,3 @@ class ScoringRulesTest {
         field.setBoolean(board, value);
     }
 }
-
-

@@ -1,8 +1,7 @@
 package net.vetcafe.jtetris.ui;
 
 final class ScoreFeedbackFormatter {
-    private ScoreFeedbackFormatter() {
-    }
+    private ScoreFeedbackFormatter() {}
 
     static String eventText(String raw) {
         if (raw == null || raw.isBlank() || "NONE".equals(raw) || "NO_CLEAR".equals(raw)) {

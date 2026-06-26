@@ -9,10 +9,7 @@ class TetrisFrameInputTimingTest {
 
     @Test
     void defaultDasKeepsObservedTapSingleCellAndRepeatsAtDeadline() throws Exception {
-        InputRepeater repeater = new InputRepeater(
-                staticIntField("DAS_MS"),
-                staticIntField("ARR_MS")
-        );
+        InputRepeater repeater = new InputRepeater(staticIntField("DAS_MS"), staticIntField("ARR_MS"));
 
         assertEquals(1, repeater.pressRight(0));
         assertEquals(0, repeater.poll(176));

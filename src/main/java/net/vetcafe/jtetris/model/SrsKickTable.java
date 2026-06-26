@@ -6,62 +6,27 @@ package net.vetcafe.jtetris.model;
  * <p>Offsets are expressed in screen coordinates where +x is right and +y is down.
  */
 final class SrsKickTable {
-    private static final int[][] JLSTZ_0_TO_R = {
-            {0, 0}, {-1, 0}, {-1, -1}, {0, 2}, {-1, 2}
-    };
-    private static final int[][] JLSTZ_R_TO_0 = {
-            {0, 0}, {1, 0}, {1, 1}, {0, -2}, {1, -2}
-    };
-    private static final int[][] JLSTZ_R_TO_2 = {
-            {0, 0}, {1, 0}, {1, -1}, {0, 2}, {1, 2}
-    };
-    private static final int[][] JLSTZ_2_TO_R = {
-            {0, 0}, {-1, 0}, {-1, 1}, {0, -2}, {-1, -2}
-    };
-    private static final int[][] JLSTZ_2_TO_L = {
-            {0, 0}, {1, 0}, {1, -1}, {0, 2}, {1, 2}
-    };
-    private static final int[][] JLSTZ_L_TO_2 = {
-            {0, 0}, {-1, 0}, {-1, 1}, {0, -2}, {-1, -2}
-    };
-    private static final int[][] JLSTZ_L_TO_0 = {
-            {0, 0}, {-1, 0}, {-1, -1}, {0, 2}, {-1, 2}
-    };
-    private static final int[][] JLSTZ_0_TO_L = {
-            {0, 0}, {1, 0}, {1, 1}, {0, -2}, {1, -2}
-    };
+    private static final int[][] JLSTZ_0_TO_R = {{0, 0}, {-1, 0}, {-1, -1}, {0, 2}, {-1, 2}};
+    private static final int[][] JLSTZ_R_TO_0 = {{0, 0}, {1, 0}, {1, 1}, {0, -2}, {1, -2}};
+    private static final int[][] JLSTZ_R_TO_2 = {{0, 0}, {1, 0}, {1, -1}, {0, 2}, {1, 2}};
+    private static final int[][] JLSTZ_2_TO_R = {{0, 0}, {-1, 0}, {-1, 1}, {0, -2}, {-1, -2}};
+    private static final int[][] JLSTZ_2_TO_L = {{0, 0}, {1, 0}, {1, -1}, {0, 2}, {1, 2}};
+    private static final int[][] JLSTZ_L_TO_2 = {{0, 0}, {-1, 0}, {-1, 1}, {0, -2}, {-1, -2}};
+    private static final int[][] JLSTZ_L_TO_0 = {{0, 0}, {-1, 0}, {-1, -1}, {0, 2}, {-1, 2}};
+    private static final int[][] JLSTZ_0_TO_L = {{0, 0}, {1, 0}, {1, 1}, {0, -2}, {1, -2}};
 
-    private static final int[][] I_0_TO_R = {
-            {0, 0}, {-2, 0}, {1, 0}, {-2, 1}, {1, -2}
-    };
-    private static final int[][] I_R_TO_0 = {
-            {0, 0}, {2, 0}, {-1, 0}, {2, -1}, {-1, 2}
-    };
-    private static final int[][] I_R_TO_2 = {
-            {0, 0}, {-1, 0}, {2, 0}, {-1, -2}, {2, 1}
-    };
-    private static final int[][] I_2_TO_R = {
-            {0, 0}, {1, 0}, {-2, 0}, {1, 2}, {-2, -1}
-    };
-    private static final int[][] I_2_TO_L = {
-            {0, 0}, {2, 0}, {-1, 0}, {2, -1}, {-1, 2}
-    };
-    private static final int[][] I_L_TO_2 = {
-            {0, 0}, {-2, 0}, {1, 0}, {-2, 1}, {1, -2}
-    };
-    private static final int[][] I_L_TO_0 = {
-            {0, 0}, {1, 0}, {-2, 0}, {1, 2}, {-2, -1}
-    };
-    private static final int[][] I_0_TO_L = {
-            {0, 0}, {-1, 0}, {2, 0}, {-1, -2}, {2, 1}
-    };
+    private static final int[][] I_0_TO_R = {{0, 0}, {-2, 0}, {1, 0}, {-2, 1}, {1, -2}};
+    private static final int[][] I_R_TO_0 = {{0, 0}, {2, 0}, {-1, 0}, {2, -1}, {-1, 2}};
+    private static final int[][] I_R_TO_2 = {{0, 0}, {-1, 0}, {2, 0}, {-1, -2}, {2, 1}};
+    private static final int[][] I_2_TO_R = {{0, 0}, {1, 0}, {-2, 0}, {1, 2}, {-2, -1}};
+    private static final int[][] I_2_TO_L = {{0, 0}, {2, 0}, {-1, 0}, {2, -1}, {-1, 2}};
+    private static final int[][] I_L_TO_2 = {{0, 0}, {-2, 0}, {1, 0}, {-2, 1}, {1, -2}};
+    private static final int[][] I_L_TO_0 = {{0, 0}, {1, 0}, {-2, 0}, {1, 2}, {-2, -1}};
+    private static final int[][] I_0_TO_L = {{0, 0}, {-1, 0}, {2, 0}, {-1, -2}, {2, 1}};
 
-    private static final int[][] NO_KICK = {
-            {0, 0}
-    };
+    private static final int[][] NO_KICK = {{0, 0}};
 
-    private SrsKickTable() {
-    }
+    private SrsKickTable() {}
 
     static int[][] getKickOffsets(TetrominoType type, int fromRotation, int toRotation) {
         int from = Math.floorMod(fromRotation, 4);
@@ -97,6 +62,3 @@ final class SrsKickTable {
         };
     }
 }
-
-
-

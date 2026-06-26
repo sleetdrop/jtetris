@@ -35,6 +35,3 @@ public class PieceBag {
         queue.addAll(shuffled);
     }
 }
-
-
-

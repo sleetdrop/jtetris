@@ -44,10 +44,8 @@ class GamePanelGhostRenderingTest {
             Color inner = GamePanel.ghostInnerColor();
             double minimumPieceDistance = Double.MAX_VALUE;
             for (TetrominoType type : TetrominoType.values()) {
-                minimumPieceDistance = Math.min(
-                        minimumPieceDistance,
-                        colorDistance(ColorPalette.colorFor(type), board)
-                );
+                minimumPieceDistance =
+                        Math.min(minimumPieceDistance, colorDistance(ColorPalette.colorFor(type), board));
             }
 
             assertTrue(colorDistance(outer, board) < minimumPieceDistance);

@@ -1,15 +1,5 @@
 package net.vetcafe.jtetris.ui;
 
-import net.vetcafe.jtetris.model.Board;
-import net.vetcafe.jtetris.model.Tetromino;
-import net.vetcafe.jtetris.model.TetrominoType;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.Timer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -20,6 +10,15 @@ import java.awt.RenderingHints;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.LongSupplier;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import net.vetcafe.jtetris.model.Board;
+import net.vetcafe.jtetris.model.Tetromino;
+import net.vetcafe.jtetris.model.TetrominoType;
 
 public class SidePanel extends JPanel {
     private final Board board;
@@ -133,15 +132,17 @@ public class SidePanel extends JPanel {
 
         int combo = board.getComboStreak();
         comboLabel.setText(ScoreFeedbackFormatter.comboText(combo));
-        comboLabel.setForeground(ScoreFeedbackFormatter.activeCombo(combo)
-                ? UiTheme.active().textPrimary()
-                : UiTheme.active().textMuted());
+        comboLabel.setForeground(
+                ScoreFeedbackFormatter.activeCombo(combo)
+                        ? UiTheme.active().textPrimary()
+                        : UiTheme.active().textMuted());
 
         boolean b2b = board.isBackToBackActive();
         b2bLabel.setText(ScoreFeedbackFormatter.backToBackText(b2b));
-        b2bLabel.setForeground(ScoreFeedbackFormatter.activeBackToBack(b2b)
-                ? UiTheme.active().textPrimary()
-                : UiTheme.active().textMuted());
+        b2bLabel.setForeground(
+                ScoreFeedbackFormatter.activeBackToBack(b2b)
+                        ? UiTheme.active().textPrimary()
+                        : UiTheme.active().textMuted());
         previewPanel.repaint();
         repaint();
     }
@@ -161,12 +162,14 @@ public class SidePanel extends JPanel {
         linesLabel.setForeground(UiTheme.active().textPrimary());
         timeLabel.setForeground(UiTheme.active().textPrimary());
         feedbackLabel.setForeground(UiTheme.active().textPrimary());
-        comboLabel.setForeground(ScoreFeedbackFormatter.activeCombo(board.getComboStreak())
-                ? UiTheme.active().textPrimary()
-                : UiTheme.active().textMuted());
-        b2bLabel.setForeground(ScoreFeedbackFormatter.activeBackToBack(board.isBackToBackActive())
-                ? UiTheme.active().textPrimary()
-                : UiTheme.active().textMuted());
+        comboLabel.setForeground(
+                ScoreFeedbackFormatter.activeCombo(board.getComboStreak())
+                        ? UiTheme.active().textPrimary()
+                        : UiTheme.active().textMuted());
+        b2bLabel.setForeground(
+                ScoreFeedbackFormatter.activeBackToBack(board.isBackToBackActive())
+                        ? UiTheme.active().textPrimary()
+                        : UiTheme.active().textMuted());
         repaint();
     }
 

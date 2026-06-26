@@ -22,8 +22,7 @@ class ReplayHooksTest {
                 ReplayAction.ROTATE_CCW,
                 ReplayAction.TICK,
                 ReplayAction.TICK,
-                ReplayAction.HARD_DROP
-        );
+                ReplayAction.HARD_DROP);
 
         for (ReplayAction action : actions) {
             source.applyReplayAction(action);
@@ -82,4 +81,3 @@ class ReplayHooksTest {
         assertNull(unseeded.getReplaySeed());
     }
 }
-

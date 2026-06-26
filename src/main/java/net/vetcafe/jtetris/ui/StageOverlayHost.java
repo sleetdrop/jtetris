@@ -1,21 +1,21 @@
 package net.vetcafe.jtetris.ui;
 
+import java.awt.AlphaComposite;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.util.Objects;
+import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import java.awt.AlphaComposite;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.FlowLayout;
-import java.awt.Insets;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 /**
  * In-stage overlay host that manages HUD-style panel lifecycle and basic enter/exit motion.
@@ -48,11 +48,9 @@ public final class StageOverlayHost extends JPanel {
     }
 
     public interface OverlayLifecycle {
-        default void onOpened() {
-        }
+        default void onOpened() {}
 
-        default void onClosed() {
-        }
+        default void onClosed() {}
     }
 
     public record OverlaySize(int maxWidth, int maxHeight) {
@@ -63,7 +61,8 @@ public final class StageOverlayHost extends JPanel {
         }
     }
 
-    public record OverlaySpec(String id, String title, JComponent content, OverlayLifecycle lifecycle, OverlaySize size) {
+    public record OverlaySpec(
+            String id, String title, JComponent content, OverlayLifecycle lifecycle, OverlaySize size) {
         public OverlaySpec {
             if (id == null || id.isBlank()) {
                 throw new IllegalArgumentException("overlay id is required");
@@ -74,8 +73,7 @@ public final class StageOverlayHost extends JPanel {
             if (content == null) {
                 throw new IllegalArgumentException("overlay content is required");
             }
-            lifecycle = lifecycle == null ? new OverlayLifecycle() {
-            } : lifecycle;
+            lifecycle = lifecycle == null ? new OverlayLifecycle() {} : lifecycle;
             size = size == null ? compactSize() : size;
         }
 
@@ -106,8 +104,7 @@ public final class StageOverlayHost extends JPanel {
     private State state = State.HIDDEN;
     private OverlaySpec activeOverlay;
     private long animationStartAtMs;
-    private Consumer<Boolean> blockingVisibilityListener = visible -> {
-    };
+    private Consumer<Boolean> blockingVisibilityListener = visible -> {};
 
     public StageOverlayHost() {
         setOpaque(false);
@@ -116,13 +113,15 @@ public final class StageOverlayHost extends JPanel {
         add(surface);
 
         titleLabel.setFont(UiFonts.semibold(TITLE_FONT_SIZE));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(TITLE_INSET_TOP, TITLE_INSET_X, TITLE_INSET_BOTTOM, TITLE_INSET_X));
+        titleLabel.setBorder(
+                BorderFactory.createEmptyBorder(TITLE_INSET_TOP, TITLE_INSET_X, TITLE_INSET_BOTTOM, TITLE_INSET_X));
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
         header.add(titleLabel, BorderLayout.WEST);
 
         surface.setLayout(new BorderLayout(0, HEADER_BOTTOM_GAP));
-        surface.setBorder(BorderFactory.createEmptyBorder(SURFACE_PADDING_Y, SURFACE_PADDING_X, SURFACE_PADDING_Y, SURFACE_PADDING_X));
+        surface.setBorder(BorderFactory.createEmptyBorder(
+                SURFACE_PADDING_Y, SURFACE_PADDING_X, SURFACE_PADDING_Y, SURFACE_PADDING_X));
         surface.add(header, BorderLayout.NORTH);
 
         animationTimer = new Timer(TICK_MS, e -> advanceAnimation());
@@ -192,7 +191,8 @@ public final class StageOverlayHost extends JPanel {
     public void applyTheme() {
         UiTheme theme = UiTheme.active();
         titleLabel.setForeground(theme.overlayText());
-        surface.setPanelColors(theme.overlayBackground(), theme.overlaySurface(), theme.overlayBorder(), theme.overlayAccent());
+        surface.setPanelColors(
+                theme.overlayBackground(), theme.overlaySurface(), theme.overlayBorder(), theme.overlayAccent());
         repaint();
     }
 
@@ -301,8 +301,7 @@ public final class StageOverlayHost extends JPanel {
             setBackground(background);
             setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(border, 1),
-                    BorderFactory.createEmptyBorder(BODY_PADDING, BODY_PADDING, BODY_PADDING, BODY_PADDING)
-            ));
+                    BorderFactory.createEmptyBorder(BODY_PADDING, BODY_PADDING, BODY_PADDING, BODY_PADDING)));
             if (body != null) {
                 body.setBackground(surfaceColor);
             }

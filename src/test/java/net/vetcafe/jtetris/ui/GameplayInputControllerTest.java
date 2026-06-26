@@ -1,12 +1,12 @@
 package net.vetcafe.jtetris.ui;
 
-import net.vetcafe.jtetris.model.Board;
-import net.vetcafe.jtetris.model.TetrominoType;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import net.vetcafe.jtetris.model.Board;
+import net.vetcafe.jtetris.model.TetrominoType;
+import org.junit.jupiter.api.Test;
 
 class GameplayInputControllerTest {
 
@@ -172,8 +172,11 @@ class GameplayInputControllerTest {
         runMixedScenario(first);
         runMixedScenario(second);
 
-        assertEquals(first.board.getCurrent().getType(), second.board.getCurrent().getType());
-        assertEquals(first.board.getCurrent().getRotation(), second.board.getCurrent().getRotation());
+        assertEquals(
+                first.board.getCurrent().getType(), second.board.getCurrent().getType());
+        assertEquals(
+                first.board.getCurrent().getRotation(),
+                second.board.getCurrent().getRotation());
         assertEquals(first.board.getCurrent().getX(), second.board.getCurrent().getX());
         assertEquals(first.board.getCurrent().getY(), second.board.getCurrent().getY());
         assertEquals(first.board.getHold().getType(), second.board.getHold().getType());

@@ -235,7 +235,8 @@ public class Board {
         if (gameOver) return false;
         int fromRotation = current.getRotation();
         Tetromino rotated = current.copy();
-        if (cw) rotated.rotateCW(); else rotated.rotateCCW();
+        if (cw) rotated.rotateCW();
+        else rotated.rotateCCW();
 
         int toRotation = rotated.getRotation();
         int[][] kicks = SrsKickTable.getKickOffsets(current.getType(), fromRotation, toRotation);

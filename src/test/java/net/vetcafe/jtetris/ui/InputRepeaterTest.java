@@ -78,4 +78,3 @@ class InputRepeaterTest {
         assertEquals(1, repeater.pressRight(1001));
     }
 }
-

@@ -1,5 +1,8 @@
 package net.vetcafe.jtetris.logging;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -8,12 +11,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class InputLogTest {
-    private final Logger logger =
-            (Logger) LoggerFactory.getLogger(InputLog.LOGGER_NAME);
+    private final Logger logger = (Logger) LoggerFactory.getLogger(InputLog.LOGGER_NAME);
     private final Level originalLevel = logger.getLevel();
     private ListAppender<ILoggingEvent> attachedAppender;
 
@@ -48,9 +47,7 @@ class InputLogTest {
         logger.setLevel(Level.DEBUG);
         ListAppender<ILoggingEvent> appender = attach();
 
-        InputLog.repeaterDecision(
-                "horizontal", "poll", 100, true, false, -1, 130, 0, "before-das", 1, 0
-        );
+        InputLog.repeaterDecision("horizontal", "poll", 100, true, false, -1, 130, 0, "before-das", 1, 0);
 
         assertTrue(appender.list.isEmpty());
     }
@@ -60,9 +57,7 @@ class InputLogTest {
         logger.setLevel(Level.TRACE);
         ListAppender<ILoggingEvent> appender = attach();
 
-        InputLog.repeaterDecision(
-                "horizontal", "poll", 140, true, false, -1, 180, -1, "repeat", 1, 0
-        );
+        InputLog.repeaterDecision("horizontal", "poll", 140, true, false, -1, 180, -1, "repeat", 1, 0);
 
         assertEquals(1, appender.list.size());
         String message = appender.list.get(0).getFormattedMessage();

@@ -8,25 +8,15 @@ public final class ApplicationDataPaths {
     public static final String SCORE_FILE = "scores.properties";
     public static final String LOG_DIRECTORY = "logs";
 
-    private ApplicationDataPaths() {
-    }
+    private ApplicationDataPaths() {}
 
     public static Path currentRoot() {
         Path home = Path.of(System.getProperty("user.home", "."));
         return resolveRoot(
-                System.getProperty("os.name", ""),
-                home,
-                System.getenv("XDG_DATA_HOME"),
-                System.getenv("LOCALAPPDATA")
-        );
+                System.getProperty("os.name", ""), home, System.getenv("XDG_DATA_HOME"), System.getenv("LOCALAPPDATA"));
     }
 
-    public static Path resolveRoot(
-            String osName,
-            Path home,
-            String xdgDataHome,
-            String localAppData
-    ) {
+    public static Path resolveRoot(String osName, Path home, String xdgDataHome, String localAppData) {
         String normalizedOs = osName == null ? "" : osName.toLowerCase(Locale.ROOT);
         Path dataRoot;
         if (normalizedOs.contains("mac")) {

@@ -1,11 +1,8 @@
 package net.vetcafe.jtetris.ui;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -17,6 +14,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import org.junit.jupiter.api.Test;
 
 class StageOverlayHostLayoutTest {
@@ -33,11 +33,7 @@ class StageOverlayHostLayoutTest {
             }
         });
 
-        host.showOverlay(new StageOverlayHost.OverlaySpec(
-                "blocking",
-                "Blocking",
-                new JPanel()
-        ));
+        host.showOverlay(new StageOverlayHost.OverlaySpec("blocking", "Blocking", new JPanel()));
         host.dismissOverlay();
 
         assertTrue(hidden.await(1, TimeUnit.SECONDS));
@@ -70,13 +66,18 @@ class StageOverlayHostLayoutTest {
         host.validate();
 
         Component surface = host.getComponent(0);
-        assertTrue(surface.getHeight() <= 220, "simple overlay should size to content instead of using a tall fixed panel");
-        Rectangle buttonBounds = javax.swing.SwingUtilities.convertRectangle(quit.getParent(), quit.getBounds(), surface);
-        Rectangle messageBounds = javax.swing.SwingUtilities.convertRectangle(message.getParent(), message.getBounds(), surface);
+        assertTrue(
+                surface.getHeight() <= 220,
+                "simple overlay should size to content instead of using a tall fixed panel");
+        Rectangle buttonBounds =
+                javax.swing.SwingUtilities.convertRectangle(quit.getParent(), quit.getBounds(), surface);
+        Rectangle messageBounds =
+                javax.swing.SwingUtilities.convertRectangle(message.getParent(), message.getBounds(), surface);
         int messageToButtonGap = buttonBounds.y - (messageBounds.y + messageBounds.height);
         int bottomGap = surface.getHeight() - (buttonBounds.y + buttonBounds.height);
 
-        assertTrue(messageToButtonGap <= 24, "simple overlay action button should stay visually grouped with its message");
+        assertTrue(
+                messageToButtonGap <= 24, "simple overlay action button should stay visually grouped with its message");
         assertTrue(bottomGap >= 18, "overlay action button should keep a visible bottom gap");
     }
 
@@ -115,12 +116,7 @@ class StageOverlayHostLayoutTest {
         host.setBounds(0, 0, 680, 520);
 
         host.showOverlay(new StageOverlayHost.OverlaySpec(
-                "help",
-                "JTetris Help",
-                HelpContent.create(() -> {
-                }),
-                StageOverlayHost.largeSize()
-        ));
+                "help", "JTetris Help", HelpContent.create(() -> {}), StageOverlayHost.largeSize()));
         host.doLayout();
         host.validate();
 
@@ -165,7 +161,8 @@ class StageOverlayHostLayoutTest {
         Color actual = new Color(image.getRGB(sampleX, sampleY), true);
         Color expected = UiTheme.active().overlayBorder();
 
-        assertTrue(colorDistance(actual, expected) <= 8, "bottom overlay border should be painted during enter animation");
+        assertTrue(
+                colorDistance(actual, expected) <= 8, "bottom overlay border should be painted during enter animation");
     }
 
     private static boolean allChildrenInside(Component root) {
@@ -174,7 +171,8 @@ class StageOverlayHostLayoutTest {
         }
         for (Component child : container.getComponents()) {
             Rectangle bounds = javax.swing.SwingUtilities.convertRectangle(child.getParent(), child.getBounds(), root);
-            if (bounds.x < 0 || bounds.y < 0
+            if (bounds.x < 0
+                    || bounds.y < 0
                     || bounds.x + bounds.width > root.getWidth()
                     || bounds.y + bounds.height > root.getHeight()) {
                 return false;

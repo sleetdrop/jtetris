@@ -20,8 +20,8 @@ class NextQueueTest {
     void upcomingQueueSnapshotIsImmutable() {
         Board board = new Board(7L);
 
-        assertThrows(UnsupportedOperationException.class,
-                () -> board.getNextQueue().add(TetrominoType.I));
+        assertThrows(
+                UnsupportedOperationException.class, () -> board.getNextQueue().add(TetrominoType.I));
     }
 
     @Test

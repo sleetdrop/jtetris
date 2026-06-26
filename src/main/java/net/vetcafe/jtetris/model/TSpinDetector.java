@@ -1,8 +1,7 @@
 package net.vetcafe.jtetris.model;
 
 final class TSpinDetector {
-    private TSpinDetector() {
-    }
+    private TSpinDetector() {}
 
     static boolean isTSpin(Tetromino tetromino, TetrominoType[][] grid, boolean lastActionWasRotation) {
         if (!lastActionWasRotation || tetromino == null || tetromino.getType() != TetrominoType.T) {
@@ -35,6 +34,3 @@ final class TSpinDetector {
         return grid[y][x] != null;
     }
 }
-
-
-

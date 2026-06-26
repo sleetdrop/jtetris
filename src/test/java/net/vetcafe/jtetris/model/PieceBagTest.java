@@ -39,5 +39,3 @@ class PieceBagTest {
         assertNotEquals(firstCurrent, board.getCurrent().getType());
     }
 }
-
-

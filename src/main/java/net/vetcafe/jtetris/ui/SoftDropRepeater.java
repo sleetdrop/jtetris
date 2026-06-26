@@ -52,18 +52,6 @@ public class SoftDropRepeater {
 
     private void trace(String event, long nowMs, int step, String reason) {
         InputLog.repeaterDecision(
-                "softDrop",
-                event,
-                nowMs,
-                held,
-                false,
-                held ? 1 : 0,
-                nextRepeatAt,
-                step,
-                reason,
-                0,
-                0
-        );
+                "softDrop", event, nowMs, held, false, held ? 1 : 0, nextRepeatAt, step, reason, 0, 0);
     }
 }
-

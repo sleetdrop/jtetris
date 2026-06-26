@@ -60,12 +60,7 @@ public class ScoreManager {
                     properties.store(output, "JTetris local scores");
                 }
                 try {
-                    Files.move(
-                            temporary,
-                            path,
-                            StandardCopyOption.ATOMIC_MOVE,
-                            StandardCopyOption.REPLACE_EXISTING
-                    );
+                    Files.move(temporary, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
                 } catch (AtomicMoveNotSupportedException ignored) {
                     Files.move(temporary, path, StandardCopyOption.REPLACE_EXISTING);
                 }
@@ -100,10 +95,7 @@ public class ScoreManager {
     private final LinkedHashMap<String, String> userNames = new LinkedHashMap<>();
 
     public ScoreManager() {
-        this(
-                ScoreDataPaths.current(),
-                ScoreDataPaths.legacy(Path.of(System.getProperty("user.home", ".")))
-        );
+        this(ScoreDataPaths.current(), ScoreDataPaths.legacy(Path.of(System.getProperty("user.home", "."))));
     }
 
     ScoreManager(Path storeFile, Path legacyFile) {
@@ -168,8 +160,7 @@ public class ScoreManager {
         return false;
     }
 
-    public static record ScoreEntry(String user, int score) {
-    }
+    public static record ScoreEntry(String user, int score) {}
 
     public synchronized List<ScoreEntry> getLeaderboard() {
         List<ScoreEntry> list = new ArrayList<>();
@@ -183,11 +174,9 @@ public class ScoreManager {
             String name = userNames.getOrDefault(propertyKey, propertyKey);
             list.add(new ScoreEntry(name, score));
         }
-        list.sort(
-                Comparator.comparingInt(ScoreEntry::score)
-                        .reversed()
-                        .thenComparing(ScoreEntry::user, String.CASE_INSENSITIVE_ORDER)
-        );
+        list.sort(Comparator.comparingInt(ScoreEntry::score)
+                .reversed()
+                .thenComparing(ScoreEntry::user, String.CASE_INSENSITIVE_ORDER));
         return list;
     }
 

@@ -54,6 +54,3 @@ class TSpinDetectorTest {
         assertTrue(TSpinDetector.isTSpin(t, grid, true));
     }
 }
-
-
-

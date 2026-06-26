@@ -1,40 +1,39 @@
 package net.vetcafe.jtetris.ui;
 
-import net.vetcafe.jtetris.logging.EdtWatchdog;
-import net.vetcafe.jtetris.logging.InputLog;
-import net.vetcafe.jtetris.logging.LoggingBootstrap;
-import net.vetcafe.jtetris.model.Board;
-import net.vetcafe.jtetris.score.ScoreManager;
-
-import javax.swing.JComboBox;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.function.BooleanSupplier;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.Timer;
 import javax.swing.KeyStroke;
-import javax.swing.AbstractAction;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.KeyEvent;
+import javax.swing.Timer;
 import javax.swing.UIManager;
-import javax.swing.ButtonGroup;
-import java.awt.Dimension;
-import javax.swing.BorderFactory;
-import java.awt.Component;
-import java.util.function.BooleanSupplier;
+import net.vetcafe.jtetris.logging.EdtWatchdog;
+import net.vetcafe.jtetris.logging.InputLog;
+import net.vetcafe.jtetris.logging.LoggingBootstrap;
+import net.vetcafe.jtetris.model.Board;
+import net.vetcafe.jtetris.score.ScoreManager;
 
 public class TetrisFrame extends JFrame {
     private static final String APP_NAME = "JTetris";
@@ -112,12 +111,7 @@ public class TetrisFrame extends JFrame {
     private final SidePanel sidePanel = new SidePanel(board, sessionTimer::elapsedMillis);
     private final ScoreManager scoreManager = new ScoreManager();
     private final GameplayInputController inputController = new GameplayInputController(
-            board,
-            DAS_MS,
-            ARR_MS,
-            SOFT_DROP_REPEAT_MS,
-            () -> System.nanoTime() / 1_000_000L
-    );
+            board, DAS_MS, ARR_MS, SOFT_DROP_REPEAT_MS, () -> System.nanoTime() / 1_000_000L);
     // ensure score dialog is shown once per game
     private boolean scorePrompted;
     private boolean lastGameOverProcessed;
@@ -353,10 +347,7 @@ public class TetrisFrame extends JFrame {
         JPanel content = createSimpleOverlayContent(info, actions);
 
         overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
-                "game-over-info",
-                "Game Over",
-                content,
-                new StageOverlayHost.OverlayLifecycle() {
+                "game-over-info", "Game Over", content, new StageOverlayHost.OverlayLifecycle() {
                     @Override
                     public void onOpened() {
                         clearHeldInputs();
@@ -368,8 +359,7 @@ public class TetrisFrame extends JFrame {
                         focusGame();
                         showGameOverOverlay();
                     }
-                }
-        ));
+                }));
     }
 
     private void showGameOverOverlay() {
@@ -395,10 +385,7 @@ public class TetrisFrame extends JFrame {
         JPanel content = createSimpleOverlayContent(message, actions);
 
         overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
-                "game-over-restart",
-                "Game Over",
-                content,
-                new StageOverlayHost.OverlayLifecycle() {
+                "game-over-restart", "Game Over", content, new StageOverlayHost.OverlayLifecycle() {
                     @Override
                     public void onOpened() {
                         clearHeldInputs();
@@ -409,8 +396,7 @@ public class TetrisFrame extends JFrame {
                         clearHeldInputs();
                         focusGame();
                     }
-                }
-        ));
+                }));
     }
 
     private void showScoreEntryOverlay() {
@@ -449,9 +435,7 @@ public class TetrisFrame extends JFrame {
         scoreEntryNewUserField.setForeground(theme.textPrimary());
         scoreEntryNewUserField.setCaretColor(theme.textPrimary());
         scoreEntryNewUserField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(theme.dialogBorder(), 1),
-                BorderFactory.createEmptyBorder(4, 8, 4, 8)
-        ));
+                BorderFactory.createLineBorder(theme.dialogBorder(), 1), BorderFactory.createEmptyBorder(4, 8, 4, 8)));
 
         JLabel lblExisting = new JLabel("Choose existing:");
         StageOverlayHost.styleOverlayBodyLabel(lblExisting);
@@ -460,10 +444,17 @@ public class TetrisFrame extends JFrame {
         lblExisting.setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 0));
         lblNew.setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 0));
 
-        gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.WEST; formPanel.add(lblExisting, gbc);
-        gbc.gridx = 1; formPanel.add(scoreEntryExistingUsers, gbc);
-        gbc.gridx = 0; gbc.gridy = 1; formPanel.add(lblNew, gbc);
-        gbc.gridx = 1; formPanel.add(scoreEntryNewUserField, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        formPanel.add(lblExisting, gbc);
+        gbc.gridx = 1;
+        formPanel.add(scoreEntryExistingUsers, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        formPanel.add(lblNew, gbc);
+        gbc.gridx = 1;
+        formPanel.add(scoreEntryNewUserField, gbc);
 
         JPanel actions = StageOverlayHost.createOverlayActionRow();
         JButton record = new JButton("Record");
@@ -482,10 +473,7 @@ public class TetrisFrame extends JFrame {
         scoreEntryFeedbackMessage = null;
 
         overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
-                "score-entry",
-                "Record score",
-                panel,
-                new StageOverlayHost.OverlayLifecycle() {
+                "score-entry", "Record score", panel, new StageOverlayHost.OverlayLifecycle() {
                     @Override
                     public void onOpened() {
                         clearHeldInputs();
@@ -509,8 +497,7 @@ public class TetrisFrame extends JFrame {
                         scoreEntryNewUserField = null;
                         showGameOverOverlay();
                     }
-                }
-        ));
+                }));
     }
 
     private String extractScoreEntryCandidate() {
@@ -532,16 +519,10 @@ public class TetrisFrame extends JFrame {
         }
 
         LeaderboardContent content = new LeaderboardContent(
-                scoreManager.getLeaderboard(),
-                this::requestLeaderboardDelete,
-                this::dismissOverlayIfVisible
-        );
+                scoreManager.getLeaderboard(), this::requestLeaderboardDelete, this::dismissOverlayIfVisible);
 
         overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
-                "leaderboard",
-                "Leaderboard",
-                content,
-                new StageOverlayHost.OverlayLifecycle() {
+                "leaderboard", "Leaderboard", content, new StageOverlayHost.OverlayLifecycle() {
                     @Override
                     public void onOpened() {
                         clearHeldInputs();
@@ -557,8 +538,7 @@ public class TetrisFrame extends JFrame {
                         }
                         focusGame();
                     }
-                }
-        ));
+                }));
     }
 
     private void requestLeaderboardDelete(String user) {
@@ -611,16 +591,13 @@ public class TetrisFrame extends JFrame {
                         }
                         showLeaderboard();
                     }
-                }
-        ));
+                }));
     }
 
     private void confirmLeaderboardDelete() {
         boolean deleted = scoreManager.deleteUser(pendingLeaderboardDeleteUser);
         pendingLeaderboardDeleteUser = null;
-        leaderboardTransition = deleted
-                ? LeaderboardTransition.REFRESH
-                : LeaderboardTransition.DELETE_FAILURE;
+        leaderboardTransition = deleted ? LeaderboardTransition.REFRESH : LeaderboardTransition.DELETE_FAILURE;
     }
 
     private void showLeaderboardDeleteFailure() {
@@ -650,8 +627,7 @@ public class TetrisFrame extends JFrame {
                         clearHeldInputs();
                         showLeaderboard();
                     }
-                }
-        ));
+                }));
     }
 
     private void showExitConfirmOverlay() {
@@ -679,10 +655,7 @@ public class TetrisFrame extends JFrame {
         JPanel content = createSimpleOverlayContent(message, actions);
 
         overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
-                "exit-confirm",
-                "Confirm Exit",
-                content,
-                new StageOverlayHost.OverlayLifecycle() {
+                "exit-confirm", "Confirm Exit", content, new StageOverlayHost.OverlayLifecycle() {
                     @Override
                     public void onOpened() {
                         clearHeldInputs();
@@ -693,8 +666,7 @@ public class TetrisFrame extends JFrame {
                         clearHeldInputs();
                         focusGame();
                     }
-                }
-        ));
+                }));
     }
 
     private boolean isModalLayerActive() {
@@ -714,13 +686,16 @@ public class TetrisFrame extends JFrame {
 
         registerAction(im, am, "leftPressed", KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), this::onLeftPressed);
         registerAction(im, am, "leftReleased", KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), this::onLeftReleased);
-        registerAction(im, am, "rightPressed", KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), this::onRightPressed);
-        registerAction(im, am, "rightReleased", KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), this::onRightReleased);
+        registerAction(
+                im, am, "rightPressed", KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), this::onRightPressed);
+        registerAction(
+                im, am, "rightReleased", KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), this::onRightReleased);
         registerAction(im, am, "downPressed", KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false), this::onDownPressed);
         registerAction(im, am, "downReleased", KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, true), this::onDownReleased);
         registerAction(im, am, "rotateCW", KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), () -> rotateIfActive(true));
         registerAction(im, am, "rotateCCW", KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0), () -> rotateIfActive(false));
-        registerAction(im, am, "hardDropOrOverlayConfirm", KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), this::onSpacePressed);
+        registerAction(
+                im, am, "hardDropOrOverlayConfirm", KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), this::onSpacePressed);
         registerAction(im, am, "overlayConfirm", KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), this::onEnterPressed);
         registerAction(im, am, "hold", KeyStroke.getKeyStroke(KeyEvent.VK_C, 0), this::holdIfActive);
         registerAction(im, am, "pause", KeyStroke.getKeyStroke(KeyEvent.VK_P, 0), this::togglePause);
@@ -728,7 +703,8 @@ public class TetrisFrame extends JFrame {
         registerAction(im, am, "leaderboard", KeyStroke.getKeyStroke(KeyEvent.VK_L, 0), this::showLeaderboard);
         registerAction(im, am, "help", KeyStroke.getKeyStroke(KeyEvent.VK_H, 0), this::showHelp);
         registerAction(im, am, "overlayDemo", KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), this::toggleOverlayDemo);
-        registerAction(im, am, "quitOrOverlayCancel", KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), this::onEscapePressed);
+        registerAction(
+                im, am, "quitOrOverlayCancel", KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), this::onEscapePressed);
     }
 
     private void showHelp() {
@@ -758,8 +734,7 @@ public class TetrisFrame extends JFrame {
                         focusGame();
                     }
                 },
-                StageOverlayHost.largeSize()
-        ));
+                StageOverlayHost.largeSize()));
     }
 
     private void toggleOverlayDemo() {
@@ -769,7 +744,8 @@ public class TetrisFrame extends JFrame {
             return;
         }
 
-        JLabel message = new JLabel("<html>Stage overlay foundation demo.<br>Gameplay input is blocked while this panel is visible.</html>");
+        JLabel message = new JLabel(
+                "<html>Stage overlay foundation demo.<br>Gameplay input is blocked while this panel is visible.</html>");
         StageOverlayHost.styleOverlayBodyLabel(message);
         message.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
 
@@ -782,10 +758,7 @@ public class TetrisFrame extends JFrame {
         JPanel content = createSimpleOverlayContent(message, actions);
 
         overlayHost.showOverlay(new StageOverlayHost.OverlaySpec(
-                "demo-info",
-                "Overlay Demo",
-                content,
-                new StageOverlayHost.OverlayLifecycle() {
+                "demo-info", "Overlay Demo", content, new StageOverlayHost.OverlayLifecycle() {
                     @Override
                     public void onOpened() {
                         clearHeldInputs();
@@ -796,8 +769,7 @@ public class TetrisFrame extends JFrame {
                         clearHeldInputs();
                         focusGame();
                     }
-                }
-        ));
+                }));
     }
 
     private JPanel createSimpleOverlayContent(JLabel message, JPanel actions) {
@@ -896,7 +868,8 @@ public class TetrisFrame extends JFrame {
         }
     }
 
-    private void registerAction(javax.swing.InputMap im, javax.swing.ActionMap am, String name, KeyStroke key, Runnable action) {
+    private void registerAction(
+            javax.swing.InputMap im, javax.swing.ActionMap am, String name, KeyStroke key, Runnable action) {
         im.put(key, name);
         am.put(name, new AbstractAction() {
             @Override
@@ -942,8 +915,7 @@ public class TetrisFrame extends JFrame {
                 beforeY,
                 currentPieceX(),
                 currentPieceY(),
-                false
-        );
+                false);
     }
 
     private void processHeldInput() {
@@ -960,11 +932,7 @@ public class TetrisFrame extends JFrame {
     }
 
     private void syncSessionTimer() {
-        sessionTimer.syncRunning(shouldRunSessionTimer(
-                paused,
-                isModalLayerActive(),
-                board.isGameOver()
-        ));
+        sessionTimer.syncRunning(shouldRunSessionTimer(paused, isModalLayerActive(), board.isGameOver()));
     }
 
     private void clearHeldInputs() {
@@ -985,16 +953,7 @@ public class TetrisFrame extends JFrame {
         boolean changed = eligible && operation.getAsBoolean();
         int afterX = currentPieceX();
         int afterY = currentPieceY();
-        InputLog.swingAction(
-                action,
-                now,
-                eligible,
-                beforeX,
-                beforeY,
-                afterX,
-                afterY,
-                changed
-        );
+        InputLog.swingAction(action, now, eligible, beforeX, beforeY, afterX, afterY, changed);
         repaintGameIfChanged(changed);
     }
 
@@ -1012,9 +971,7 @@ public class TetrisFrame extends JFrame {
 
     private void rotateIfActive(boolean cw) {
         if (!isGameplayInputEnabled()) return;
-        boolean changed = cw
-                ? inputController.rotateClockwise()
-                : inputController.rotateCounterclockwise();
+        boolean changed = cw ? inputController.rotateClockwise() : inputController.rotateCounterclockwise();
         repaintGameIfChanged(changed);
     }
 

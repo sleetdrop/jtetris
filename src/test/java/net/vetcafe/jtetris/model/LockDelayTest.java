@@ -56,7 +56,8 @@ class LockDelayTest {
 
         board.tick();
         Tetromino afterResetTick = board.getCurrent();
-        assertEquals(grounded.getType(), afterResetTick.getType(), "Lock should not happen immediately after reset action");
+        assertEquals(
+                grounded.getType(), afterResetTick.getType(), "Lock should not happen immediately after reset action");
         TetrominoType[][] gridAfterResetTick = board.snapshot();
         assertNoCellsLocked(gridAfterResetTick, grounded);
 
@@ -110,5 +111,3 @@ class LockDelayTest {
         return false;
     }
 }
-
-

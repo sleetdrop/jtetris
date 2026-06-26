@@ -1,10 +1,9 @@
 package net.vetcafe.jtetris.ui;
 
-import net.vetcafe.jtetris.logging.InputLog;
-import net.vetcafe.jtetris.model.Board;
-
 import java.util.Objects;
 import java.util.function.LongSupplier;
+import net.vetcafe.jtetris.logging.InputLog;
+import net.vetcafe.jtetris.model.Board;
 
 final class GameplayInputController {
     private final Board board;
@@ -18,13 +17,7 @@ final class GameplayInputController {
     private long rightPressedAt;
     private long softDropPressedAt;
 
-    GameplayInputController(
-            Board board,
-            long dasMs,
-            long arrMs,
-            long softDropRepeatMs,
-            LongSupplier nowMs
-    ) {
+    GameplayInputController(Board board, long dasMs, long arrMs, long softDropRepeatMs, LongSupplier nowMs) {
         if (dasMs <= 0 || arrMs <= 0 || softDropRepeatMs <= 0) {
             throw new IllegalArgumentException("input timing values must be positive");
         }
@@ -83,17 +76,7 @@ final class GameplayInputController {
         softDropHeld = false;
         softDropRepeater.release();
         InputLog.controllerOperation(
-                "releaseSoftDrop",
-                now,
-                0,
-                0,
-                beforeX,
-                beforeY,
-                currentX(),
-                currentY(),
-                false,
-                holdMs
-        );
+                "releaseSoftDrop", now, 0, 0, beforeX, beforeY, currentX(), currentY(), false, holdMs);
     }
 
     boolean poll() {
@@ -107,17 +90,7 @@ final class GameplayInputController {
         boolean changed = movedHorizontally || movedDown;
         if (horizontalSteps != 0 || softDropSteps != 0 || changed) {
             InputLog.controllerOperation(
-                    "poll",
-                    now,
-                    horizontalSteps,
-                    softDropSteps,
-                    beforeX,
-                    beforeY,
-                    currentX(),
-                    currentY(),
-                    changed,
-                    -1
-            );
+                    "poll", now, horizontalSteps, softDropSteps, beforeX, beforeY, currentX(), currentY(), changed, -1);
         }
         return changed;
     }
@@ -145,17 +118,7 @@ final class GameplayInputController {
         rightHeld = false;
         softDropHeld = false;
         InputLog.controllerOperation(
-                "reset",
-                nowMs.getAsLong(),
-                0,
-                0,
-                currentX(),
-                currentY(),
-                currentX(),
-                currentY(),
-                false,
-                -1
-        );
+                "reset", nowMs.getAsLong(), 0, 0, currentX(), currentY(), currentX(), currentY(), false, -1);
     }
 
     private boolean applyAndLogHorizontal(String operation, long now, int steps, long holdMs) {
@@ -163,17 +126,7 @@ final class GameplayInputController {
         int beforeY = currentY();
         boolean changed = applyHorizontalSteps(steps);
         InputLog.controllerOperation(
-                operation,
-                now,
-                steps,
-                0,
-                beforeX,
-                beforeY,
-                currentX(),
-                currentY(),
-                changed,
-                holdMs
-        );
+                operation, now, steps, 0, beforeX, beforeY, currentX(), currentY(), changed, holdMs);
         return changed;
     }
 
@@ -182,17 +135,7 @@ final class GameplayInputController {
         int beforeY = currentY();
         boolean changed = applySoftDropSteps(steps);
         InputLog.controllerOperation(
-                operation,
-                now,
-                0,
-                steps,
-                beforeX,
-                beforeY,
-                currentX(),
-                currentY(),
-                changed,
-                holdMs
-        );
+                operation, now, 0, steps, beforeX, beforeY, currentX(), currentY(), changed, holdMs);
         return changed;
     }
 
@@ -201,18 +144,7 @@ final class GameplayInputController {
         int beforeX = currentX();
         int beforeY = currentY();
         boolean changed = action.run();
-        InputLog.controllerOperation(
-                operation,
-                now,
-                0,
-                0,
-                beforeX,
-                beforeY,
-                currentX(),
-                currentY(),
-                changed,
-                -1
-        );
+        InputLog.controllerOperation(operation, now, 0, 0, beforeX, beforeY, currentX(), currentY(), changed, -1);
         return changed;
     }
 

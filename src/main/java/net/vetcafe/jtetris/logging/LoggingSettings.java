@@ -1,12 +1,11 @@
 package net.vetcafe.jtetris.logging;
 
-import net.vetcafe.jtetris.platform.ApplicationDataPaths;
-
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
+import net.vetcafe.jtetris.platform.ApplicationDataPaths;
 
 record LoggingSettings(
         boolean debug,
@@ -19,8 +18,7 @@ record LoggingSettings(
         boolean edtWatchdogEnabled,
         long edtWatchdogThresholdMs,
         boolean externalConfiguration,
-        List<String> warnings
-) {
+        List<String> warnings) {
     static final String DEFAULT_MAX_FILE_SIZE = "10MB";
     static final int DEFAULT_MAX_HISTORY = 7;
     static final String DEFAULT_TOTAL_SIZE_CAP = "100MB";
@@ -39,36 +37,12 @@ record LoggingSettings(
         LogLevel input = parseLevel(properties, "jtetris.log.input.level", global, warnings);
         Path defaultLogDirectory = ApplicationDataPaths.logDirectory(applicationRoot);
         Path logDirectory = parseDirectory(properties, defaultLogDirectory, warnings);
-        String maxFileSize = parseFileSize(
-                properties,
-                "jtetris.log.maxFileSize",
-                DEFAULT_MAX_FILE_SIZE,
-                warnings
-        );
-        int maxHistory = parsePositiveInt(
-                properties,
-                "jtetris.log.maxHistory",
-                DEFAULT_MAX_HISTORY,
-                warnings
-        );
-        String totalSizeCap = parseFileSize(
-                properties,
-                "jtetris.log.totalSizeCap",
-                DEFAULT_TOTAL_SIZE_CAP,
-                warnings
-        );
-        boolean watchdogEnabled = parseBoolean(
-                properties,
-                "jtetris.log.edtWatchdog.enabled",
-                debug,
-                warnings
-        );
+        String maxFileSize = parseFileSize(properties, "jtetris.log.maxFileSize", DEFAULT_MAX_FILE_SIZE, warnings);
+        int maxHistory = parsePositiveInt(properties, "jtetris.log.maxHistory", DEFAULT_MAX_HISTORY, warnings);
+        String totalSizeCap = parseFileSize(properties, "jtetris.log.totalSizeCap", DEFAULT_TOTAL_SIZE_CAP, warnings);
+        boolean watchdogEnabled = parseBoolean(properties, "jtetris.log.edtWatchdog.enabled", debug, warnings);
         long watchdogThreshold = parsePositiveLong(
-                properties,
-                "jtetris.log.edtWatchdog.thresholdMs",
-                DEFAULT_WATCHDOG_THRESHOLD_MS,
-                warnings
-        );
+                properties, "jtetris.log.edtWatchdog.thresholdMs", DEFAULT_WATCHDOG_THRESHOLD_MS, warnings);
         boolean externalConfiguration = hasText(properties.getProperty("logback.configurationFile"));
 
         return new LoggingSettings(
@@ -82,16 +56,10 @@ record LoggingSettings(
                 watchdogEnabled,
                 watchdogThreshold,
                 externalConfiguration,
-                warnings
-        );
+                warnings);
     }
 
-    private static LogLevel parseLevel(
-            Properties properties,
-            String key,
-            LogLevel fallback,
-            List<String> warnings
-    ) {
+    private static LogLevel parseLevel(Properties properties, String key, LogLevel fallback, List<String> warnings) {
         String value = properties.getProperty(key);
         if (!hasText(value)) {
             return fallback;
@@ -102,11 +70,7 @@ record LoggingSettings(
         });
     }
 
-    private static Path parseDirectory(
-            Properties properties,
-            Path fallback,
-            List<String> warnings
-    ) {
+    private static Path parseDirectory(Properties properties, Path fallback, List<String> warnings) {
         String value = properties.getProperty("jtetris.log.dir");
         if (!hasText(value)) {
             return fallback;
@@ -123,12 +87,7 @@ record LoggingSettings(
         return fallback;
     }
 
-    private static String parseFileSize(
-            Properties properties,
-            String key,
-            String fallback,
-            List<String> warnings
-    ) {
+    private static String parseFileSize(Properties properties, String key, String fallback, List<String> warnings) {
         String value = properties.getProperty(key);
         if (!hasText(value)) {
             return fallback;
@@ -141,12 +100,7 @@ record LoggingSettings(
         return fallback;
     }
 
-    private static int parsePositiveInt(
-            Properties properties,
-            String key,
-            int fallback,
-            List<String> warnings
-    ) {
+    private static int parsePositiveInt(Properties properties, String key, int fallback, List<String> warnings) {
         String value = properties.getProperty(key);
         if (!hasText(value)) {
             return fallback;
@@ -163,12 +117,7 @@ record LoggingSettings(
         return fallback;
     }
 
-    private static long parsePositiveLong(
-            Properties properties,
-            String key,
-            long fallback,
-            List<String> warnings
-    ) {
+    private static long parsePositiveLong(Properties properties, String key, long fallback, List<String> warnings) {
         String value = properties.getProperty(key);
         if (!hasText(value)) {
             return fallback;
@@ -185,12 +134,7 @@ record LoggingSettings(
         return fallback;
     }
 
-    private static boolean parseBoolean(
-            Properties properties,
-            String key,
-            boolean fallback,
-            List<String> warnings
-    ) {
+    private static boolean parseBoolean(Properties properties, String key, boolean fallback, List<String> warnings) {
         String value = properties.getProperty(key);
         if (!hasText(value)) {
             return fallback;

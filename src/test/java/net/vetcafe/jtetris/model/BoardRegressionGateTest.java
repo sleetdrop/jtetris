@@ -86,7 +86,7 @@ class BoardRegressionGateTest {
 
         invokeClearLines(board);
 
-        assertArrayEquals(new int[]{Board.HEIGHT - 1, Board.HEIGHT - 2}, board.getLastClearedRows());
+        assertArrayEquals(new int[] {Board.HEIGHT - 1, Board.HEIGHT - 2}, board.getLastClearedRows());
         assertEquals(1, board.getLineClearEffectVersion());
 
         invokeClearLines(board);

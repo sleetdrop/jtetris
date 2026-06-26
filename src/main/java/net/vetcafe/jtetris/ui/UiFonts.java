@@ -13,8 +13,7 @@ public final class UiFonts {
     private static volatile Font regularBase = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
     private static volatile Font semiboldBase = new Font(Font.SANS_SERIF, Font.BOLD, 14);
 
-    private UiFonts() {
-    }
+    private UiFonts() {}
 
     public static Font regular(float size) {
         ensureLoaded();
@@ -61,4 +60,3 @@ public final class UiFonts {
         }
     }
 }
-

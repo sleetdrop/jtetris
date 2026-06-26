@@ -1,7 +1,7 @@
 package net.vetcafe.jtetris.ui;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
@@ -21,7 +21,7 @@ class ThemeVisualsTest {
 
     @Test
     void themeSurfacesKeepReadableTextAndQuietGrid() {
-        for (UiTheme.Mode mode : new UiTheme.Mode[] { UiTheme.Mode.LIGHT, UiTheme.Mode.DARK }) {
+        for (UiTheme.Mode mode : new UiTheme.Mode[] {UiTheme.Mode.LIGHT, UiTheme.Mode.DARK}) {
             UiTheme.setActiveMode(mode);
             UiTheme theme = UiTheme.active();
 
@@ -33,7 +33,7 @@ class ThemeVisualsTest {
 
     @Test
     void paletteOutlinesStayFlatInsteadOfShadowHeavy() {
-        for (UiTheme.Mode mode : new UiTheme.Mode[] { UiTheme.Mode.LIGHT, UiTheme.Mode.DARK }) {
+        for (UiTheme.Mode mode : new UiTheme.Mode[] {UiTheme.Mode.LIGHT, UiTheme.Mode.DARK}) {
             UiTheme.setActiveMode(mode);
             for (TetrominoType type : TetrominoType.values()) {
                 Color fill = ColorPalette.colorFor(type);

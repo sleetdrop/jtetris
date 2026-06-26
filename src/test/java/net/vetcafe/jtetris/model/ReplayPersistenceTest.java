@@ -25,8 +25,7 @@ class ReplayPersistenceTest {
                 ReplayAction.ROTATE_CW,
                 ReplayAction.SOFT_DROP,
                 ReplayAction.HARD_DROP,
-                ReplayAction.TICK
-        );
+                ReplayAction.TICK);
 
         ReplayPersistence.save(replayFile, 42L, actions);
         ReplayPersistence.LoadedReplay loaded = ReplayPersistence.load(replayFile);
@@ -49,8 +48,7 @@ class ReplayPersistenceTest {
                 ReplayAction.TICK,
                 ReplayAction.TICK,
                 ReplayAction.LEFT,
-                ReplayAction.HARD_DROP
-        );
+                ReplayAction.HARD_DROP);
         for (ReplayAction action : actions) {
             source.applyReplayAction(action);
         }
@@ -82,4 +80,3 @@ class ReplayPersistenceTest {
         assertTrue(ex.getMessage().contains("Invalid replay file"));
     }
 }
-

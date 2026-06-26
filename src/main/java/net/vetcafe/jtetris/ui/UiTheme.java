@@ -27,8 +27,7 @@ public final class UiTheme {
             new Color(198, 206, 216),
             new Color(231, 235, 240),
             new Color(50, 58, 70),
-            new Color(213, 219, 227)
-    );
+            new Color(213, 219, 227));
 
     private static final UiTheme DARK = new UiTheme(
             Mode.DARK,
@@ -45,8 +44,7 @@ public final class UiTheme {
             new Color(73, 84, 108),
             new Color(34, 40, 55),
             new Color(214, 219, 229),
-            new Color(51, 59, 78)
-    );
+            new Color(51, 59, 78));
 
     private static volatile Mode activeMode = modeOverride();
     private static volatile boolean systemDark = isLikelyDarkSystemTheme();
@@ -83,8 +81,7 @@ public final class UiTheme {
             Color dialogBorder,
             Color tableHeaderBackground,
             Color tableHeaderText,
-            Color tableGrid
-    ) {
+            Color tableGrid) {
         this.mode = mode;
         this.dark = dark;
         this.frameBackground = frameBackground;
@@ -145,8 +142,7 @@ public final class UiTheme {
 
     private static boolean isFlatLafActive() {
         LookAndFeel lookAndFeel = UIManager.getLookAndFeel();
-        return lookAndFeel != null
-                && lookAndFeel.getClass().getName().startsWith("com.formdev.flatlaf.");
+        return lookAndFeel != null && lookAndFeel.getClass().getName().startsWith("com.formdev.flatlaf.");
     }
 
     private static boolean isLikelyDarkSystemTheme() {

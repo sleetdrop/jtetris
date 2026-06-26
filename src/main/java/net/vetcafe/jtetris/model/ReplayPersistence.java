@@ -16,8 +16,7 @@ public final class ReplayPersistence {
     private static final String SEED_PREFIX = "seed=";
     private static final String ACTIONS_PREFIX = "actions=";
 
-    private ReplayPersistence() {
-    }
+    private ReplayPersistence() {}
 
     public static void save(Path path, long seed, List<ReplayAction> actions) throws IOException {
         if (path == null) {
@@ -27,14 +26,10 @@ public final class ReplayPersistence {
             throw new IllegalArgumentException("actions must not be null");
         }
 
-        String serializedActions = String.join(",", actions.stream().map(Enum::name).toList());
-        String content = String.join(
-                System.lineSeparator(),
-                HEADER,
-                SEED_PREFIX + seed,
-                ACTIONS_PREFIX + serializedActions,
-                ""
-        );
+        String serializedActions =
+                String.join(",", actions.stream().map(Enum::name).toList());
+        String content =
+                String.join(System.lineSeparator(), HEADER, SEED_PREFIX + seed, ACTIONS_PREFIX + serializedActions, "");
 
         Path parent = path.getParent();
         if (parent != null) {
@@ -90,7 +85,5 @@ public final class ReplayPersistence {
         return new LoadedReplay(seed, Collections.unmodifiableList(actions));
     }
 
-    public record LoadedReplay(long seed, List<ReplayAction> actions) {
-    }
+    public record LoadedReplay(long seed, List<ReplayAction> actions) {}
 }
-

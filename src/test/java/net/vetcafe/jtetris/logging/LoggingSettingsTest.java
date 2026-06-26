@@ -1,13 +1,12 @@
 package net.vetcafe.jtetris.logging;
 
-import org.junit.jupiter.api.Test;
-
-import java.nio.file.Path;
-import java.util.Properties;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.nio.file.Path;
+import java.util.Properties;
+import org.junit.jupiter.api.Test;
 
 class LoggingSettingsTest {
 
@@ -43,8 +42,7 @@ class LoggingSettingsTest {
         Properties properties = properties(
                 "jtetris.debug", "true",
                 "jtetris.log.level", "WARN",
-                "jtetris.log.input.level", "TRACE"
-        );
+                "jtetris.log.input.level", "TRACE");
 
         LoggingSettings settings = LoggingSettings.parse(properties, Path.of("/app/data"));
 
@@ -60,8 +58,7 @@ class LoggingSettingsTest {
                 "jtetris.log.maxHistory", "14",
                 "jtetris.log.totalSizeCap", "250MB",
                 "jtetris.log.edtWatchdog.enabled", "true",
-                "jtetris.log.edtWatchdog.thresholdMs", "750"
-        );
+                "jtetris.log.edtWatchdog.thresholdMs", "750");
 
         LoggingSettings settings = LoggingSettings.parse(properties, Path.of("/app/data"));
 
@@ -83,8 +80,7 @@ class LoggingSettingsTest {
                 "jtetris.log.maxHistory", "0",
                 "jtetris.log.totalSizeCap", "-1MB",
                 "jtetris.log.edtWatchdog.enabled", "maybe",
-                "jtetris.log.edtWatchdog.thresholdMs", "-5"
-        );
+                "jtetris.log.edtWatchdog.thresholdMs", "-5");
 
         LoggingSettings settings = LoggingSettings.parse(properties, Path.of("/app/data"));
 
@@ -103,8 +99,7 @@ class LoggingSettingsTest {
     void externalConfigurationIsDetected() {
         Properties properties = properties(
                 "logback.configurationFile", "/tmp/custom-logback.xml",
-                "jtetris.debug", "true"
-        );
+                "jtetris.debug", "true");
 
         LoggingSettings settings = LoggingSettings.parse(properties, Path.of("/app/data"));
 

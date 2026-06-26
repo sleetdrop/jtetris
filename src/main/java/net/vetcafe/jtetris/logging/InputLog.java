@@ -7,8 +7,7 @@ public final class InputLog {
     public static final String LOGGER_NAME = "net.vetcafe.jtetris.input";
     private static final Logger LOGGER = LoggerFactory.getLogger(LOGGER_NAME);
 
-    private InputLog() {
-    }
+    private InputLog() {}
 
     public static void swingAction(
             String action,
@@ -18,8 +17,7 @@ public final class InputLog {
             int beforeY,
             int afterX,
             int afterY,
-            boolean changed
-    ) {
+            boolean changed) {
         if (!LOGGER.isDebugEnabled()) {
             return;
         }
@@ -33,8 +31,7 @@ public final class InputLog {
                 afterX,
                 afterY,
                 changed,
-                Thread.currentThread().getName()
-        );
+                Thread.currentThread().getName());
     }
 
     public static void controllerOperation(
@@ -47,8 +44,7 @@ public final class InputLog {
             int afterX,
             int afterY,
             boolean changed,
-            long holdMs
-    ) {
+            long holdMs) {
         if (!LOGGER.isDebugEnabled()) {
             return;
         }
@@ -63,8 +59,7 @@ public final class InputLog {
                 afterX,
                 afterY,
                 changed,
-                holdMs
-        );
+                holdMs);
     }
 
     public static void repeaterDecision(
@@ -78,8 +73,7 @@ public final class InputLog {
             int step,
             String reason,
             long leftPressOrder,
-            long rightPressOrder
-    ) {
+            long rightPressOrder) {
         if (!LOGGER.isTraceEnabled()) {
             return;
         }
@@ -95,7 +89,6 @@ public final class InputLog {
                 step,
                 reason,
                 leftPressOrder,
-                rightPressOrder
-        );
+                rightPressOrder);
     }
 }

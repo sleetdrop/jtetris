@@ -10,17 +10,17 @@ class SrsRotationTest {
     @Test
     void iPieceUsesDedicatedKickTable() {
         int[][] kicks = SrsKickTable.getKickOffsets(TetrominoType.I, 1, 2);
-        assertArrayEquals(new int[]{0, 0}, kicks[0]);
-        assertArrayEquals(new int[]{-1, 0}, kicks[1]);
-        assertArrayEquals(new int[]{2, 0}, kicks[2]);
+        assertArrayEquals(new int[] {0, 0}, kicks[0]);
+        assertArrayEquals(new int[] {-1, 0}, kicks[1]);
+        assertArrayEquals(new int[] {2, 0}, kicks[2]);
     }
 
     @Test
     void jlstzUsesStandardKickTable() {
         int[][] kicks = SrsKickTable.getKickOffsets(TetrominoType.T, 0, 1);
-        assertArrayEquals(new int[]{0, 0}, kicks[0]);
-        assertArrayEquals(new int[]{-1, 0}, kicks[1]);
-        assertArrayEquals(new int[]{-1, -1}, kicks[2]);
+        assertArrayEquals(new int[] {0, 0}, kicks[0]);
+        assertArrayEquals(new int[] {-1, 0}, kicks[1]);
+        assertArrayEquals(new int[] {-1, -1}, kicks[2]);
     }
 
     @Test
@@ -43,5 +43,3 @@ class SrsRotationTest {
         assertTrue(board.getCurrent().getType() == target, "Target piece was not found in several 7-bag cycles");
     }
 }
-
-

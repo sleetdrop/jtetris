@@ -1,13 +1,12 @@
 package net.vetcafe.jtetris.logging;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 class EdtWatchdogTest {
 
@@ -16,12 +15,7 @@ class EdtWatchdogTest {
         FakeClock clock = new FakeClock();
         List<Runnable> dispatched = new ArrayList<>();
         List<Long> warnings = new ArrayList<>();
-        EdtWatchdog watchdog = new EdtWatchdog(
-                500,
-                clock::now,
-                dispatched::add,
-                (delay, stack) -> warnings.add(delay)
-        );
+        EdtWatchdog watchdog = new EdtWatchdog(500, clock::now, dispatched::add, (delay, stack) -> warnings.add(delay));
 
         watchdog.probe();
         clock.advance(100);
@@ -36,12 +30,7 @@ class EdtWatchdogTest {
         FakeClock clock = new FakeClock();
         List<Runnable> dispatched = new ArrayList<>();
         List<Long> warnings = new ArrayList<>();
-        EdtWatchdog watchdog = new EdtWatchdog(
-                500,
-                clock::now,
-                dispatched::add,
-                (delay, stack) -> warnings.add(delay)
-        );
+        EdtWatchdog watchdog = new EdtWatchdog(500, clock::now, dispatched::add, (delay, stack) -> warnings.add(delay));
 
         watchdog.probe();
         clock.advance(600);
@@ -63,13 +52,7 @@ class EdtWatchdogTest {
     void closeStopsFurtherProbes() {
         FakeClock clock = new FakeClock();
         List<Runnable> dispatched = new ArrayList<>();
-        EdtWatchdog watchdog = new EdtWatchdog(
-                500,
-                clock::now,
-                dispatched::add,
-                (delay, stack) -> {
-                }
-        );
+        EdtWatchdog watchdog = new EdtWatchdog(500, clock::now, dispatched::add, (delay, stack) -> {});
 
         watchdog.close();
         watchdog.probe();

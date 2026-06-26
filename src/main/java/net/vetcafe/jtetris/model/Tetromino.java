@@ -54,6 +54,3 @@ public class Tetromino {
         return t;
     }
 }
-
-
-
