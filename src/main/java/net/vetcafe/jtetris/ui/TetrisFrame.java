@@ -186,8 +186,12 @@ public class TetrisFrame extends JFrame {
                 lastGameOverProcessed = false;
             }
             syncSessionTimer();
-            if (!shouldRunSessionTimer(paused, isModalLayerActive(), false)) return;
-            if (!board.tick()) return;
+            if (!shouldRunSessionTimer(paused, isModalLayerActive(), false)) {
+                return;
+            }
+            if (!board.tick()) {
+                return;
+            }
             syncSessionTimer();
             gamePanel.repaint();
         });
@@ -744,8 +748,8 @@ public class TetrisFrame extends JFrame {
             return;
         }
 
-        JLabel message = new JLabel(
-                "<html>Stage overlay foundation demo.<br>Gameplay input is blocked while this panel is visible.</html>");
+        JLabel message = new JLabel("<html>Stage overlay foundation demo.<br>"
+                + "Gameplay input is blocked while this panel is visible.</html>");
         StageOverlayHost.styleOverlayBodyLabel(message);
         message.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
 
@@ -919,7 +923,9 @@ public class TetrisFrame extends JFrame {
     }
 
     private void processHeldInput() {
-        if (!isGameplayInputEnabled()) return;
+        if (!isGameplayInputEnabled()) {
+            return;
+        }
         repaintGameIfChanged(inputController.poll());
     }
 
@@ -970,20 +976,26 @@ public class TetrisFrame extends JFrame {
     }
 
     private void rotateIfActive(boolean cw) {
-        if (!isGameplayInputEnabled()) return;
+        if (!isGameplayInputEnabled()) {
+            return;
+        }
         boolean changed = cw ? inputController.rotateClockwise() : inputController.rotateCounterclockwise();
         repaintGameIfChanged(changed);
     }
 
     private void hardDropIfActive() {
-        if (!isGameplayInputEnabled()) return;
+        if (!isGameplayInputEnabled()) {
+            return;
+        }
         boolean changed = inputController.hardDrop();
         syncSessionTimer();
         repaintGameIfChanged(changed);
     }
 
     private void holdIfActive() {
-        if (!isGameplayInputEnabled()) return;
+        if (!isGameplayInputEnabled()) {
+            return;
+        }
         boolean changed = inputController.hold();
         syncSessionTimer();
         repaintGameIfChanged(changed);

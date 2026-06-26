@@ -116,7 +116,9 @@ public class Board {
     }
 
     public Tetromino getGhost() {
-        if (gameOver || current == null) return null;
+        if (gameOver || current == null) {
+            return null;
+        }
         Tetromino ghost = current.copy();
         while (true) {
             Tetromino candidate = ghost.copy();
@@ -211,7 +213,9 @@ public class Board {
     }
 
     public boolean move(int dx, int dy) {
-        if (gameOver) return false;
+        if (gameOver) {
+            return false;
+        }
         Tetromino moved = current.copy();
         moved.move(dx, dy);
         if (isPositionValid(moved)) {
@@ -232,11 +236,16 @@ public class Board {
     }
 
     private boolean rotate(boolean cw) {
-        if (gameOver) return false;
+        if (gameOver) {
+            return false;
+        }
         int fromRotation = current.getRotation();
         Tetromino rotated = current.copy();
-        if (cw) rotated.rotateCW();
-        else rotated.rotateCCW();
+        if (cw) {
+            rotated.rotateCW();
+        } else {
+            rotated.rotateCCW();
+        }
 
         int toRotation = rotated.getRotation();
         int[][] kicks = SrsKickTable.getKickOffsets(current.getType(), fromRotation, toRotation);
@@ -254,18 +263,24 @@ public class Board {
     }
 
     public boolean hardDrop() {
-        if (gameOver) return false;
+        if (gameOver) {
+            return false;
+        }
         boolean moved = false;
         while (move(0, 1)) {
             moved = true;
         }
-        if (!moved) return false;
+        if (!moved) {
+            return false;
+        }
         lockCurrent();
         return true;
     }
 
     public boolean hold() {
-        if (gameOver || holdUsedThisTurn || current == null) return false;
+        if (gameOver || holdUsedThisTurn || current == null) {
+            return false;
+        }
 
         TetrominoType currentType = current.getType();
         if (hold == null) {
@@ -288,7 +303,9 @@ public class Board {
     }
 
     public boolean tick() {
-        if (gameOver) return false;
+        if (gameOver) {
+            return false;
+        }
 
         Tetromino movedDown = current.copy();
         movedDown.move(0, 1);
@@ -447,8 +464,12 @@ public class Board {
         for (var cell : tetromino.getCells()) {
             int x = tetromino.getX() + cell.x;
             int y = tetromino.getY() + cell.y;
-            if (x < 0 || x >= WIDTH || y >= HEIGHT) return false;
-            if (y >= 0 && grid[y][x] != null) return false;
+            if (x < 0 || x >= WIDTH || y >= HEIGHT) {
+                return false;
+            }
+            if (y >= 0 && grid[y][x] != null) {
+                return false;
+            }
         }
         return true;
     }

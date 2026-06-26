@@ -22,7 +22,8 @@ public final class InputLog {
             return;
         }
         LOGGER.debug(
-                "boundary=swing action={} nowMs={} eligible={} beforeX={} beforeY={} afterX={} afterY={} changed={} thread={}",
+                "boundary=swing action={} nowMs={} eligible={} beforeX={} beforeY={} "
+                        + "afterX={} afterY={} changed={} thread={}",
                 action,
                 nowMs,
                 eligible,
@@ -49,7 +50,8 @@ public final class InputLog {
             return;
         }
         LOGGER.debug(
-                "boundary=controller operation={} nowMs={} stepX={} stepY={} beforeX={} beforeY={} afterX={} afterY={} changed={} holdMs={}",
+                "boundary=controller operation={} nowMs={} stepX={} stepY={} beforeX={} beforeY={} "
+                        + "afterX={} afterY={} changed={} holdMs={}",
                 operation,
                 nowMs,
                 stepX,
@@ -78,7 +80,8 @@ public final class InputLog {
             return;
         }
         LOGGER.trace(
-                "boundary=repeater component={} event={} nowMs={} leftHeld={} rightHeld={} activeDirection={} nextRepeatAt={} step={} reason={} leftPressOrder={} rightPressOrder={}",
+                "boundary=repeater component={} event={} nowMs={} leftHeld={} rightHeld={} "
+                        + "activeDirection={} nextRepeatAt={} step={} reason={} leftPressOrder={} rightPressOrder={}",
                 component,
                 event,
                 nowMs,

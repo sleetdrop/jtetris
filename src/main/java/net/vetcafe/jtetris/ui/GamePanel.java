@@ -23,17 +23,17 @@ public class GamePanel extends JPanel {
     private static final int DEFAULT_CLEAR_FLASH_DARK_EDGE_ALPHA = 178;
     private static final int DEFAULT_CLEAR_FLASH_LIGHT_EDGE_ALPHA = 196;
 
-    private static final int clearFlashTotalMs =
+    private static final int CLEAR_FLASH_TOTAL_MS =
             boundedIntProperty("jtetris.flash.duration.ms", DEFAULT_CLEAR_FLASH_TOTAL_MS, 60, 1000);
-    private static final int clearFlashStepMs =
+    private static final int CLEAR_FLASH_STEP_MS =
             boundedIntProperty("jtetris.flash.step.ms", DEFAULT_CLEAR_FLASH_STEP_MS, 15, 250);
-    private static final int clearFlashDarkFillAlpha =
+    private static final int CLEAR_FLASH_DARK_FILL_ALPHA =
             boundedIntProperty("jtetris.flash.dark.fill.alpha", DEFAULT_CLEAR_FLASH_DARK_FILL_ALPHA, 20, 255);
-    private static final int clearFlashLightFillAlpha =
+    private static final int CLEAR_FLASH_LIGHT_FILL_ALPHA =
             boundedIntProperty("jtetris.flash.light.fill.alpha", DEFAULT_CLEAR_FLASH_LIGHT_FILL_ALPHA, 20, 255);
-    private static final int clearFlashDarkEdgeAlpha =
+    private static final int CLEAR_FLASH_DARK_EDGE_ALPHA =
             boundedIntProperty("jtetris.flash.dark.edge.alpha", DEFAULT_CLEAR_FLASH_DARK_EDGE_ALPHA, 20, 255);
-    private static final int clearFlashLightEdgeAlpha =
+    private static final int CLEAR_FLASH_LIGHT_EDGE_ALPHA =
             boundedIntProperty("jtetris.flash.light.edge.alpha", DEFAULT_CLEAR_FLASH_LIGHT_EDGE_ALPHA, 20, 255);
 
     private final Board board;
@@ -46,7 +46,7 @@ public class GamePanel extends JPanel {
 
     public GamePanel(Board board) {
         this.board = board;
-        this.clearFlashTimer = new Timer(clearFlashStepMs, e -> {
+        this.clearFlashTimer = new Timer(CLEAR_FLASH_STEP_MS, e -> {
             if (isLineClearFlashActive()) {
                 repaint();
             } else {
@@ -114,25 +114,33 @@ public class GamePanel extends JPanel {
 
     private void drawCurrentPiece(Graphics2D g2d) {
         Tetromino current = board.getCurrent();
-        if (current == null) return;
+        if (current == null) {
+            return;
+        }
         for (var cell : current.getCells()) {
             int px = (current.getX() + cell.x) * cellSize;
             int py = (current.getY() + cell.y - 2) * cellSize;
-            if (py + cellSize <= 0) continue; // skip hidden rows
+            if (py + cellSize <= 0) {
+                continue; // skip hidden rows
+            }
             fillCell(g2d, px / cellSize, py / cellSize, current.getType());
         }
     }
 
     private void drawGhostPiece(Graphics2D g2d) {
         Tetromino ghost = board.getGhost();
-        if (ghost == null) return;
+        if (ghost == null) {
+            return;
+        }
 
         Tetromino current = board.getCurrent();
         for (var cell : ghost.getCells()) {
             int gx = ghost.getX() + cell.x;
             int modelY = ghost.getY() + cell.y;
             int gy = modelY - 2;
-            if (gy < 0 || overlapsCurrentCell(current, gx, modelY)) continue;
+            if (gy < 0 || overlapsCurrentCell(current, gx, modelY)) {
+                continue;
+            }
             drawGhostCell(g2d, gx, gy, cellSize);
         }
     }
@@ -146,7 +154,9 @@ public class GamePanel extends JPanel {
     }
 
     static boolean overlapsCurrentCell(Tetromino current, int gridX, int modelY) {
-        if (current == null) return false;
+        if (current == null) {
+            return false;
+        }
         for (var cell : current.getCells()) {
             if (current.getX() + cell.x == gridX && current.getY() + cell.y == modelY) {
                 return true;
@@ -160,7 +170,9 @@ public class GamePanel extends JPanel {
         int y = gridY * cellSize;
         int outerInset = 1;
         int outerSize = cellSize - (outerInset * 2);
-        if (outerSize <= 1) return;
+        if (outerSize <= 1) {
+            return;
+        }
 
         g2d.setColor(ghostOuterColor());
         g2d.drawRect(x + outerInset, y + outerInset, outerSize - 1, outerSize - 1);
@@ -189,7 +201,7 @@ public class GamePanel extends JPanel {
         }
         flashingRows = visibleRows;
         flashStartAtMs = System.currentTimeMillis();
-        flashEndAtMs = flashStartAtMs + clearFlashTotalMs;
+        flashEndAtMs = flashStartAtMs + CLEAR_FLASH_TOTAL_MS;
         if (!clearFlashTimer.isRunning()) {
             clearFlashTimer.start();
         }
@@ -200,23 +212,27 @@ public class GamePanel extends JPanel {
     }
 
     private void drawLineClearFlash(Graphics2D g2d) {
-        if (flashingRows.length == 0) return;
+        if (flashingRows.length == 0) {
+            return;
+        }
         long now = System.currentTimeMillis();
         if (now >= flashEndAtMs) {
             flashingRows = new int[0];
             return;
         }
-        long phase = (now - flashStartAtMs) / clearFlashStepMs;
-        if ((phase & 1L) == 1L) return;
+        long phase = (now - flashStartAtMs) / CLEAR_FLASH_STEP_MS;
+        if ((phase & 1L) == 1L) {
+            return;
+        }
 
         UiTheme theme = UiTheme.active();
         int boost = cellSize <= 16 ? 28 : (cellSize <= 20 ? 14 : 0);
         Color fill = theme.isDark()
-                ? new Color(246, 248, 255, boostedAlpha(clearFlashDarkFillAlpha, boost))
-                : new Color(255, 255, 255, boostedAlpha(clearFlashLightFillAlpha, boost));
+                ? new Color(246, 248, 255, boostedAlpha(CLEAR_FLASH_DARK_FILL_ALPHA, boost))
+                : new Color(255, 255, 255, boostedAlpha(CLEAR_FLASH_LIGHT_FILL_ALPHA, boost));
         Color edge = theme.isDark()
-                ? new Color(255, 255, 255, boostedAlpha(clearFlashDarkEdgeAlpha, boost / 2))
-                : new Color(255, 255, 255, boostedAlpha(clearFlashLightEdgeAlpha, boost / 2));
+                ? new Color(255, 255, 255, boostedAlpha(CLEAR_FLASH_DARK_EDGE_ALPHA, boost / 2))
+                : new Color(255, 255, 255, boostedAlpha(CLEAR_FLASH_LIGHT_EDGE_ALPHA, boost / 2));
         int width = Board.WIDTH * cellSize;
 
         for (int row : flashingRows) {
