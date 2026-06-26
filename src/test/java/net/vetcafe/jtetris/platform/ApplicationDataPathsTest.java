@@ -41,6 +41,7 @@ class ApplicationDataPathsTest {
         Path root = Path.of("/data/net.vetcafe.jtetris");
 
         assertEquals(root.resolve("scores.properties"), ApplicationDataPaths.scoreFile(root));
+        assertEquals(root.resolve("preferences.properties"), ApplicationDataPaths.preferencesFile(root));
         assertEquals(root.resolve("logs"), ApplicationDataPaths.logDirectory(root));
     }
 }

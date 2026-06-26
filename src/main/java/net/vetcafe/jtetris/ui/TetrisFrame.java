@@ -34,6 +34,7 @@ import net.vetcafe.jtetris.logging.InputLog;
 import net.vetcafe.jtetris.logging.LoggingBootstrap;
 import net.vetcafe.jtetris.model.Board;
 import net.vetcafe.jtetris.score.ScoreManager;
+import net.vetcafe.jtetris.settings.UserPreferences;
 
 public class TetrisFrame extends JFrame {
     private static final String APP_NAME = "JTetris";
@@ -45,6 +46,7 @@ public class TetrisFrame extends JFrame {
     private static final int DAS_MS = 180;
     private static final int ARR_MS = 35;
     private static final int SOFT_DROP_REPEAT_MS = 40;
+    private static final UserPreferences USER_PREFERENCES = new UserPreferences();
 
     private enum LeaderboardTransition {
         NONE,
@@ -63,7 +65,7 @@ public class TetrisFrame extends JFrame {
     }
 
     private static void installInitialLookAndFeel() {
-        UiTheme.setActiveMode(UiTheme.modeOverride());
+        UiTheme.setActiveMode(UiTheme.startupMode(USER_PREFERENCES.loadThemeMode().orElse(null)));
         UiTheme.refreshFromSystem();
         applyFlatLafForActiveTheme(false);
     }
@@ -253,7 +255,7 @@ public class TetrisFrame extends JFrame {
     }
 
     private JMenu createThemeMenu() {
-        JMenu themeMenu = new JMenu("Theme");
+        JMenu themeMenu = new JMenu("Theme: " + themeModeLabel(UiTheme.activeMode()));
         themeMenu.setFont(UiFonts.regular(13f));
         ButtonGroup group = new ButtonGroup();
 
@@ -277,6 +279,7 @@ public class TetrisFrame extends JFrame {
     }
 
     private void applyThemeMode(UiTheme.Mode mode) {
+        USER_PREFERENCES.saveThemeMode(mode);
         UiTheme.setActiveMode(mode);
         UiTheme.refreshFromSystem();
         applyFlatLafForActiveTheme(true);
@@ -291,6 +294,14 @@ public class TetrisFrame extends JFrame {
         if (!isModalLayerActive()) {
             focusGame();
         }
+    }
+
+    private String themeModeLabel(UiTheme.Mode mode) {
+        return switch (mode) {
+            case LIGHT -> "Light";
+            case DARK -> "Dark";
+            case AUTO -> "Auto";
+        };
     }
 
     private void togglePause() {

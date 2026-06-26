@@ -128,6 +128,18 @@ public final class UiTheme {
         };
     }
 
+    public static Mode startupMode(Mode storedMode) {
+        String value = System.getProperty("jtetris.theme");
+        if (value == null || value.isBlank()) {
+            return storedMode == null ? Mode.AUTO : storedMode;
+        }
+        return switch (value.trim().toLowerCase(Locale.ROOT)) {
+            case "light" -> Mode.LIGHT;
+            case "dark" -> Mode.DARK;
+            default -> Mode.AUTO;
+        };
+    }
+
     private static UiTheme detectInitialTheme() {
         return themeFor(activeMode);
     }

@@ -16,6 +16,7 @@ A concise Swing-based JTetris for learning Java, Swing UI, and basic game loop/a
   - `SidePanel`: performance stats, scoring feedback, combo/B2B status, Hold preview, and three-piece Next queue.
   - `HelpContent`: Swing-native help overlay content for controls and modern Tetris concepts surfaced by the UI.
 - **Scores**: `net.vetcafe.jtetris.score.ScoreManager`: best-only per-user local high scores stored in a package-namespaced platform application data directory.
+- **Settings**: `net.vetcafe.jtetris.settings.UserPreferences`: lightweight user preferences stored separately from scores in the same platform application data directory.
 - **Logging**: SLF4J application API with bundled Logback rolling files, configurable levels, input-domain diagnostics, uncaught-exception capture, and a debug-only EDT watchdog.
 
 ## Architecture at a glance
@@ -115,7 +116,7 @@ classDiagram
 - Leaderboard: L (also via menu)
 - Help: H (also via menu)
 - Quit: Esc (also via menu)
-- Theme: choose `Theme -> Auto/Light/Dark` from the menu bar (applies immediately)
+- Theme: choose `Theme: ... -> Auto/Light/Dark` from the menu bar (applies immediately and is remembered for the next launch)
 
 ## UI Layout & Styling
 - `GamePanel` is centered; `SidePanel` uses a clear information hierarchy with prominent Score, compact Level/Lines/Time, scoring feedback, Combo/B2B status, a separate Hold section, and three vertically ordered Next previews.
@@ -123,7 +124,7 @@ classDiagram
 - The current mode is Endless Marathon: play continues until top-out, and Time tracks active gameplay rather than wall-clock time.
 - Every blocking in-window overlay pauses gravity and session time; closing the final overlay resumes only when the game is not manually paused or over.
 - Help is implemented as a scrollable in-window Swing overlay.
-- UI theme supports startup override (`-Djtetris.theme=auto|light|dark`) and runtime switching via menu without restart.
+- UI theme supports startup override (`-Djtetris.theme=auto|light|dark`) and runtime switching via menu without restart. Without a JVM override, startup uses the last menu-selected theme stored in local preferences, then falls back to Auto.
 - Ghost piece uses a subtle, unified neutral shadow color (instead of piece-matched colors) to indicate hard-drop landing.
 - When a line clear happens, the cleared row area briefly flashes in a simple LCD-style overlay.
 - Flash tuning supports JVM properties: `-Djtetris.flash.duration.ms=180`, `-Djtetris.flash.step.ms=45`, `-Djtetris.flash.dark.fill.alpha=132`, `-Djtetris.flash.light.fill.alpha=154`, `-Djtetris.flash.dark.edge.alpha=178`, `-Djtetris.flash.light.edge.alpha=196`.

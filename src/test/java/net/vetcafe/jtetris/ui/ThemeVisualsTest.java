@@ -1,6 +1,7 @@
 package net.vetcafe.jtetris.ui;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -9,13 +10,26 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import net.vetcafe.jtetris.model.TetrominoType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ThemeVisualsTest {
     private final UiTheme.Mode originalMode = UiTheme.activeMode();
+    private String originalThemeProperty;
+
+    @BeforeEach
+    void rememberThemeProperty() {
+        originalThemeProperty = System.getProperty("jtetris.theme");
+        System.clearProperty("jtetris.theme");
+    }
 
     @AfterEach
     void restoreThemeMode() {
+        if (originalThemeProperty == null) {
+            System.clearProperty("jtetris.theme");
+        } else {
+            System.setProperty("jtetris.theme", originalThemeProperty);
+        }
         UiTheme.setActiveMode(originalMode);
     }
 
@@ -66,6 +80,18 @@ class ThemeVisualsTest {
             UIManager.setLookAndFeel(originalLookAndFeel);
             UiTheme.refreshFromSystem();
         }
+    }
+
+    @Test
+    void startupModeUsesStoredPreferenceWhenSystemPropertyIsMissing() {
+        assertEquals(UiTheme.Mode.LIGHT, UiTheme.startupMode(UiTheme.Mode.LIGHT));
+    }
+
+    @Test
+    void startupModeUsesSystemPropertyBeforeStoredPreference() {
+        System.setProperty("jtetris.theme", "dark");
+
+        assertEquals(UiTheme.Mode.DARK, UiTheme.startupMode(UiTheme.Mode.LIGHT));
     }
 
     private static double luminanceDistance(Color a, Color b) {

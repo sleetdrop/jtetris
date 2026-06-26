@@ -6,6 +6,7 @@ import java.util.Locale;
 public final class ApplicationDataPaths {
     public static final String APP_DIRECTORY = "net.vetcafe.jtetris";
     public static final String SCORE_FILE = "scores.properties";
+    public static final String PREFERENCES_FILE = "preferences.properties";
     public static final String LOG_DIRECTORY = "logs";
 
     private ApplicationDataPaths() {}
@@ -37,6 +38,10 @@ public final class ApplicationDataPaths {
 
     public static Path scoreFile(Path root) {
         return root.resolve(SCORE_FILE);
+    }
+
+    public static Path preferencesFile(Path root) {
+        return root.resolve(PREFERENCES_FILE);
     }
 
     public static Path logDirectory(Path root) {
