@@ -5,8 +5,31 @@ This document defines practical quality gates for local development, OpenSpec ch
 ## Gate levels
 
 - `Gate 0` (fast local): compile + unit tests.
-- `Gate 1` (local completion): full test suite + deterministic replay check.
+- `Gate 1` (local completion): formatter + lint + full test suite +
+  deterministic replay check.
 - `Gate 2` (review/CI): same as Gate 1 plus OpenSpec and documentation sanity checklist.
+
+## Java style checks
+
+JTetris uses the reader-first Java style in `doc/java-style.md`.
+
+Check formatting:
+
+```bash
+./mvnw spotless:check
+```
+
+Apply formatting:
+
+```bash
+./mvnw spotless:apply
+```
+
+Check the low-risk lint baseline:
+
+```bash
+./mvnw checkstyle:check
+```
 
 ## Gate 0: Fast local check
 
@@ -21,6 +44,8 @@ Pass condition:
 ## Gate 1: Local completion check
 
 ```bash
+./mvnw spotless:check
+./mvnw checkstyle:check
 ./mvnw -q -Djava.awt.headless=true clean test
 ```
 
