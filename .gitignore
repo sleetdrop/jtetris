@@ -32,5 +32,8 @@ bin/
 ### VS Code ###
 .vscode/
 
+### Local environment ###
+.envrc
+
 ### Mac OS ###
 .DS_Store

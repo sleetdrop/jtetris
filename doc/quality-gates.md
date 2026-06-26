@@ -13,11 +13,26 @@ This document defines practical quality gates for local development, OpenSpec ch
 
 JTetris uses the reader-first Java style in `doc/java-style.md`.
 
-On macOS, run formatter and lint commands with the project JDK:
+Formatter and lint commands should run on JDK 17. Use whatever environment
+manager fits your platform as long as `java -version` reports 17 before running
+the quality gates.
+
+On macOS, this explicit form selects JDK 17 for a single command:
 
 ```bash
 JAVA_HOME=$(/usr/libexec/java_home -v 17)
 ```
+
+If you use direnv, keep a local `.envrc` in your checkout. The repository
+ignores this file because the correct JDK path is platform- and machine-specific.
+One macOS example:
+
+```bash
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+PATH_add "$JAVA_HOME/bin"
+```
+
+Then run `direnv allow` once from the repository root.
 
 Check formatting:
 
