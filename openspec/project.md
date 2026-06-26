@@ -20,7 +20,8 @@ JTetris is a lightweight Java 17 Swing Tetris clone used for learning, gameplay-
 - `art`: source and generated app icon assets for macOS, Windows, and Linux packaging.
 - `doc`: stable design and quality documentation.
 - `doc/specs`: historical specs and handoff ledger from the pre-OpenSpec workflow.
-- `openspec`: current spec-driven workflow for new non-trivial changes.
+- `openspec`: optional spec workflow for changes that need durable behavior,
+  architecture, product, or process traceability.
 
 ## Commands
 ```bash
@@ -41,9 +42,18 @@ open target/dist/JTetris.app
 - Prefer small, localized changes. Treat `pom.xml`, package moves, dependency changes, and broad naming changes as standalone changes.
 
 ## Workflow
-- Use OpenSpec for new non-trivial changes.
-- Start with `openspec/AGENTS.md`, then inspect active changes under `openspec/changes/`.
-- Create a new change under `openspec/changes/<change-id>/` before implementation.
+- Default to the lightweight project workflow in `AGENTS.md` for routine
+  development.
+- Use OpenSpec only for changes that alter long-lived behavior contracts,
+  product decisions, architecture boundaries, project workflow,
+  build/release/dependency policy, or compatibility expectations.
+- Do not use OpenSpec for routine bug fixes, localized refactors, tests, small
+  documentation edits, or implementation details that are clear from code and
+  commits.
+- When OpenSpec is used, start with `openspec/AGENTS.md`, then inspect active
+  changes under `openspec/changes/`.
+- When OpenSpec is used, create a new change under
+  `openspec/changes/<change-id>/` before implementation.
 - Include `proposal.md`, `tasks.md`, and spec deltas under `specs/<capability>/spec.md`; add `design.md` for cross-cutting or risky changes.
 - Before editing implementation files, restate the current goal, exact file allowlist, and out-of-scope items.
 - Complete one small task at a time and keep verification evidence with the active change.

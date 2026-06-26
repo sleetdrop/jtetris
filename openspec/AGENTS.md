@@ -8,11 +8,16 @@
 1. Read root `AGENTS.md`.
 2. Read `openspec/project.md`.
 3. Inspect active changes with `find openspec/changes -maxdepth 2 -type f | sort`.
-4. Read the active change's `proposal.md`, `tasks.md`, any `design.md`, and affected spec deltas.
+4. Read the active change's `proposal.md`, `tasks.md`, any `design.md`, and affected spec deltas when the task is inside an active OpenSpec change.
 5. Restate the goal, exact file allowlist, and out-of-scope items before editing.
 
+## When To Use OpenSpec
+- OpenSpec is for durable decisions, not routine development overhead.
+- Use OpenSpec when a change alters long-lived behavior contracts, product decisions, architecture boundaries, project workflow, build/release/dependency policy, or compatibility expectations.
+- Do not create OpenSpec changes for routine bug fixes, localized refactors, tests, small documentation edits, or implementation details that are clear from code and commits.
+
 ## Change Structure
-Each non-trivial change should use:
+Each OpenSpec-backed change should use:
 - `openspec/changes/<change-id>/proposal.md`
 - `openspec/changes/<change-id>/tasks.md`
 - `openspec/changes/<change-id>/design.md` when the change is cross-cutting, risky, or architectural.

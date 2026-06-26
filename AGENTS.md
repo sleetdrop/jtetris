@@ -55,24 +55,26 @@ java -jar target/jtetris-1.0-SNAPSHOT.jar
 
 ## Execution Mode (Early Stage Stability)
 - Default mode is `strict`: only implement the current requested feature, no opportunistic refactors.
-- For non-trivial changes, create or update an OpenSpec change under `openspec/changes/<change-id>` before code changes.
+- Default workflow is lightweight: use this file, `doc/java-style.md`, focused plans when useful, and concrete verification evidence.
+- Use OpenSpec only when the change creates or changes a long-lived behavior contract, product decision, architecture boundary, project workflow, build/release/dependency policy, or other decision likely to need future traceability.
+- Do not create OpenSpec changes for routine bug fixes, localized refactors, tests, small documentation edits, or implementation work whose rationale is clear from code and commit history.
 - Use `doc/specs` as historical context only unless a task explicitly asks to repair or archive old workflow documents.
-- Before implementation, restate current goal, explicit file allowlist, and out-of-scope items; do not edit files outside that allowlist unless re-approved.
+- Before implementation, restate current goal, explicit file allowlist, and out-of-scope items when the change is multi-file, risky, or workflow-affecting; do not edit files outside that allowlist unless re-approved.
 - After finishing each approved checklist step, create one focused git commit before starting the next step.
-- Treat `pom.xml`, package moves, dependency changes, and broad naming changes as standalone tasks with their own spec.
+- Treat `pom.xml`, package moves, dependency changes, and broad naming changes as standalone tasks. Use OpenSpec for them when they alter long-lived project workflow or compatibility contracts.
 - If unrelated issues are found, record them in notes/spec backlog and continue current scope only.
 
 ## Session Handoff Protocol
 - End-of-session required steps:
   1. Run `./mvnw clean test`.
-  2. Update the active OpenSpec `tasks.md` checklist and verification notes.
-  3. If the work depends on historical decisions, add a concise note to the active OpenSpec change instead of rewriting `doc/specs`.
-  4. Leave a short resume note in the active OpenSpec change when work is incomplete.
+  2. Record verification in the final response, and in the active OpenSpec change only when one exists.
+  3. If the work depends on historical decisions, add a concise note to the active OpenSpec change when one exists; otherwise keep the note in the relevant project documentation or final handoff.
+  4. Leave a short resume note in the active OpenSpec change when one exists and work is incomplete.
 - Start-of-session required steps:
   1. Read `AGENTS.md`.
-  2. Read `openspec/project.md` and `openspec/AGENTS.md`.
-  3. Read the active OpenSpec change and any relevant historical `doc/specs/context-pack.md` entry.
-  4. Restate current goal/plan + file allowlist + out-of-scope items before editing.
+  2. Read `openspec/project.md` and `openspec/AGENTS.md` only when the task uses or changes OpenSpec.
+  3. Read the active OpenSpec change and relevant historical `doc/specs/context-pack.md` entry only when they apply.
+  4. Restate current goal/plan + file allowlist + out-of-scope items before editing when the change is multi-file, risky, or workflow-affecting.
 
 ## Definition Of Done
 - Code compiles and tests pass with `./mvnw clean test`.
