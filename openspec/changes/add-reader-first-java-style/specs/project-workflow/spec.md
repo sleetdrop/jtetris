@@ -6,7 +6,7 @@ formatting through the Maven build.
 
 #### Scenario: Developer checks Java formatting
 Given a developer has a local checkout
-When they run `./mvnw spotless:check`
+When they run `JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw spotless:check`
 Then the command reports whether Java source and tests match the configured
 formatter.
 
@@ -16,7 +16,7 @@ baseline.
 
 #### Scenario: Developer checks Java lint
 Given a developer has a local checkout
-When they run `./mvnw checkstyle:check`
+When they run `JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw checkstyle:check`
 Then the command reports violations of the configured JTetris Checkstyle rule
 set.
 

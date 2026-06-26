@@ -35,3 +35,6 @@ Out of scope:
 - `./mvnw spotless:check`
 - `./mvnw checkstyle:check`
 - `./mvnw -Djava.awt.headless=true clean test`
+
+Formatter and lint commands should run with JDK 17, matching the project
+runtime.

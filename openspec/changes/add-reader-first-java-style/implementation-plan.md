@@ -56,8 +56,8 @@
 - [ ] Configure Spotless to format Java source and tests.
 - [ ] Configure Maven Checkstyle to use `config/checkstyle/checkstyle.xml`.
 - [ ] Create the Checkstyle configuration with low-risk style checks.
-- [ ] Run `./mvnw spotless:check` and expect formatting failures before applying format.
-- [ ] Run `./mvnw checkstyle:check` and inspect any rule failures.
+- [ ] Run `JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw spotless:check` and expect formatting failures before applying format.
+- [ ] Run `JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw checkstyle:check` and inspect any rule failures.
 - [ ] Commit with `git add pom.xml config/checkstyle/checkstyle.xml && git commit -m "build: add java format and lint gates"`.
 
 ### Task 4: Apply Mechanical Formatting
@@ -66,9 +66,9 @@
 - Modify: `src/main/java/**/*.java`
 - Modify: `src/test/java/**/*.java`
 
-- [ ] Run `./mvnw spotless:apply`.
+- [ ] Run `JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw spotless:apply`.
 - [ ] Review `git diff --stat` to confirm this is formatting-only.
-- [ ] Run `./mvnw spotless:check` and expect success.
+- [ ] Run `JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw spotless:check` and expect success.
 - [ ] Commit with `git add src/main/java src/test/java && git commit -m "style: format java sources"`.
 
 ### Task 5: Fix Low-Risk Lint Failures
@@ -76,9 +76,9 @@
 **Files:**
 - Modify only Java files reported by Checkstyle.
 
-- [ ] Run `./mvnw checkstyle:check`.
+- [ ] Run `JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw checkstyle:check`.
 - [ ] Fix only unused imports, import order, wildcard imports, missing braces, or naming issues that do not change behavior.
-- [ ] Run `./mvnw checkstyle:check` again and expect success.
+- [ ] Run `JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw checkstyle:check` again and expect success.
 - [ ] Commit with `git add src/main/java src/test/java && git commit -m "style: satisfy java lint baseline"`.
 
 ### Task 6: Verify And Record Evidence
@@ -86,8 +86,8 @@
 **Files:**
 - Modify: `openspec/changes/add-reader-first-java-style/tasks.md`
 
-- [ ] Run `./mvnw spotless:check`.
-- [ ] Run `./mvnw checkstyle:check`.
+- [ ] Run `JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw spotless:check`.
+- [ ] Run `JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw checkstyle:check`.
 - [ ] Run `./mvnw -Djava.awt.headless=true clean test`.
 - [ ] Record command results in `tasks.md`.
 - [ ] Commit with `git add openspec/changes/add-reader-first-java-style/tasks.md && git commit -m "docs: record java style verification"`.

@@ -15,6 +15,10 @@ Formatting will be handled by Spotless with Palantir Java Format. Palantir's
 formatter keeps the determinism of Google Java Format while being friendlier to
 modern Java expressions and 120-column source.
 
+The formatter should run under JDK 17, matching the project runtime. Running the
+current formatter stack under newer early JDKs can fail against changed `javac`
+internals before it reaches project source formatting.
+
 Linting will be handled by Maven Checkstyle with a small project-owned rule set.
 The first rule set intentionally focuses on checks that are unlikely to create
 semantic churn:

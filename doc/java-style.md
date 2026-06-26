@@ -9,6 +9,7 @@ The formatter settles whitespace. The style guide settles intent.
 ## Formatting
 
 - Java source and tests are formatted with the Maven formatter gate.
+- Run formatter and lint commands with JDK 17, matching the project runtime.
 - Do not hand-align code. Let the formatter choose wrapping and indentation.
 - Use 120 columns as the normal line-length target.
 - Do not use wildcard imports.

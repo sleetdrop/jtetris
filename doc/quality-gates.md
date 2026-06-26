@@ -13,22 +13,28 @@ This document defines practical quality gates for local development, OpenSpec ch
 
 JTetris uses the reader-first Java style in `doc/java-style.md`.
 
+On macOS, run formatter and lint commands with the project JDK:
+
+```bash
+JAVA_HOME=$(/usr/libexec/java_home -v 17)
+```
+
 Check formatting:
 
 ```bash
-./mvnw spotless:check
+JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw spotless:check
 ```
 
 Apply formatting:
 
 ```bash
-./mvnw spotless:apply
+JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw spotless:apply
 ```
 
 Check the low-risk lint baseline:
 
 ```bash
-./mvnw checkstyle:check
+JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw checkstyle:check
 ```
 
 ## Gate 0: Fast local check
@@ -44,8 +50,8 @@ Pass condition:
 ## Gate 1: Local completion check
 
 ```bash
-./mvnw spotless:check
-./mvnw checkstyle:check
+JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw spotless:check
+JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw checkstyle:check
 ./mvnw -q -Djava.awt.headless=true clean test
 ```
 
@@ -66,6 +72,8 @@ Pass condition:
 For this project, CI should execute:
 
 ```bash
+JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw spotless:check
+JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw checkstyle:check
 ./mvnw -q -Djava.awt.headless=true clean test
 ```
 
