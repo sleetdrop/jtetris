@@ -56,7 +56,9 @@ class HoldPieceTest {
         assertEquals(before.get(0), board.getCurrent().getType());
         assertEquals(before.get(1), board.getNextQueue().get(0));
         assertEquals(before.get(2), board.getNextQueue().get(1));
-        assertEquals(3, board.getNextQueue().size());
+        assertEquals(before.get(3), board.getNextQueue().get(2));
+        assertEquals(before.get(4), board.getNextQueue().get(3));
+        assertEquals(5, board.getNextQueue().size());
     }
 
     @Test

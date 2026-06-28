@@ -41,7 +41,6 @@ public class TetrisFrame extends JFrame {
     private static final String FLATLAF_LIGHT = "com.formdev.flatlaf.FlatLightLaf";
     private static final String FLATLAF_DARK = "com.formdev.flatlaf.FlatDarkLaf";
     private static final String FLATLAF_BASE = "com.formdev.flatlaf.FlatLaf";
-    private static final int GRAVITY_TICK_MS = 700;
     private static final int INPUT_POLL_MS = 16;
     private static final int DAS_MS = 180;
     private static final int ARR_MS = 35;
@@ -114,6 +113,7 @@ public class TetrisFrame extends JFrame {
     private final ScoreManager scoreManager = new ScoreManager();
     private final GameplayInputController inputController = new GameplayInputController(
             board, DAS_MS, ARR_MS, SOFT_DROP_REPEAT_MS, () -> System.nanoTime() / 1_000_000L);
+    private final Timer gravityTimer;
     // ensure score dialog is shown once per game
     private boolean scorePrompted;
     private boolean lastGameOverProcessed;
@@ -125,6 +125,7 @@ public class TetrisFrame extends JFrame {
     private String pendingLeaderboardDeleteUser;
     private LeaderboardTransition leaderboardTransition = LeaderboardTransition.NONE;
     private boolean paused;
+    private long groundedSinceMs = -1L;
     private EdtWatchdog edtWatchdog;
 
     public TetrisFrame() {
@@ -173,31 +174,8 @@ public class TetrisFrame extends JFrame {
         Timer inputTimer = new Timer(INPUT_POLL_MS, e -> processHeldInput());
         inputTimer.start();
 
-        Timer timer = new Timer(GRAVITY_TICK_MS, e -> {
-            boolean over = board.isGameOver();
-            if (over) {
-                syncSessionTimer();
-                if (!scorePrompted || !lastGameOverProcessed) {
-                    scorePrompted = true;
-                    lastGameOverProcessed = true;
-                    pendingGameOverScore = board.getScore();
-                    showScoreEntryOverlay();
-                }
-                return;
-            } else {
-                lastGameOverProcessed = false;
-            }
-            syncSessionTimer();
-            if (!shouldRunSessionTimer(paused, isModalLayerActive(), false)) {
-                return;
-            }
-            if (!board.tick()) {
-                return;
-            }
-            syncSessionTimer();
-            gamePanel.repaint();
-        });
-        timer.start();
+        gravityTimer = new Timer(MarathonTiming.gravityDelayMs(board.getLevel()), e -> processGravity());
+        gravityTimer.start();
 
         syncSessionTimer();
         focusGame();
@@ -950,6 +928,45 @@ public class TetrisFrame extends JFrame {
         repaintGameIfChanged(inputController.poll());
     }
 
+    private void processGravity() {
+        boolean over = board.isGameOver();
+        if (over) {
+            syncSessionTimer();
+            if (!scorePrompted || !lastGameOverProcessed) {
+                scorePrompted = true;
+                lastGameOverProcessed = true;
+                pendingGameOverScore = board.getScore();
+                showScoreEntryOverlay();
+            }
+            return;
+        }
+        lastGameOverProcessed = false;
+        syncSessionTimer();
+        if (!shouldRunSessionTimer(paused, isModalLayerActive(), false)) {
+            return;
+        }
+
+        boolean changed;
+        if (board.isCurrentGrounded()) {
+            long now = monotonicNowMs();
+            if (groundedSinceMs < 0L) {
+                groundedSinceMs = now;
+                return;
+            }
+            if (now - groundedSinceMs < MarathonTiming.lockDelayMs()) {
+                return;
+            }
+            changed = board.lockIfGrounded();
+            groundedSinceMs = -1L;
+        } else {
+            groundedSinceMs = -1L;
+            changed = board.tick();
+        }
+        gravityTimer.setDelay(MarathonTiming.gravityDelayMs(board.getLevel()));
+        syncSessionTimer();
+        repaintGameIfChanged(changed);
+    }
+
     private boolean isGameplayInputEnabled() {
         return !paused && !isModalLayerActive() && !board.isGameOver();
     }
@@ -968,6 +985,7 @@ public class TetrisFrame extends JFrame {
 
     private void repaintGameIfChanged(boolean changed) {
         if (changed) {
+            groundedSinceMs = -1L;
             gamePanel.repaint();
         }
     }

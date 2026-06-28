@@ -5,7 +5,7 @@ A concise Swing-based JTetris for learning Java, Swing UI, and basic game loop/a
 
 ## Architecture
 - **Model**: `net.vetcafe.jtetris.model.*`
-  - `Board`: game state (grid, active piece, hold piece, three-piece upcoming queue, ghost projection, scoring, level). Handles gravity (`tick`), movement, rotation, line clearing, spawning, baseline T-Spin lock-state tracking, and seeded replay hooks. Hidden top rows keep spawn safe.
+  - `Board`: game state (grid, active piece, hold piece, five-piece upcoming queue, ghost projection, scoring, level). Handles gravity (`tick`), movement, rotation, line clearing, spawning, baseline T-Spin lock-state tracking, and seeded replay hooks. Hidden top rows keep spawn safe.
   - `Tetromino` & `TetrominoType`: piece data and rotations.
 - **UI**: `net.vetcafe.jtetris.ui.*`
   - `TetrisFrame`: main window, timer-driven loop, key bindings, menu, pause/restart/leaderboard, and in-stage prompt overlays for game-over, score entry, leaderboard, and exit confirmation.
@@ -13,7 +13,8 @@ A concise Swing-based JTetris for learning Java, Swing UI, and basic game loop/a
   - `InputRepeater`: deterministic horizontal DAS/ARR state machine owned by `GameplayInputController`.
   - `SoftDropRepeater`: deterministic soft-drop repeat timing owned by `GameplayInputController`.
   - `GamePanel`: renders board, ghost projection, and active piece; focuses itself on show; modern dark palette.
-  - `SidePanel`: performance stats, scoring feedback, combo/B2B status, Hold preview, and three-piece Next queue.
+  - `MarathonTiming`: Endless Marathon gravity and lock-delay timing constants used by the Swing loop.
+  - `SidePanel`: performance stats, scoring feedback, combo/B2B status, Hold preview, and five-piece Next queue.
   - `HelpContent`: Swing-native help overlay content for controls and modern Tetris concepts surfaced by the UI.
 - **Scores**: `net.vetcafe.jtetris.score.ScoreManager`: best-only per-user local high scores stored in a package-namespaced platform application data directory.
 - **Settings**: `net.vetcafe.jtetris.settings.UserPreferences`: lightweight user preferences stored separately from scores in the same platform application data directory.
@@ -86,7 +87,7 @@ classDiagram
 ```
 
 ## Game Loop & Timing
-- Swing `Timer` in `TetrisFrame` ticks every ~700 ms (speeds up by level). On each tick: if not paused and not game over, call `Board.tick()` (gravity); repaint board.
+- Swing `Timer` in `TetrisFrame` starts at 700 ms and shortens by level through `MarathonTiming`. On each eligible gravity tick, it advances the active piece or, once grounded for the fixed 500 ms lock delay, locks the piece.
 - A second short-interval timer asks `GameplayInputController` to poll held horizontal and soft-drop input using monotonic elapsed time. Each poll emits at most one step per held input, so delayed Swing callbacks discard stale repeat intervals instead of causing movement bursts.
 - Core gameplay operations can be executed headlessly against a seeded real `Board` with a fake clock; Swing remains responsible for eligibility, repainting, overlays, focus, and session timing.
 - In-stage overlays (score entry/leaderboard/new game prompt/exit confirmation) temporarily block gameplay input and clear held repeaters to prevent post-overlay drift.
@@ -103,7 +104,8 @@ classDiagram
 ## Scoring & Levels
 - Line clear scores (per classic Tetris style): 1/2/3/4 lines = 100/300/500/800 * level.
 - Consecutive clears add combo bonus; difficult clear chains (Tetris/T-Spin clears) use back-to-back bonus.
-- `linesCleared` total drives `level = 1 + linesCleared / 10` (speeds fall via timer delay tuning in future).
+- `linesCleared` total drives `level = 1 + linesCleared / 10`; level drives the Marathon gravity delay.
+- Soft drop adds 1 point per manually moved cell; hard drop adds 2 points per manually moved cell.
 - High score: best-per-user persists locally. On game over, prompt to pick existing or add new user; store if higher. The leaderboard supports single-player deletion after explicit confirmation.
 
 ## Controls (UI is English-only)
@@ -119,7 +121,7 @@ classDiagram
 - Theme: choose `Theme -> Auto/Light/Dark` from the menu bar (applies immediately and is remembered for the next launch)
 
 ## UI Layout & Styling
-- `GamePanel` is centered; `SidePanel` uses a clear information hierarchy with prominent Score, compact Level/Lines/Time, scoring feedback, Combo/B2B status, a separate Hold section, and three vertically ordered Next previews.
+- `GamePanel` is centered; `SidePanel` uses a clear information hierarchy with prominent Score, compact Level/Lines/Time, scoring feedback, Combo/B2B status, a separate Hold section, and five vertically ordered Next previews.
 - The permanent controls cheat-sheet was removed from the side panel; controls remain available in Help through `H` or the menu.
 - The current mode is Endless Marathon: play continues until top-out, and Time tracks active gameplay rather than wall-clock time.
 - Every blocking in-window overlay pauses gravity and session time; closing the final overlay resumes only when the game is not manually paused or over.

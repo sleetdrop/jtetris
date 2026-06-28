@@ -77,6 +77,25 @@ class ScoringRulesTest {
         assertTrue(board.getLastScoreEvent().startsWith("TSPIN_SINGLE"));
     }
 
+    @Test
+    void softDropAddsOnePointPerMovedCell() {
+        Board board = new Board(7L);
+
+        assertTrue(board.softDrop());
+        assertEquals(1, board.getScore());
+    }
+
+    @Test
+    void hardDropAddsTwoPointsPerMovedCell() {
+        Board board = new Board(7L);
+        int startY = board.getCurrent().getY();
+        int landingY = board.getGhost().getY();
+
+        assertTrue(board.hardDrop());
+
+        assertEquals((landingY - startY) * 2, board.getScore());
+    }
+
     private static void invokeClearLines(Board board) throws Exception {
         Method clearLines = Board.class.getDeclaredMethod("clearLines");
         clearLines.setAccessible(true);

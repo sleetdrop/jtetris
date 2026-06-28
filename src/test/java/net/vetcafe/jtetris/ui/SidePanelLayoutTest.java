@@ -55,7 +55,7 @@ class SidePanelLayoutTest {
         SidePanel panel = onEdt(() -> new SidePanel(board));
 
         assertEquals(board.getNextQueue(), panel.displayedNextTypes());
-        assertEquals(3, panel.displayedNextTypes().size());
+        assertEquals(5, panel.displayedNextTypes().size());
     }
 
     @Test

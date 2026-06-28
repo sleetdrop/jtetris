@@ -70,19 +70,19 @@ JTetris SHALL present side-panel game information as player-facing state using a
 - **Then** it shows a subdued empty state
 - **And** after hold is used for the current piece, the held piece preview is visually marked as temporarily unavailable until the piece locks
 
-### Requirement: Side panel shows three upcoming pieces
-JTetris SHALL render the three model-owned upcoming pieces vertically in promotion order.
+### Requirement: Side panel shows five upcoming pieces
+JTetris SHALL render the five model-owned upcoming pieces vertically in promotion order.
 
 #### Scenario: First upcoming piece is visually primary
-- **Given** the Board upcoming queue contains three types
+- **Given** the Board upcoming queue contains five types
 - **When** the Next section renders
-- **Then** all three types are visible in queue order
+- **Then** all five types are visible in queue order
 - **And** the first upcoming piece uses the primary preview size and full theme color
-- **And** the second and third pieces remain readable as visually secondary previews
+- **And** the second through fifth pieces remain readable as visually secondary previews
 
 #### Scenario: Upcoming previews match flat theme styling
 - **Given** either the light or dark theme is active
-- **When** the three upcoming pieces are rendered
+- **When** the five upcoming pieces are rendered
 - **Then** each cell uses `ColorPalette` fill and outline routing
 - **And** the previews do not introduce bevel, shadow, or theme-specific hard-coded colors
 

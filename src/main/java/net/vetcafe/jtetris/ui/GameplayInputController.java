@@ -167,7 +167,7 @@ final class GameplayInputController {
     private boolean applySoftDropSteps(int steps) {
         boolean moved = false;
         for (int i = 0; i < steps; i++) {
-            if (!board.move(0, 1)) {
+            if (!board.softDrop()) {
                 break;
             }
             moved = true;

@@ -75,12 +75,13 @@ final class HelpContent {
                 <p>A run continues until top-out. Score is the primary result; Level and Lines show progression.
                 Time measures active play and excludes pauses and blocking prompts.</p>
                 <h2 style='font-size: 15px; color: %s;'>Playfield</h2>
-                <p>The ghost piece shows where the active piece will land. Next shows the next three pieces in
+                <p>The ghost piece shows where the active piece will land. Next shows the next five pieces in
                 play order. Hold stores one piece for later; after you use Hold, it is unavailable until the
-                current piece locks.</p>
+                current piece locks. Natural gravity speeds up as Level increases.</p>
                 <h2 style='font-size: 15px; color: %s;'>Scoring Feedback</h2>
                 <p><b>Single</b>, <b>Double</b>, <b>Triple</b>, and <b>Tetris</b> describe clearing 1, 2, 3,
                 or 4 lines at once.</p>
+                <p><b>Soft drop</b> awards 1 point per moved cell. <b>Hard drop</b> awards 2 points per moved cell.</p>
                 <p><b>Combo</b> means consecutive pieces cleared lines. It resets after a piece locks without
                 clearing a line.</p>
                 <p><b>Back-to-Back</b> tracks consecutive difficult clears such as Tetris and T-Spin line clears.

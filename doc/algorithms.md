@@ -2,11 +2,11 @@
 
 ## Board representation
 - Grid: `TetrominoType[HEIGHT][WIDTH]`, with HEIGHT=22 (top 2 rows hidden for spawn).
-- Active piece: `Tetromino current`; upcoming pieces: an ordered three-entry `ArrayDeque<TetrominoType>`.
+- Active piece: `Tetromino current`; upcoming pieces: an ordered five-entry `ArrayDeque<TetrominoType>`.
 - Piece generation uses `PieceBag` (7-bag randomizer) to keep distribution fair.
 
 ## Next queue
-- `Board` owns exactly three upcoming tetromino types and exposes them as an immutable snapshot through `getNextQueue()`.
+- `Board` owns exactly five upcoming tetromino types and exposes them as an immutable snapshot through `getNextQueue()`.
 - Normal spawn removes the queue head, makes it active at spawn orientation, and appends one new type from `PieceBag`.
 - `getNext()` remains a compatibility accessor for the queue head; new consumers should use `getNextQueue()` when complete preview state matters.
 - Seeded replay verification compares the complete queue so future-piece state is reproducible.
@@ -18,8 +18,9 @@
 - Rotation succeeds on the first valid kick candidate; fails when all candidates are invalid.
 
 ## Gravity & locking
-- `tick()` tries to move current down; if blocked, enters lock-delay countdown and locks only after the delay expires while still grounded.
-- `hardDrop()` repeatedly moves down until blocked, then locks.
+- `tick()` tries to move current down; if blocked, enters the model-level lock-delay countdown used by replay and headless tests.
+- The Swing Marathon loop uses `MarathonTiming.gravityDelayMs(level)` for level-based natural gravity and `MarathonTiming.lockDelayMs()` for a fixed UI-layer lock window before calling `Board.lockIfGrounded()`.
+- `hardDrop()` repeatedly moves down until blocked, awards drop score, then locks.
 - Successful move/rotation resets lock-delay countdown.
 
 ## Hold piece
@@ -45,8 +46,10 @@
 - Base T-Spin line-clear score: 800/1200/1600 * level for 1/2/3 lines.
 - Combo bonus: consecutive clears add `50 * comboStreak * level` from streak 1 onward.
 - Back-to-back (B2B): consecutive difficult clears (Tetris or T-Spin clear) apply 1.5x base score.
+- Soft drop: 1 point per manually moved cell.
+- Hard drop: 2 points per manually moved cell.
 - `linesCleared` accumulates; `level = 1 + linesCleared / 10`.
-- Current timer delay is fixed in code (700 ms); future work: derive delay from level.
+- Marathon gravity delay starts at 700 ms and shortens by level to a 50 ms high-level floor.
 
 ## Game over
 - Triggered if spawn position is invalid or a lock writes outside bounds.
@@ -66,7 +69,7 @@
 
 ## Rendering
 - `GamePanel`: renders grid, locked blocks, ghost projection, and active piece; antialiased; modern dark palette.
-- `SidePanel`: structured hierarchy with core stats, player-facing scoring feedback, combo/B2B status, Hold, and three vertically ordered Next previews.
+- `SidePanel`: structured hierarchy with core stats, player-facing scoring feedback, combo/B2B status, Hold, and five vertically ordered Next previews.
 - `HelpContent`: authoritative Swing-native controls reference plus Hold/Next/Ghost concepts and advanced scoring terms.
 
 ## Input
@@ -91,9 +94,9 @@ flowchart TD
     A([Timer tick]) --> B{Paused or Game Over?}
     B -->|Yes| C[Skip tick]
     B -->|No| D[Board tick]
-    D --> E{Can move down?}
-    E -->|Yes| F[Advance piece down]
-    E -->|No| G[Lock piece]
+    D --> E{Grounded?}
+    E -->|No| F[Advance piece down]
+    E -->|Yes after lock delay| G[Lock piece]
     G --> H[Clear full lines]
     H --> I[Spawn next piece]
     I --> J{Spawn valid?}
@@ -103,7 +106,7 @@ flowchart TD
 
 ## Known simplifications
 - Input repeat timing is deterministic for horizontal movement and soft drop.
-- Timer speed does not yet scale with level.
+- T-Spin Mini and Perfect Clear scoring are not yet implemented.
 
 ## Regression gates
 - `BoardRegressionGateTest` enforces core model invariants: boundary/occupied-cell collisions, blocked rotation failure, line-clear state consistency, and blocked-spawn top-out.
@@ -125,9 +128,7 @@ flowchart TD
 - UI export/import wiring is intentionally deferred; when added, UI should only call this model utility and keep action execution semantics in `Board`.
 
 ## Extension ideas
-- Level-based fall speed.
 - Perfect Clear detection and scoring feedback.
-- Soft drop and hard drop scoring.
 - T-Spin Mini distinction.
 - Sound effects.
 - UI scaling for high-DPI and resizable layout.

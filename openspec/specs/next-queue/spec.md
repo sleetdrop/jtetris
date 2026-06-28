@@ -5,31 +5,31 @@ Define the ordered upcoming-piece state used by gameplay, Hold promotion, replay
 
 ## Requirements
 
-### Requirement: Board maintains three upcoming pieces
-JTetris SHALL maintain an ordered, model-owned queue containing exactly three upcoming tetromino types after board initialization and throughout active gameplay.
+### Requirement: Board maintains five upcoming pieces
+JTetris SHALL maintain an ordered, model-owned queue containing exactly five upcoming tetromino types after board initialization and throughout active gameplay.
 
-#### Scenario: New board exposes three upcoming pieces
+#### Scenario: New board exposes five upcoming pieces
 - **Given** a board has been constructed
 - **When** its upcoming queue is queried
-- **Then** the result contains exactly three tetromino types
+- **Then** the result contains exactly five tetromino types
 - **And** the first type is the next type that will become active
 
 #### Scenario: Normal spawn advances and refills the queue
-- **Given** a board has three upcoming pieces
+- **Given** a board has five upcoming pieces
 - **When** the active piece locks and the next piece spawns
 - **Then** the former queue head becomes the active piece
 - **And** the remaining queue entries retain their order
-- **And** one new type from the 7-bag is appended so the queue again contains three entries
+- **And** one new type from the 7-bag is appended so the queue again contains five entries
 
 #### Scenario: Empty Hold advances the queue
-- **Given** Hold is empty and the board has three upcoming pieces
+- **Given** Hold is empty and the board has five upcoming pieces
 - **When** the player uses Hold
 - **Then** the former active type is stored in Hold
 - **And** the former queue head becomes active
-- **And** the upcoming queue is refilled to three entries
+- **And** the upcoming queue is refilled to five entries
 
 #### Scenario: Hold swap preserves the queue
-- **Given** Hold already contains a piece and the board has three upcoming pieces
+- **Given** Hold already contains a piece and the board has five upcoming pieces
 - **When** the player swaps the active piece with Hold
 - **Then** the upcoming queue remains unchanged
 
@@ -37,7 +37,7 @@ JTetris SHALL maintain an ordered, model-owned queue containing exactly three up
 - **Given** a game has progressed
 - **When** the board is reset
 - **Then** a new current piece is created
-- **And** the upcoming queue contains exactly three entries from the reset 7-bag sequence
+- **And** the upcoming queue contains exactly five entries from the reset 7-bag sequence
 
 ### Requirement: Upcoming queue is read-only to consumers
 JTetris SHALL expose upcoming queue state without allowing UI or test consumers to mutate Board state.

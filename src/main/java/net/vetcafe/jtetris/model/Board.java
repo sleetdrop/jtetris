@@ -10,7 +10,7 @@ public class Board {
     public static final int WIDTH = 10;
     public static final int HEIGHT = 22; // includes hidden rows at top
     private static final int LOCK_DELAY_TICKS = 1;
-    private static final int NEXT_QUEUE_SIZE = 3;
+    private static final int NEXT_QUEUE_SIZE = 5;
 
     private final TetrominoType[][] grid = new TetrominoType[HEIGHT][WIDTH];
     private final PieceBag pieceBag;
@@ -195,7 +195,7 @@ public class Board {
         return switch (action) {
             case LEFT -> move(-1, 0);
             case RIGHT -> move(1, 0);
-            case SOFT_DROP -> move(0, 1);
+            case SOFT_DROP -> softDrop();
             case ROTATE_CW -> rotateCW();
             case ROTATE_CCW -> rotateCCW();
             case HARD_DROP -> hardDrop();
@@ -222,6 +222,14 @@ public class Board {
             current = moved;
             groundedTicks = 0;
             lastActionWasRotation = false;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean softDrop() {
+        if (move(0, 1)) {
+            score += 1;
             return true;
         }
         return false;
@@ -267,10 +275,30 @@ public class Board {
             return false;
         }
         boolean moved = false;
+        int movedCells = 0;
         while (move(0, 1)) {
             moved = true;
+            movedCells++;
         }
         if (!moved) {
+            return false;
+        }
+        score += movedCells * 2;
+        lockCurrent();
+        return true;
+    }
+
+    public boolean isCurrentGrounded() {
+        if (gameOver || current == null) {
+            return false;
+        }
+        Tetromino movedDown = current.copy();
+        movedDown.move(0, 1);
+        return !isPositionValid(movedDown);
+    }
+
+    public boolean lockIfGrounded() {
+        if (!isCurrentGrounded()) {
             return false;
         }
         lockCurrent();

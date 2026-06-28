@@ -5,7 +5,7 @@ A lightweight JTetris clone for learning Java, Swing UI, and basic game loop/sco
 ## Features
 - Java 17 Swing desktop UI with light/dark theme support.
 - Endless Marathon play that continues until top-out, with active session time shown alongside score, level, and lines.
-- Guideline-style Tetris mechanics including 7-bag randomization, hold piece, ghost piece, SRS rotation kicks, lock delay, combo/B2B scoring, and T-spin detection.
+- Guideline-style Tetris mechanics including 7-bag randomization, hold piece, ghost piece, SRS rotation kicks, level-based gravity, fixed lock delay, five-piece Next preview, drop scoring, combo/B2B scoring, and T-spin detection.
 - Swing-native in-game Help for controls and modern Tetris scoring concepts.
 - Local best-score storage per user.
 - Replay-oriented model hooks and regression tests for core gameplay behavior.
@@ -83,7 +83,7 @@ text input, screenshots, or score-file contents.
 JTetris currently focuses on **Endless Marathon**. A run continues until
 top-out, with Score as the primary result and Level, Lines, and Time as session
 context. Time measures active gameplay and excludes manual pauses and blocking
-in-window prompts.
+in-window prompts. Natural gravity speeds up as Level increases.
 
 ## Packaging
 Build the standalone runnable jar:
@@ -120,6 +120,7 @@ macOS app metadata is overridden from `packaging/macos/Info.plist` so the genera
 - [OpenSpec Agent Guide](openspec/AGENTS.md)
 - [Overview](doc/overview.md)
 - [Algorithms](doc/algorithms.md)
+- [Tetris Guideline Notes](doc/tetris-guideline-notes.md)
 - [Quality Gates](doc/quality-gates.md)
 - [Historical Spec Workflow](doc/specs/README.md)
 - [Historical Optimization Roadmap](doc/specs/roadmap.md)

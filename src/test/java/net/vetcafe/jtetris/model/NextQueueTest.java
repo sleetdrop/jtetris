@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 class NextQueueTest {
 
     @Test
-    void boardStartsWithThreeUpcomingPieces() {
+    void boardStartsWithFiveUpcomingPieces() {
         Board board = new Board(7L);
 
-        assertEquals(3, board.getNextQueue().size());
+        assertEquals(5, board.getNextQueue().size());
         assertEquals(board.getNext().getType(), board.getNextQueue().get(0));
     }
 
@@ -34,18 +34,20 @@ class NextQueueTest {
         assertEquals(before.get(0), board.getCurrent().getType());
         assertEquals(before.get(1), board.getNextQueue().get(0));
         assertEquals(before.get(2), board.getNextQueue().get(1));
-        assertEquals(3, board.getNextQueue().size());
+        assertEquals(before.get(3), board.getNextQueue().get(2));
+        assertEquals(before.get(4), board.getNextQueue().get(3));
+        assertEquals(5, board.getNextQueue().size());
     }
 
     @Test
-    void resetRebuildsThreeUpcomingPieces() {
+    void resetRebuildsFiveUpcomingPieces() {
         Board board = new Board(7L);
         board.applyReplayAction(ReplayAction.LEFT);
         lockCurrent(board);
 
         board.reset();
 
-        assertEquals(3, board.getNextQueue().size());
+        assertEquals(5, board.getNextQueue().size());
         assertEquals(0, board.getReplayActions().size());
     }
 

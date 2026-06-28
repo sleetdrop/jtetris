@@ -176,11 +176,13 @@ public class SidePanel extends JPanel {
     private static class PreviewPanel extends JPanel {
         private static final int HOLD_TITLE_Y = 28;
         private static final int HOLD_PIECE_Y = 42;
-        private static final int NEXT_DIVIDER_Y = 104;
-        private static final int NEXT_TITLE_Y = 134;
-        private static final int PRIMARY_NEXT_Y = 150;
-        private static final int SECONDARY_NEXT_Y = 216;
-        private static final int TERTIARY_NEXT_Y = 274;
+        private static final int NEXT_DIVIDER_Y = 96;
+        private static final int NEXT_TITLE_Y = 118;
+        private static final int PRIMARY_NEXT_Y = 132;
+        private static final int SECONDARY_NEXT_Y = 178;
+        private static final int TERTIARY_NEXT_Y = 216;
+        private static final int QUATERNARY_NEXT_Y = 254;
+        private static final int QUINARY_NEXT_Y = 292;
 
         private final Board board;
 
@@ -213,7 +215,13 @@ public class SidePanel extends JPanel {
                 drawPiece(g2d, nextTypes.get(1), SECONDARY_NEXT_Y, 15, true);
             }
             if (nextTypes.size() > 2) {
-                drawPiece(g2d, nextTypes.get(2), TERTIARY_NEXT_Y, 15, true);
+                drawPiece(g2d, nextTypes.get(2), TERTIARY_NEXT_Y, 12, true);
+            }
+            if (nextTypes.size() > 3) {
+                drawPiece(g2d, nextTypes.get(3), QUATERNARY_NEXT_Y, 12, true);
+            }
+            if (nextTypes.size() > 4) {
+                drawPiece(g2d, nextTypes.get(4), QUINARY_NEXT_Y, 12, true);
             }
             g2d.dispose();
         }
