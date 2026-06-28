@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Properties;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -119,6 +120,22 @@ class ScoreManagerTest {
 
         assertFalse(manager.deleteUser("Bob"));
         assertEquals(1200, manager.getBest("Alice"));
+    }
+
+    @Test
+    void persistsLastScoreUserWithoutAddingMetadataToPlayers() {
+        Path store = tempDir.resolve("data/net.vetcafe.jtetris/scores.properties");
+        Path legacy = tempDir.resolve(".tetris_scores.properties");
+        ScoreManager manager = new ScoreManager(store, legacy);
+        manager.updateIfHigher("Alice", 1200);
+        manager.updateIfHigher("Bob", 400);
+
+        ScoreManager reloaded = new ScoreManager(store, legacy);
+
+        assertEquals("Bob", reloaded.getLastScoreUser());
+        assertEquals(List.of("alice", "bob"), reloaded.getUsers());
+        assertEquals(List.of(new ScoreManager.ScoreEntry("alice", 1200), new ScoreManager.ScoreEntry("bob", 400)),
+                reloaded.getLeaderboard());
     }
 
     @Test

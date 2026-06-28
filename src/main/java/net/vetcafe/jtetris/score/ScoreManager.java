@@ -18,6 +18,8 @@ import java.util.Properties;
  * Simple per-user high score store backed by a platform-local properties file.
  */
 public class ScoreManager {
+    private static final String LAST_SCORE_USER_KEY = "__jtetris.lastScoreUser";
+
     interface Persistence {
         boolean exists(Path path);
 
@@ -128,8 +130,17 @@ public class ScoreManager {
         int best = getBest(user);
         int newBest = Math.max(score, best);
         props.setProperty(normalized, Integer.toString(newBest));
+        props.setProperty(LAST_SCORE_USER_KEY, user == null ? "" : user.trim());
         save();
         return newBest;
+    }
+
+    public synchronized String getLastScoreUser() {
+        String lastScoreUser = props.getProperty(LAST_SCORE_USER_KEY, "").trim();
+        if (lastScoreUser.isEmpty()) {
+            return "";
+        }
+        return lastScoreUser;
     }
 
     public synchronized List<String> getUsers() {
@@ -141,14 +152,18 @@ public class ScoreManager {
 
     public synchronized boolean deleteUser(String user) {
         String normalized = key(user);
-        if (!props.containsKey(normalized)) {
+        if (!hasScoreKey(normalized) || !props.containsKey(normalized)) {
             return false;
         }
 
         String previousScore = props.getProperty(normalized);
         String previousName = userNames.get(normalized);
+        String previousLastScoreUser = props.getProperty(LAST_SCORE_USER_KEY);
         props.remove(normalized);
         userNames.remove(normalized);
+        if (normalized.equals(key(props.getProperty(LAST_SCORE_USER_KEY)))) {
+            props.remove(LAST_SCORE_USER_KEY);
+        }
         if (save()) {
             return true;
         }
@@ -156,6 +171,9 @@ public class ScoreManager {
         props.setProperty(normalized, previousScore);
         if (previousName != null) {
             userNames.put(normalized, previousName);
+        }
+        if (previousLastScoreUser != null) {
+            props.setProperty(LAST_SCORE_USER_KEY, previousLastScoreUser);
         }
         return false;
     }
@@ -165,6 +183,9 @@ public class ScoreManager {
     public synchronized List<ScoreEntry> getLeaderboard() {
         List<ScoreEntry> list = new ArrayList<>();
         for (String propertyKey : props.stringPropertyNames()) {
+            if (!hasScoreKey(propertyKey)) {
+                continue;
+            }
             int score = 0;
             try {
                 score = Integer.parseInt(props.getProperty(propertyKey, "0"));
@@ -206,7 +227,9 @@ public class ScoreManager {
         props.clear();
         props.putAll(loaded);
         userNames.clear();
-        props.stringPropertyNames().forEach(propertyKey -> userNames.put(propertyKey, propertyKey));
+        props.stringPropertyNames().stream()
+                .filter(this::hasScoreKey)
+                .forEach(propertyKey -> userNames.put(propertyKey, propertyKey));
     }
 
     private boolean save() {
@@ -217,5 +240,9 @@ public class ScoreManager {
 
     private String key(String user) {
         return user == null ? "" : user.trim().toLowerCase();
+    }
+
+    private boolean hasScoreKey(String propertyKey) {
+        return !LAST_SCORE_USER_KEY.equals(propertyKey);
     }
 }

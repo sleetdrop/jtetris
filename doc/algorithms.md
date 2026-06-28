@@ -59,7 +59,8 @@
   - Windows: `%LOCALAPPDATA%` with `~/AppData/Local` as fallback
 - If no platform store exists, `~/.tetris_scores.properties` is loaded, written to the new store, and deleted only after the new write succeeds.
 - If both files exist, the platform store is authoritative and the legacy file is not merged.
-- Keys are lowercase usernames. Original casing is remembered for display during the current process; reloaded properties use the normalized key as the display name.
+- Score keys are lowercase usernames. Original casing is remembered for display during the current process; reloaded properties use the normalized key as the display name.
+- `__jtetris.lastScoreUser` stores the most recent score-entry user so the next game-over prompt can default to that player; it is ignored by leaderboard and user-list reads.
 - Reads are tolerant of unreadable files. An unreadable legacy file is retained to avoid destructive migration.
 - Deleting a leaderboard player removes that user's best score only after confirmation; failed persistence restores the in-memory record.
 

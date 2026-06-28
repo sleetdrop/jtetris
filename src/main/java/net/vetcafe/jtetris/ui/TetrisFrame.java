@@ -442,6 +442,7 @@ public class TetrisFrame extends JFrame {
         scoreEntryExistingUsers.setBackground(theme.dialogBackground());
         scoreEntryExistingUsers.setForeground(theme.textPrimary());
         scoreEntryExistingUsers.setPrototypeDisplayValue("Player name");
+        selectScoreEntryDefaultUser(scoreEntryExistingUsers, scoreManager.getLastScoreUser());
 
         scoreEntryNewUserField = new JTextField();
         scoreEntryNewUserField.setColumns(12);
@@ -525,6 +526,19 @@ public class TetrisFrame extends JFrame {
             candidate = sel == null ? "" : sel.toString().trim();
         }
         return candidate.isEmpty() ? null : candidate;
+    }
+
+    static void selectScoreEntryDefaultUser(JComboBox<String> users, String defaultUser) {
+        if (users == null || defaultUser == null || defaultUser.isBlank()) {
+            return;
+        }
+        for (int index = 0; index < users.getItemCount(); index++) {
+            String user = users.getItemAt(index);
+            if (defaultUser.equalsIgnoreCase(user)) {
+                users.setSelectedIndex(index);
+                return;
+            }
+        }
     }
 
     private void showLeaderboard() {
