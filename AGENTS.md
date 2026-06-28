@@ -55,11 +55,12 @@ java -jar target/jtetris-1.0-SNAPSHOT.jar
 
 ## Execution Mode (Early Stage Stability)
 - Default mode is `strict`: only implement the current requested feature, no opportunistic refactors.
-- Default workflow is lightweight: use this file, `doc/java-style.md`, focused plans when useful, and concrete verification evidence.
+- Default workflow is lightweight: use this file, `doc/java-style.md`, focused plans when useful, relevant Superpowers guidance, and concrete verification evidence.
 - Use OpenSpec only when the change creates or changes a long-lived behavior contract, product decision, architecture boundary, project workflow, build/release/dependency policy, or other decision likely to need future traceability.
 - Do not create OpenSpec changes for routine bug fixes, localized refactors, tests, small documentation edits, or implementation work whose rationale is clear from code and commit history.
 - Use `doc/specs` as historical context only unless a task explicitly asks to repair or archive old workflow documents.
 - Before implementation, restate current goal, explicit file allowlist, and out-of-scope items when the change is multi-file, risky, or workflow-affecting; do not edit files outside that allowlist unless re-approved.
+- After implementation, run a docs impact check against `README.md`, `doc/overview.md`, `doc/algorithms.md`, `doc/quality-gates.md`, and `AGENTS.md`; update only the documents affected by the change, or state in the final response that no docs update was needed.
 - After finishing each approved checklist step, create one focused git commit before starting the next step.
 - Treat `pom.xml`, package moves, dependency changes, and broad naming changes as standalone tasks. Use OpenSpec for them when they alter long-lived project workflow or compatibility contracts.
 - If unrelated issues are found, record them in notes/spec backlog and continue current scope only.

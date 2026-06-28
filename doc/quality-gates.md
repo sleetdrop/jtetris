@@ -1,13 +1,15 @@
 # Quality Gates
 
-This document defines practical quality gates for local development, OpenSpec changes, and optional PR validation.
+This document defines practical quality gates for local development, lightweight
+Superpowers-guided work, selective OpenSpec changes, and optional PR validation.
 
 ## Gate levels
 
 - `Gate 0` (fast local): compile + unit tests.
 - `Gate 1` (local completion): formatter + lint + full test suite +
   deterministic replay check.
-- `Gate 2` (review/CI): same as Gate 1 plus OpenSpec and documentation sanity checklist.
+- `Gate 2` (review/CI): same as Gate 1 plus documentation impact and
+  selective OpenSpec checks.
 
 ## Java style checks
 
@@ -92,10 +94,23 @@ JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw checkstyle:check
 ./mvnw -q -Djava.awt.headless=true clean test
 ```
 
-And enforce a lightweight docs checklist:
-- Behavior change has corresponding OpenSpec change/spec update under `openspec/`.
-- The active OpenSpec change records verification evidence and any needed handoff notes.
-- User-facing behavior changes are reflected in `README.md` or `doc/overview.md`.
+And enforce a lightweight docs impact checklist:
+- Check whether `README.md`, `doc/overview.md`, `doc/algorithms.md`,
+  `doc/quality-gates.md`, or `AGENTS.md` needs an update.
+- Update user-facing docs for visible behavior, controls, storage paths, launch
+  options, or workflow changes.
+- Update technical docs when algorithms, replay/determinism contracts, scoring,
+  input timing, quality gates, or agent workflow rules change.
+- Use OpenSpec only for durable behavior contracts, product decisions,
+  architecture boundaries, project workflow, build/release/dependency policy, or
+  compatibility expectations; routine bug fixes, localized refactors, tests, and
+  small docs edits do not need an OpenSpec change.
+- When an OpenSpec change is active, record verification evidence and any needed
+  handoff notes there as well as in the final response.
+
+When Superpowers guidance is used during development, follow its verification
+discipline before claiming completion: identify the command that proves the
+claim, run it fresh, read the output, and report the evidence.
 
 ## Deterministic replay debug flow
 
