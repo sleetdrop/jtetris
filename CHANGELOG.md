@@ -9,10 +9,12 @@ All notable user-facing changes to JTetris releases are tracked here.
 - GitHub Actions release-build workflow for standalone jar, macOS app images, and Windows app images.
 - Windows app-image packaging through the Maven `windows` profile.
 - Release documentation for platform-specific app archives and the standalone jar fallback.
+- Cross-platform CI coverage for path-related tests that previously only ran on Unix-like hosts.
 
 ### Changed
 - Release artifact names now use the public `JTetris-<version>-<platform>` naming scheme.
 - README screenshots are planned to be refreshed before the `1.1.0` release.
+- Windows arm64 is documented as a standalone-jar fallback for `1.1.0` because Temurin Java 25 arm64 was unavailable on the hosted runner.
 
 ### Compatibility
 - Local score data remains in `scores.properties` under the platform application data directory.

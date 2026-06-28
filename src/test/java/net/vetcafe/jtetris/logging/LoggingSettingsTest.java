@@ -9,14 +9,16 @@ import java.util.Properties;
 import org.junit.jupiter.api.Test;
 
 class LoggingSettingsTest {
+    private final Path sandbox = Path.of(System.getProperty("java.io.tmpdir")).toAbsolutePath();
+    private final Path applicationRoot = sandbox.resolve("app/data");
 
     @Test
     void defaultsToErrorAndPlatformLogDirectory() {
-        LoggingSettings settings = LoggingSettings.parse(new Properties(), Path.of("/app/data"));
+        LoggingSettings settings = LoggingSettings.parse(new Properties(), applicationRoot);
 
         assertEquals(LogLevel.ERROR, settings.globalLevel());
         assertEquals(LogLevel.ERROR, settings.inputLevel());
-        assertEquals(Path.of("/app/data/logs"), settings.logDirectory());
+        assertEquals(applicationRoot.resolve("logs"), settings.logDirectory());
         assertEquals("10MB", settings.maxFileSize());
         assertEquals(7, settings.maxHistory());
         assertEquals("100MB", settings.totalSizeCap());
@@ -30,7 +32,7 @@ class LoggingSettingsTest {
     void debugModeDefaultsGlobalLevelToDebugAndEnablesWatchdog() {
         Properties properties = properties("jtetris.debug", "true");
 
-        LoggingSettings settings = LoggingSettings.parse(properties, Path.of("/app/data"));
+        LoggingSettings settings = LoggingSettings.parse(properties, applicationRoot);
 
         assertEquals(LogLevel.DEBUG, settings.globalLevel());
         assertEquals(LogLevel.DEBUG, settings.inputLevel());
@@ -44,7 +46,7 @@ class LoggingSettingsTest {
                 "jtetris.log.level", "WARN",
                 "jtetris.log.input.level", "TRACE");
 
-        LoggingSettings settings = LoggingSettings.parse(properties, Path.of("/app/data"));
+        LoggingSettings settings = LoggingSettings.parse(properties, applicationRoot);
 
         assertEquals(LogLevel.WARN, settings.globalLevel());
         assertEquals(LogLevel.TRACE, settings.inputLevel());
@@ -52,17 +54,18 @@ class LoggingSettingsTest {
 
     @Test
     void acceptsAbsoluteDirectoryAndRollingOverrides() {
+        Path logDirectory = sandbox.resolve("jtetris-logs");
         Properties properties = properties(
-                "jtetris.log.dir", "/tmp/jtetris-logs",
+                "jtetris.log.dir", logDirectory.toString(),
                 "jtetris.log.maxFileSize", "25MB",
                 "jtetris.log.maxHistory", "14",
                 "jtetris.log.totalSizeCap", "250MB",
                 "jtetris.log.edtWatchdog.enabled", "true",
                 "jtetris.log.edtWatchdog.thresholdMs", "750");
 
-        LoggingSettings settings = LoggingSettings.parse(properties, Path.of("/app/data"));
+        LoggingSettings settings = LoggingSettings.parse(properties, applicationRoot);
 
-        assertEquals(Path.of("/tmp/jtetris-logs"), settings.logDirectory());
+        assertEquals(logDirectory, settings.logDirectory());
         assertEquals("25MB", settings.maxFileSize());
         assertEquals(14, settings.maxHistory());
         assertEquals("250MB", settings.totalSizeCap());
@@ -82,11 +85,11 @@ class LoggingSettingsTest {
                 "jtetris.log.edtWatchdog.enabled", "maybe",
                 "jtetris.log.edtWatchdog.thresholdMs", "-5");
 
-        LoggingSettings settings = LoggingSettings.parse(properties, Path.of("/app/data"));
+        LoggingSettings settings = LoggingSettings.parse(properties, applicationRoot);
 
         assertEquals(LogLevel.ERROR, settings.globalLevel());
         assertEquals(LogLevel.ERROR, settings.inputLevel());
-        assertEquals(Path.of("/app/data/logs"), settings.logDirectory());
+        assertEquals(applicationRoot.resolve("logs"), settings.logDirectory());
         assertEquals("10MB", settings.maxFileSize());
         assertEquals(7, settings.maxHistory());
         assertEquals("100MB", settings.totalSizeCap());
@@ -101,7 +104,7 @@ class LoggingSettingsTest {
                 "logback.configurationFile", "/tmp/custom-logback.xml",
                 "jtetris.debug", "true");
 
-        LoggingSettings settings = LoggingSettings.parse(properties, Path.of("/app/data"));
+        LoggingSettings settings = LoggingSettings.parse(properties, applicationRoot);
 
         assertTrue(settings.externalConfiguration());
     }

@@ -118,9 +118,9 @@ Build a Windows application image on Windows:
 
 The `release-build` GitHub Actions workflow builds versioned release artifacts
 for the standalone jar, macOS Apple Silicon, macOS Intel, and Windows x64.
-Windows arm64 is included as a best-effort preview target while GitHub's hosted
-runner support for that platform remains preview-quality. Users on unsupported
-native platforms can run the standalone jar with Java 25.
+Windows arm64 is not built for `1.1.0` because the hosted runner did not have a
+Temurin Java 25 arm64 package available during release validation. Users on
+unsupported native platforms can run the standalone jar with Java 25.
 
 Release automation should provision Java 25 with `actions/setup-java` and an
 OpenJDK distribution such as Eclipse Temurin for bundled-runtime app artifacts.

@@ -10,9 +10,8 @@ The release matrix prioritizes stable GitHub-hosted runners:
 - `macos-15` for macOS arm64.
 - `macos-15-intel` for macOS x64.
 - `windows-2025` for Windows x64.
-- `windows-11-arm` for Windows arm64 as a preview target.
 
-Windows arm64 is treated as best effort because GitHub identifies that hosted runner family as a preview capability. Its failure should not block the stable artifact set.
+Windows arm64 is not included in the `1.1.0` release matrix because release validation found no Temurin Java 25 arm64 package available on the hosted runner. The standalone jar remains the Windows arm64 fallback.
 
 ## Maven Packaging
 Keep the existing `mac` Maven profile as the local macOS packaging entry point. Add a sibling `windows` profile that stages the same application jar and runtime dependencies into `target/jpackage-input`, then runs `jpackage` with the Windows `.ico` asset.
@@ -25,7 +24,6 @@ Release build output uses versioned, user-facing names:
 - `JTetris-1.1.0-macos-aarch64.zip`
 - `JTetris-1.1.0-macos-x64.zip`
 - `JTetris-1.1.0-windows-x64.zip`
-- `JTetris-1.1.0-windows-aarch64.zip`
 
 The Maven project version and `jpackage.appVersion` move to `1.1.0` for this release preparation.
 

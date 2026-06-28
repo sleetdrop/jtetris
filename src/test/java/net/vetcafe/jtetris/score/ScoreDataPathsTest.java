@@ -6,7 +6,9 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 
 class ScoreDataPathsTest {
-    private final Path home = Path.of("/Users/test");
+    private final Path sandbox = Path.of(System.getProperty("java.io.tmpdir")).toAbsolutePath();
+    private final Path home = sandbox.resolve("home");
+    private final Path xdgDataHome = sandbox.resolve("xdg-data");
 
     @Test
     void resolvesMacApplicationSupportPath() {
@@ -18,8 +20,8 @@ class ScoreDataPathsTest {
     @Test
     void resolvesAbsoluteXdgDataHome() {
         assertEquals(
-                Path.of("/data/net.vetcafe.jtetris/scores.properties"),
-                ScoreDataPaths.resolve("Linux", home, "/data", null));
+                xdgDataHome.resolve("net.vetcafe.jtetris/scores.properties"),
+                ScoreDataPaths.resolve("Linux", home, xdgDataHome.toString(), null));
     }
 
     @Test
@@ -31,18 +33,18 @@ class ScoreDataPathsTest {
 
     @Test
     void resolvesWindowsLocalAppData() {
+        Path localAppData = home.resolve("AppData/Local");
+
         assertEquals(
-                Path.of("C:/Users/test/AppData/Local/net.vetcafe.jtetris/scores.properties"),
-                ScoreDataPaths.resolve("Windows 11", Path.of("C:/Users/test"), null, "C:/Users/test/AppData/Local"));
+                localAppData.resolve("net.vetcafe.jtetris/scores.properties"),
+                ScoreDataPaths.resolve("Windows 11", home, null, localAppData.toString()));
     }
 
     @Test
     void fallsBackWhenWindowsLocalAppDataIsBlank() {
-        Path windowsHome = Path.of("C:/Users/test");
-
         assertEquals(
-                windowsHome.resolve("AppData/Local/net.vetcafe.jtetris/scores.properties"),
-                ScoreDataPaths.resolve("Windows 11", windowsHome, null, " "));
+                home.resolve("AppData/Local/net.vetcafe.jtetris/scores.properties"),
+                ScoreDataPaths.resolve("Windows 11", home, null, " "));
     }
 
     @Test

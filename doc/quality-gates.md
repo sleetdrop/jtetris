@@ -123,8 +123,8 @@ The repository uses two workflow levels:
   Temurin, then runs Spotless, Checkstyle, and the headless clean test suite.
 - `Release Build`: runs on release tags and manual dispatch. It uploads workflow
   artifacts for maintainer review: standalone jar, macOS Apple Silicon app
-  image, macOS Intel app image, Windows x64 app image, and best-effort Windows
-  arm64 app image.
+  image, macOS Intel app image, and Windows x64 app image. Windows arm64 users
+  should use the standalone jar for `1.1.0`.
 
 Release build artifacts are not automatically attached to a GitHub Release.
 The maintainer should review the workflow artifacts and attach the intended

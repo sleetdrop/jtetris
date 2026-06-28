@@ -6,39 +6,43 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 
 class ApplicationDataPathsTest {
-    private final Path home = Path.of("/Users/test");
+    private final Path sandbox = Path.of(System.getProperty("java.io.tmpdir")).toAbsolutePath();
+    private final Path home = sandbox.resolve("home");
+    private final Path xdgDataHome = sandbox.resolve("xdg-data");
 
     @Test
     void resolvesMacApplicationDirectory() {
         assertEquals(
-                Path.of("/Users/test/Library/Application Support/net.vetcafe.jtetris"),
+                home.resolve("Library/Application Support/net.vetcafe.jtetris"),
                 ApplicationDataPaths.resolveRoot("Mac OS X", home, null, null));
     }
 
     @Test
     void resolvesLinuxXdgApplicationDirectory() {
         assertEquals(
-                Path.of("/data/net.vetcafe.jtetris"), ApplicationDataPaths.resolveRoot("Linux", home, "/data", null));
+                xdgDataHome.resolve("net.vetcafe.jtetris"),
+                ApplicationDataPaths.resolveRoot("Linux", home, xdgDataHome.toString(), null));
     }
 
     @Test
     void ignoresRelativeLinuxXdgDirectory() {
         assertEquals(
-                Path.of("/Users/test/.local/share/net.vetcafe.jtetris"),
+                home.resolve(".local/share/net.vetcafe.jtetris"),
                 ApplicationDataPaths.resolveRoot("Linux", home, "relative/data", null));
     }
 
     @Test
     void resolvesWindowsApplicationDirectory() {
+        Path localAppData = home.resolve("AppData/Local");
+
         assertEquals(
-                Path.of("C:/Users/test/AppData/Local/net.vetcafe.jtetris"),
-                ApplicationDataPaths.resolveRoot(
-                        "Windows 11", Path.of("C:/Users/test"), null, "C:/Users/test/AppData/Local"));
+                localAppData.resolve("net.vetcafe.jtetris"),
+                ApplicationDataPaths.resolveRoot("Windows 11", home, null, localAppData.toString()));
     }
 
     @Test
     void derivesScoreFileAndLogDirectoryFromSameRoot() {
-        Path root = Path.of("/data/net.vetcafe.jtetris");
+        Path root = xdgDataHome.resolve("net.vetcafe.jtetris");
 
         assertEquals(root.resolve("scores.properties"), ApplicationDataPaths.scoreFile(root));
         assertEquals(root.resolve("preferences.properties"), ApplicationDataPaths.preferencesFile(root));

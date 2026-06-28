@@ -14,11 +14,11 @@ JTetris MUST provide directly executable release artifacts for Java users and th
 - **When** the release-build workflow runs on stable GitHub-hosted runner targets
 - **Then** it builds compressed app-image archives for macOS arm64, macOS x64, and Windows x64.
 
-#### Scenario: Publish best-effort Windows arm64 app image
-- **Given** GitHub-hosted Windows arm64 runners are a preview capability
-- **When** the release-build workflow runs the Windows arm64 job
-- **Then** that job may produce `JTetris-1.1.0-windows-aarch64.zip`
-- **And** failure of that preview job does not block stable release artifacts.
+#### Scenario: Fall back to standalone jar for Windows arm64
+- **Given** Temurin Java 25 arm64 is unavailable on the hosted Windows arm64 runner
+- **When** the `1.1.0` release-build workflow runs
+- **Then** it does not attempt to build a Windows arm64 app image
+- **And** Windows arm64 users can run the standalone jar with Java 25.
 
 #### Scenario: Avoid non-runnable release assets
 - **Given** a user downloads a project-provided release artifact
