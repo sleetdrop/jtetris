@@ -175,6 +175,13 @@ public class Board {
         return copy;
     }
 
+    public TetrominoType cellAt(int x, int y) {
+        if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
+            throw new IndexOutOfBoundsException("cell coordinates outside board: x=" + x + ", y=" + y);
+        }
+        return grid[y][x];
+    }
+
     public boolean isGameOver() {
         return gameOver;
     }

@@ -101,10 +101,9 @@ public class GamePanel extends JPanel {
     }
 
     private void drawLockedBlocks(Graphics2D g2d) {
-        TetrominoType[][] grid = board.snapshot();
         for (int y = 2; y < Board.HEIGHT; y++) { // hide top buffer rows
             for (int x = 0; x < Board.WIDTH; x++) {
-                TetrominoType type = grid[y][x];
+                TetrominoType type = board.cellAt(x, y);
                 if (type != null) {
                     fillCell(g2d, x, y - 2, type);
                 }

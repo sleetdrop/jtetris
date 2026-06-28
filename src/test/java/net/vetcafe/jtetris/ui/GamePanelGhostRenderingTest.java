@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.atomic.AtomicInteger;
+import net.vetcafe.jtetris.model.Board;
 import net.vetcafe.jtetris.model.Tetromino;
 import net.vetcafe.jtetris.model.TetrominoType;
 import org.junit.jupiter.api.AfterEach;
@@ -70,6 +72,21 @@ class GamePanelGhostRenderingTest {
         assertFalse(GamePanel.overlapsCurrentCell(current, 3, 19));
     }
 
+    @Test
+    void paintReadsLockedCellsWithoutCopyingWholeBoardSnapshot() {
+        CountingSnapshotBoard board = new CountingSnapshotBoard(7L);
+        GamePanel panel = new GamePanel(board);
+        panel.setSize(panel.getPreferredSize());
+
+        BufferedImage image = new BufferedImage(
+                panel.getPreferredSize().width, panel.getPreferredSize().height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = image.createGraphics();
+        panel.paint(graphics);
+        graphics.dispose();
+
+        assertEquals(0, board.snapshotCalls());
+    }
+
     private static BufferedImage renderGhostCell(int cellSize) {
         BufferedImage image = new BufferedImage(cellSize, cellSize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();
@@ -85,5 +102,23 @@ class GamePanelGhostRenderingTest {
         int green = first.getGreen() - second.getGreen();
         int blue = first.getBlue() - second.getBlue();
         return Math.sqrt((red * red) + (green * green) + (blue * blue));
+    }
+
+    private static final class CountingSnapshotBoard extends Board {
+        private final AtomicInteger snapshotCalls = new AtomicInteger();
+
+        private CountingSnapshotBoard(long seed) {
+            super(seed);
+        }
+
+        @Override
+        public TetrominoType[][] snapshot() {
+            snapshotCalls.incrementAndGet();
+            return super.snapshot();
+        }
+
+        private int snapshotCalls() {
+            return snapshotCalls.get();
+        }
     }
 }

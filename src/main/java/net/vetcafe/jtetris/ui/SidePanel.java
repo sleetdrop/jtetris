@@ -33,6 +33,9 @@ public class SidePanel extends JPanel {
     private final JPanel statsPanel;
     private final JPanel statusPanel;
     private final PreviewPanel previewPanel;
+    private List<TetrominoType> lastPreviewNextTypes = List.of();
+    private TetrominoType lastPreviewHoldType;
+    private boolean lastPreviewHoldAvailable;
 
     public SidePanel(Board board) {
         this(board, () -> 0L);
@@ -58,6 +61,7 @@ public class SidePanel extends JPanel {
 
         previewPanel = new PreviewPanel(board);
         add(previewPanel, BorderLayout.CENTER);
+        capturePreviewState();
 
         Timer timer = new Timer(200, e -> refreshLabels());
         timer.start();
@@ -122,29 +126,84 @@ public class SidePanel extends JPanel {
     }
 
     private void refreshLabels() {
-        scoreLabel.setText("Score: " + board.getScore());
-        levelLabel.setText("Level: " + board.getLevel());
-        linesLabel.setText("Lines: " + board.getLinesCleared());
-        timeLabel.setText("Time: " + ElapsedTimeFormatter.format(elapsedMillis.getAsLong()));
+        boolean changed = false;
+        changed |= setLabelText(scoreLabel, "Score: " + board.getScore());
+        changed |= setLabelText(levelLabel, "Level: " + board.getLevel());
+        changed |= setLabelText(linesLabel, "Lines: " + board.getLinesCleared());
+        changed |= setLabelText(timeLabel, "Time: " + ElapsedTimeFormatter.format(elapsedMillis.getAsLong()));
         String feedback = ScoreFeedbackFormatter.eventText(board.getLastScoreEvent());
-        feedbackLabel.setText(feedback);
-        feedbackLabel.setVisible(!feedback.isBlank());
+        changed |= setLabelText(feedbackLabel, feedback);
+        changed |= setLabelVisible(feedbackLabel, !feedback.isBlank());
 
         int combo = board.getComboStreak();
-        comboLabel.setText(ScoreFeedbackFormatter.comboText(combo));
-        comboLabel.setForeground(
+        changed |= setLabelText(comboLabel, ScoreFeedbackFormatter.comboText(combo));
+        changed |= setLabelForeground(
+                comboLabel,
                 ScoreFeedbackFormatter.activeCombo(combo)
                         ? UiTheme.active().textPrimary()
                         : UiTheme.active().textMuted());
 
         boolean b2b = board.isBackToBackActive();
-        b2bLabel.setText(ScoreFeedbackFormatter.backToBackText(b2b));
-        b2bLabel.setForeground(
+        changed |= setLabelText(b2bLabel, ScoreFeedbackFormatter.backToBackText(b2b));
+        changed |= setLabelForeground(
+                b2bLabel,
                 ScoreFeedbackFormatter.activeBackToBack(b2b)
                         ? UiTheme.active().textPrimary()
                         : UiTheme.active().textMuted());
+        if (refreshPreviewIfChanged()) {
+            changed = true;
+        }
+        if (changed) {
+            repaint();
+        }
+    }
+
+    private static boolean setLabelText(JLabel label, String text) {
+        if (label.getText().equals(text)) {
+            return false;
+        }
+        label.setText(text);
+        return true;
+    }
+
+    private static boolean setLabelVisible(JLabel label, boolean visible) {
+        if (label.isVisible() == visible) {
+            return false;
+        }
+        label.setVisible(visible);
+        return true;
+    }
+
+    private static boolean setLabelForeground(JLabel label, Color color) {
+        if (label.getForeground().equals(color)) {
+            return false;
+        }
+        label.setForeground(color);
+        return true;
+    }
+
+    private boolean refreshPreviewIfChanged() {
+        List<TetrominoType> nextTypes = board.getNextQueue();
+        Tetromino hold = board.getHold();
+        TetrominoType holdType = hold == null ? null : hold.getType();
+        boolean holdAvailable = board.isHoldAvailable();
+        if (lastPreviewNextTypes.equals(nextTypes)
+                && lastPreviewHoldType == holdType
+                && lastPreviewHoldAvailable == holdAvailable) {
+            return false;
+        }
+        lastPreviewNextTypes = nextTypes;
+        lastPreviewHoldType = holdType;
+        lastPreviewHoldAvailable = holdAvailable;
         previewPanel.repaint();
-        repaint();
+        return true;
+    }
+
+    private void capturePreviewState() {
+        lastPreviewNextTypes = board.getNextQueue();
+        Tetromino hold = board.getHold();
+        lastPreviewHoldType = hold == null ? null : hold.getType();
+        lastPreviewHoldAvailable = board.isHoldAvailable();
     }
 
     List<TetrominoType> displayedNextTypes() {

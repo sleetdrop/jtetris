@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
@@ -59,6 +60,17 @@ class SidePanelLayoutTest {
     }
 
     @Test
+    void sidePanelSkipsOwnRepaintWhenDisplayedValuesAreUnchanged() throws Exception {
+        CountingSidePanel panel = onEdt(() -> new CountingSidePanel(new Board(7L), () -> 0L));
+
+        panel.resetRepaintCount();
+        Thread.sleep(450);
+        onEdt(() -> null);
+
+        assertEquals(0, panel.repaintCount());
+    }
+
+    @Test
     void sectionTitlesUsePrimaryTextColor() {
         assertEquals(UiTheme.active().textPrimary(), SidePanel.sectionTitleColor());
     }
@@ -78,5 +90,29 @@ class SidePanelLayoutTest {
         FutureTask<T> task = new FutureTask<>(supplier::get);
         SwingUtilities.invokeAndWait(task);
         return task.get();
+    }
+
+    private static final class CountingSidePanel extends SidePanel {
+        private final AtomicInteger repaintCount = new AtomicInteger();
+
+        private CountingSidePanel(Board board, java.util.function.LongSupplier elapsedMillis) {
+            super(board, elapsedMillis);
+        }
+
+        @Override
+        public void repaint() {
+            if (repaintCount != null) {
+                repaintCount.incrementAndGet();
+            }
+            super.repaint();
+        }
+
+        private void resetRepaintCount() {
+            repaintCount.set(0);
+        }
+
+        private int repaintCount() {
+            return repaintCount.get();
+        }
     }
 }
