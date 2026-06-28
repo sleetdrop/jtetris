@@ -115,6 +115,21 @@ When Superpowers guidance is used during development, follow its verification
 discipline before claiming completion: identify the command that proves the
 claim, run it fresh, read the output, and report the evidence.
 
+## GitHub Actions
+
+The repository uses two workflow levels:
+
+- `CI`: runs on pushes to `main` and pull requests. It provisions Java 25 with
+  Temurin, then runs Spotless, Checkstyle, and the headless clean test suite.
+- `Release Build`: runs on release tags and manual dispatch. It uploads workflow
+  artifacts for maintainer review: standalone jar, macOS Apple Silicon app
+  image, macOS Intel app image, Windows x64 app image, and best-effort Windows
+  arm64 app image.
+
+Release build artifacts are not automatically attached to a GitHub Release.
+The maintainer should review the workflow artifacts and attach the intended
+downloads manually.
+
 ## Java modernization policy
 
 JTetris targets Java 25 LTS but does not require immediate source rewrites to
@@ -167,7 +182,7 @@ For a problem that occurs only during real Swing interaction:
    ```bash
    java -Djtetris.debug=true \
      -Djtetris.log.input.level=TRACE \
-     -jar target/jtetris-1.0.0-standalone.jar
+     -jar target/jtetris-1.1.0-standalone.jar
    ```
 
 3. Reproduce the issue once, then exit normally.

@@ -27,9 +27,10 @@ JTetris is a lightweight Java 25 Swing Tetris clone used for learning, gameplay-
 ```bash
 ./mvnw -Djava.awt.headless=true clean test
 ./mvnw clean package
-java -jar target/jtetris-1.0.0-standalone.jar
+java -jar target/jtetris-1.1.0-standalone.jar
 ./mvnw -Djava.awt.headless=true -Pmac clean package
 open target/dist/JTetris.app
+./mvnw -Djava.awt.headless=true -Pwindows clean package
 ```
 
 ## Development Constraints

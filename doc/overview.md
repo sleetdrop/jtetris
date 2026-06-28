@@ -19,6 +19,7 @@ A concise Swing-based JTetris for learning Java, Swing UI, and basic game loop/a
 - **Scores**: `net.vetcafe.jtetris.score.ScoreManager`: best-only per-user local high scores stored in a package-namespaced platform application data directory.
 - **Settings**: `net.vetcafe.jtetris.settings.UserPreferences`: lightweight user preferences stored separately from scores in the same platform application data directory.
 - **Logging**: SLF4J application API with bundled Logback rolling files, configurable levels, input-domain diagnostics, uncaught-exception capture, and a debug-only EDT watchdog.
+- **Packaging**: Maven builds the standalone jar, macOS app images, and Windows app images; GitHub Actions CI validates Java 25 quality gates and builds release artifacts for maintainer review.
 
 ## Architecture at a glance
 ```mermaid
@@ -139,6 +140,7 @@ classDiagram
   - Windows: `%LOCALAPPDATA%\net.vetcafe.jtetris\scores.properties` (falling back to `~/AppData/Local/...`)
 - The legacy `~/.tetris_scores.properties` file is migrated when no new store exists, then deleted only after the new store is written successfully.
 - Keys remain lowercase usernames and values remain best scores. New-store read failures are treated as empty; an unreadable legacy file is preserved instead of being replaced.
+- Local theme preferences use `preferences.properties` beside `scores.properties`; release packaging changes do not change either file format.
 - Replay persistence is model-layer only in `M7.3` via `ReplayPersistence`:
   - File header: `JTETRIS_REPLAY_V1`
   - Seed line: `seed=<long>`

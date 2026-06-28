@@ -5,7 +5,7 @@
 
     <groupId>net.vetcafe</groupId>
     <artifactId>jtetris</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <name>JTetris</name>
     <description>A lightweight Java Swing Tetris clone for learning and code-quality practice.</description>
     <url>https://github.com/sleetdrop/jtetris</url>
@@ -38,8 +38,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jpackage.name>JTetris</jpackage.name>
         <jpackage.type>APP_IMAGE</jpackage.type>
-        <jpackage.appVersion>1.0.0</jpackage.appVersion>
+        <jpackage.appVersion>1.1.0</jpackage.appVersion>
         <jpackage.icon>${project.basedir}/art/icon.icns</jpackage.icon>
+        <jpackage.windowsIcon>${project.basedir}/art/icon.ico</jpackage.windowsIcon>
         <jpackage.macPackageIdentifier>net.vetcafe.jtetris</jpackage.macPackageIdentifier>
         <jpackage.vendor>Yuan Jiang</jpackage.vendor>
         <junit.jupiter.version>5.10.2</junit.jupiter.version>
@@ -301,6 +302,69 @@
                                     <icon>${jpackage.icon}</icon>
                                     <resourceDir>${project.build.directory}/jpackage-resources</resourceDir>
                                     <macPackageIdentifier>${jpackage.macPackageIdentifier}</macPackageIdentifier>
+                                    <javaOptions>
+                                        <option>-Xmx512m</option>
+                                        <option>-Dflatlaf.useNativeLibrary=false</option>
+                                    </javaOptions>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>windows</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.4.0</version>
+                        <executions>
+                            <execution>
+                                <id>stage-jpackage-input</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/jpackage-input</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.build.directory}</directory>
+                                            <includes>
+                                                <include>${project.build.finalName}.jar</include>
+                                                <include>lib/**</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <version>1.7.4</version>
+                        <executions>
+                            <execution>
+                                <id>jpackage-image</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <configuration>
+                                    <type>${jpackage.type}</type>
+                                    <input>${project.build.directory}/jpackage-input</input>
+                                    <destination>${project.build.directory}/dist</destination>
+                                    <removeDestination>true</removeDestination>
+                                    <name>${jpackage.name}</name>
+                                    <mainClass>net.vetcafe.jtetris.ui.TetrisFrame</mainClass>
+                                    <mainJar>${project.build.finalName}.jar</mainJar>
+                                    <appVersion>${jpackage.appVersion}</appVersion>
+                                    <vendor>${jpackage.vendor}</vendor>
+                                    <icon>${jpackage.windowsIcon}</icon>
                                     <javaOptions>
                                         <option>-Xmx512m</option>
                                         <option>-Dflatlaf.useNativeLibrary=false</option>

@@ -38,11 +38,15 @@
 - Package runnable jar:
 ```bash
 ./mvnw clean package
-java -jar target/jtetris-1.0.0-standalone.jar
+java -jar target/jtetris-1.1.0-standalone.jar
 ```
 - macOS app-image packaging profile:
 ```bash
 ./mvnw -Djava.awt.headless=true -Pmac clean package
+```
+- Windows app-image packaging profile:
+```bash
+./mvnw -Djava.awt.headless=true -Pwindows clean package
 ```
 
 ## Editing Rules For Agents

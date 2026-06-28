@@ -9,7 +9,7 @@ A lightweight JTetris clone for learning Java, Swing UI, and basic game loop/sco
 - Swing-native in-game Help for controls and modern Tetris scoring concepts.
 - Local best-score storage per user.
 - Replay-oriented model hooks and regression tests for core gameplay behavior.
-- Runnable jar packaging and macOS app-image packaging.
+- Runnable jar packaging, macOS app-image packaging, and Windows app-image packaging.
 
 ## Screenshots
 | Light theme | Dark theme |
@@ -23,7 +23,7 @@ A lightweight JTetris clone for learning Java, Swing UI, and basic game loop/sco
 ## Quick start
 ```bash
 ./mvnw clean package
-java -jar target/jtetris-1.0.0-standalone.jar
+java -jar target/jtetris-1.1.0-standalone.jar
 ```
 
 ## Project map
@@ -57,7 +57,7 @@ Enable general diagnostics:
 
 ```bash
 java -Djtetris.debug=true \
-  -jar target/jtetris-1.0.0-standalone.jar
+  -jar target/jtetris-1.1.0-standalone.jar
 ```
 
 Enable detailed gameplay-input tracing:
@@ -65,7 +65,7 @@ Enable detailed gameplay-input tracing:
 ```bash
 java -Djtetris.debug=true \
   -Djtetris.log.input.level=TRACE \
-  -jar target/jtetris-1.0.0-standalone.jar
+  -jar target/jtetris-1.1.0-standalone.jar
 ```
 
 Use a custom absolute directory:
@@ -74,7 +74,7 @@ Use a custom absolute directory:
 java -Djtetris.debug=true \
   -Djtetris.log.input.level=TRACE \
   -Djtetris.log.dir=/absolute/path/to/logs \
-  -jar target/jtetris-1.0.0-standalone.jar
+  -jar target/jtetris-1.1.0-standalone.jar
 ```
 
 The default rolling policy uses 10 MB files, 7 days of history, and a 100 MB
@@ -101,7 +101,7 @@ before gameplay-standardization work if they are more than three months old.
 Build the standalone runnable jar:
 ```bash
 ./mvnw -Djava.awt.headless=true clean package
-java -jar target/jtetris-1.0.0-standalone.jar
+java -jar target/jtetris-1.1.0-standalone.jar
 ```
 
 Build a macOS application image:
@@ -109,6 +109,18 @@ Build a macOS application image:
 ./mvnw -Djava.awt.headless=true -Pmac clean package
 open target/dist/JTetris.app
 ```
+
+Build a Windows application image on Windows:
+```powershell
+./mvnw -Djava.awt.headless=true -Pwindows clean package
+./target/dist/JTetris/JTetris.exe
+```
+
+The `release-build` GitHub Actions workflow builds versioned release artifacts
+for the standalone jar, macOS Apple Silicon, macOS Intel, and Windows x64.
+Windows arm64 is included as a best-effort preview target while GitHub's hosted
+runner support for that platform remains preview-quality. Users on unsupported
+native platforms can run the standalone jar with Java 25.
 
 Release automation should provision Java 25 with `actions/setup-java` and an
 OpenJDK distribution such as Eclipse Temurin for bundled-runtime app artifacts.
@@ -121,6 +133,7 @@ App icon assets live under `art/`:
 - `art/icons/icon-*.png`: Linux/desktop packaging sizes.
 
 macOS app metadata is overridden from `packaging/macos/Info.plist` so the generated app bundle only advertises capabilities JTetris actually uses.
+Windows packaging uses `art/icon.ico`.
 
 ## UI theme and fonts
 - JTetris now ships with a dual palette (light/dark) and chooses a default theme from system/LAF appearance.
@@ -138,6 +151,7 @@ macOS app metadata is overridden from `packaging/macos/Info.plist` so the genera
 - [Algorithms](doc/algorithms.md)
 - [Tetris Guideline Notes](doc/tetris-guideline-notes.md)
 - [Quality Gates](doc/quality-gates.md)
+- [Changelog](CHANGELOG.md)
 - [Historical Spec Workflow](doc/specs/README.md)
 - [Historical Optimization Roadmap](doc/specs/roadmap.md)
 - [Contributing](CONTRIBUTING.md)
