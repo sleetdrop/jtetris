@@ -7,7 +7,7 @@
 - [x] Update Maven release version and versioned artifact documentation to `1.1.0`.
 - [x] Start `CHANGELOG.md`.
 - [x] Double-check score and preference compatibility with focused tests.
-- [ ] Refresh README screenshots after user-provided image replacements.
+- [x] Refresh README screenshots after user-provided image replacements.
 - [x] Run documentation impact check for `README.md`, `doc/overview.md`, `doc/algorithms.md`, `doc/quality-gates.md`, and `AGENTS.md`.
 - [x] Verify with `./mvnw -Djava.awt.headless=true clean test`.
 
@@ -20,4 +20,5 @@
 - `env JAVA_HOME=/opt/homebrew/opt/openjdk@25/libexec/openjdk.jdk/Contents/Home ./mvnw spotless:check` passed on 2026-06-28: 69 Java files clean.
 - `env JAVA_HOME=/opt/homebrew/opt/openjdk@25/libexec/openjdk.jdk/Contents/Home ./mvnw checkstyle:check` passed on 2026-06-28: 0 Checkstyle violations.
 - `env JAVA_HOME=/opt/homebrew/opt/openjdk@25/libexec/openjdk.jdk/Contents/Home ./mvnw -Djava.awt.headless=true clean test` passed on 2026-06-28: 151 tests, 0 failures, 0 errors, 0 skipped.
-- Screenshot refresh remains pending user-provided replacements for `doc/images/jtetris-light.png` and `doc/images/jtetris-dark.png`.
+- Replaced `doc/images/jtetris-light.png` and `doc/images/jtetris-dark.png` with user-provided 1.1.0 screenshots on 2026-06-28.
+- Final screenshot-refresh verification: `env JAVA_HOME=/opt/homebrew/opt/openjdk@25/libexec/openjdk.jdk/Contents/Home ./mvnw -Djava.awt.headless=true clean test` passed on 2026-06-28 after replacing screenshots: 151 tests, 0 failures, 0 errors, 0 skipped.
