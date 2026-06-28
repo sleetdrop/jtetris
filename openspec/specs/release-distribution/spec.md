@@ -24,9 +24,10 @@ JTetris MUST provide initial `1.0.0` release artifacts that are directly executa
 ### Requirement: Standalone JAR shading uses one authoritative manifest
 JTetris SHALL build the standalone JAR without copying dependency manifests that conflict with the project-generated manifest.
 
-#### Scenario: Package standalone JAR without FlatLaf manifest overlap
-- **Given** FlatLaf is included as a runtime dependency
+#### Scenario: Package standalone JAR without dependency manifest overlap
+- **Given** runtime dependencies are included in the standalone JAR
 - **When** an agent runs the Maven package lifecycle
-- **Then** the Shade plugin excludes FlatLaf's `META-INF/MANIFEST.MF`
+- **Then** the Shade plugin excludes dependency `META-INF/MANIFEST.MF`
+  resources that would conflict with the project-generated manifest
 - **And** packaging does not report an overlapping manifest resource
 - **And** the standalone JAR manifest identifies `net.vetcafe.jtetris.ui.TetrisFrame` as the main class
