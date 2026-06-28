@@ -26,6 +26,11 @@
 - Historical specs and handoff ledger: `doc/specs/README.md`, `doc/specs/context-pack.md`
 
 ## Build And Test
+- Before running Maven, confirm `java -version` reports Java 25. Respect an
+  already-correct `JAVA_HOME`; otherwise prefer the developer's local environment
+  manager (`direnv`, SDKMAN!, asdf, jenv, etc.) over hard-coded paths. On macOS,
+  `/usr/libexec/java_home -v 25` is acceptable when it lists a JDK 25; Homebrew
+  users can derive the path with `brew --prefix openjdk@25`.
 - Preferred validation command:
 ```bash
 ./mvnw -Djava.awt.headless=true clean test

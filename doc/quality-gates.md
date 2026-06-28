@@ -17,7 +17,9 @@ JTetris uses the reader-first Java style in `doc/java-style.md`.
 
 Formatter and lint commands should run on JDK 25. Use whatever environment
 manager fits your platform as long as `java -version` reports 25 before running
-the quality gates.
+the quality gates. Do not commit machine-specific JDK paths; prefer discovery
+through `JAVA_HOME`, `direnv`, SDKMAN!, asdf, jenv, `/usr/libexec/java_home -v
+25`, or package-manager metadata.
 
 On macOS with Homebrew `openjdk@25`, this form selects JDK 25 for the current
 shell:
@@ -28,7 +30,7 @@ export JAVA_HOME="$(brew --prefix openjdk@25)/libexec/openjdk.jdk/Contents/Home"
 
 If you use direnv, keep a local `.envrc` in your checkout. The repository
 ignores this file because the correct JDK path is platform- and machine-specific.
-One macOS example:
+One Homebrew-backed macOS example:
 
 ```bash
 export JAVA_HOME="$(brew --prefix openjdk@25)/libexec/openjdk.jdk/Contents/Home"
