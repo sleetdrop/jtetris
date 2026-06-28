@@ -2,6 +2,7 @@ package net.vetcafe.jtetris.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import net.vetcafe.jtetris.platform.ApplicationDataPaths;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -53,6 +54,7 @@ final class HelpContent {
         String text = color(theme.textPrimary());
         String background = color(theme.overlaySurface());
         String accent = color(theme.accent());
+        String dataRoot = escapeHtml(ApplicationDataPaths.currentRoot().toString());
         return """
                 <html>
                 <body style='font-family: sans-serif; color: %s; background: %s;'>
@@ -85,13 +87,31 @@ final class HelpContent {
                 It stays ready through non-clearing pieces and breaks on ordinary line clears.</p>
                 <p><b>T-Spin</b> is awarded when a T piece locks after a rotation in a tight corner setup.
                 JTetris currently implements baseline T-Spin scoring.</p>
+                <h2 style='font-size: 15px; color: %s;'>Local Data</h2>
+                <p>JTetris does not use cloud sync. Local scores and settings are stored in this folder:</p>
+                <p><code>%s</code></p>
+                <p>Scores use <code>%s</code>; theme settings use <code>%s</code>.</p>
                 </body>
                 </html>
                 """
-                .formatted(text, background, accent, accent, accent, accent);
+                .formatted(
+                        text,
+                        background,
+                        accent,
+                        accent,
+                        accent,
+                        accent,
+                        accent,
+                        dataRoot,
+                        ApplicationDataPaths.SCORE_FILE,
+                        ApplicationDataPaths.PREFERENCES_FILE);
     }
 
     private static String color(java.awt.Color color) {
         return "#%02x%02x%02x".formatted(color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+    private static String escapeHtml(String value) {
+        return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
 }
