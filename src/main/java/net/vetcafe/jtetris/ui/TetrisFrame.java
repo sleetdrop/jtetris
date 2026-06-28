@@ -255,7 +255,7 @@ public class TetrisFrame extends JFrame {
     }
 
     private JMenu createThemeMenu() {
-        JMenu themeMenu = new JMenu("Theme: " + themeModeLabel(UiTheme.activeMode()));
+        JMenu themeMenu = new JMenu(themeMenuTitle());
         themeMenu.setFont(UiFonts.regular(13f));
         ButtonGroup group = new ButtonGroup();
 
@@ -296,12 +296,8 @@ public class TetrisFrame extends JFrame {
         }
     }
 
-    private String themeModeLabel(UiTheme.Mode mode) {
-        return switch (mode) {
-            case LIGHT -> "Light";
-            case DARK -> "Dark";
-            case AUTO -> "Auto";
-        };
+    static String themeMenuTitle() {
+        return "Theme";
     }
 
     private void togglePause() {

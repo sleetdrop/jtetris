@@ -116,7 +116,7 @@ classDiagram
 - Leaderboard: L (also via menu)
 - Help: H (also via menu)
 - Quit: Esc (also via menu)
-- Theme: choose `Theme: ... -> Auto/Light/Dark` from the menu bar (applies immediately and is remembered for the next launch)
+- Theme: choose `Theme -> Auto/Light/Dark` from the menu bar (applies immediately and is remembered for the next launch)
 
 ## UI Layout & Styling
 - `GamePanel` is centered; `SidePanel` uses a clear information hierarchy with prominent Score, compact Level/Lines/Time, scoring feedback, Combo/B2B status, a separate Hold section, and three vertically ordered Next previews.
