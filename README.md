@@ -85,6 +85,11 @@ top-out, with Score as the primary result and Level, Lines, and Time as session
 context. Time measures active gameplay and excludes manual pauses and blocking
 in-window prompts. Natural gravity speeds up as Level increases.
 
+JTetris is **Guideline-inspired** rather than a claim of full official Tetris
+Guideline compliance. Public development notes live in
+[Tetris Guideline Notes](doc/tetris-guideline-notes.md); refresh those references
+before gameplay-standardization work if they are more than three months old.
+
 ## Packaging
 Build the standalone runnable jar:
 ```bash

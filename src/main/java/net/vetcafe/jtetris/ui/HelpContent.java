@@ -74,6 +74,7 @@ final class HelpContent {
                 <h2 style='font-size: 15px; color: %s;'>Endless Marathon</h2>
                 <p>A run continues until top-out. Score is the primary result; Level and Lines show progression.
                 Time measures active play and excludes pauses and blocking prompts.</p>
+                <p>JTetris is Guideline-inspired for familiar modern play, not full official Guideline compliance.</p>
                 <h2 style='font-size: 15px; color: %s;'>Playfield</h2>
                 <p>The ghost piece shows where the active piece will land. Next shows the next five pieces in
                 play order. Hold stores one piece for later; after you use Hold, it is unavailable until the
