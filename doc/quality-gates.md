@@ -15,14 +15,15 @@ Superpowers-guided work, selective OpenSpec changes, and optional PR validation.
 
 JTetris uses the reader-first Java style in `doc/java-style.md`.
 
-Formatter and lint commands should run on JDK 17. Use whatever environment
-manager fits your platform as long as `java -version` reports 17 before running
+Formatter and lint commands should run on JDK 25. Use whatever environment
+manager fits your platform as long as `java -version` reports 25 before running
 the quality gates.
 
-On macOS, this explicit form selects JDK 17 for a single command:
+On macOS with Homebrew `openjdk@25`, this form selects JDK 25 for the current
+shell:
 
 ```bash
-JAVA_HOME=$(/usr/libexec/java_home -v 17)
+export JAVA_HOME="$(brew --prefix openjdk@25)/libexec/openjdk.jdk/Contents/Home"
 ```
 
 If you use direnv, keep a local `.envrc` in your checkout. The repository
@@ -30,7 +31,7 @@ ignores this file because the correct JDK path is platform- and machine-specific
 One macOS example:
 
 ```bash
-export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+export JAVA_HOME="$(brew --prefix openjdk@25)/libexec/openjdk.jdk/Contents/Home"
 PATH_add "$JAVA_HOME/bin"
 ```
 
@@ -39,19 +40,19 @@ Then run `direnv allow` once from the repository root.
 Check formatting:
 
 ```bash
-JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw spotless:check
+./mvnw spotless:check
 ```
 
 Apply formatting:
 
 ```bash
-JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw spotless:apply
+./mvnw spotless:apply
 ```
 
 Check the low-risk lint baseline:
 
 ```bash
-JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw checkstyle:check
+./mvnw checkstyle:check
 ```
 
 ## Gate 0: Fast local check
@@ -67,8 +68,8 @@ Pass condition:
 ## Gate 1: Local completion check
 
 ```bash
-JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw spotless:check
-JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw checkstyle:check
+./mvnw spotless:check
+./mvnw checkstyle:check
 ./mvnw -q -Djava.awt.headless=true clean test
 ```
 
@@ -89,8 +90,8 @@ Pass condition:
 For this project, CI should execute:
 
 ```bash
-JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw spotless:check
-JAVA_HOME=$(/usr/libexec/java_home -v 17) ./mvnw checkstyle:check
+./mvnw spotless:check
+./mvnw checkstyle:check
 ./mvnw -q -Djava.awt.headless=true clean test
 ```
 
@@ -111,6 +112,15 @@ And enforce a lightweight docs impact checklist:
 When Superpowers guidance is used during development, follow its verification
 discipline before claiming completion: identify the command that proves the
 claim, run it fresh, read the output, and report the evidence.
+
+## Java modernization policy
+
+JTetris targets Java 25 LTS but does not require immediate source rewrites to
+newer language features. Prefer modern Java features when they make code shorter
+and easier to read without changing behavior. Good candidates are records for
+small immutable data carriers and pattern matching where it simplifies branching.
+Avoid broad `var` churn, clever stream rewrites, or sealed hierarchies unless a
+focused change demonstrates a clear readability or model-boundary benefit.
 
 ## Deterministic replay debug flow
 

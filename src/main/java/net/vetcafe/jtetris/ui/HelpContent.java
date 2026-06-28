@@ -2,13 +2,13 @@ package net.vetcafe.jtetris.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import net.vetcafe.jtetris.platform.ApplicationDataPaths;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import net.vetcafe.jtetris.platform.ApplicationDataPaths;
 
 final class HelpContent {
     private static final int PREFERRED_WIDTH = 560;
@@ -95,8 +95,7 @@ final class HelpContent {
                 <p>Scores use <code>%s</code>; theme settings use <code>%s</code>.</p>
                 </body>
                 </html>
-                """
-                .formatted(
+                """.formatted(
                         text,
                         background,
                         accent,

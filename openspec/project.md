@@ -1,10 +1,10 @@
 # JTetris Project Guide
 
 ## Purpose
-JTetris is a lightweight Java 17 Swing Tetris clone used for learning, gameplay-rule iteration, and agent-assisted maintenance.
+JTetris is a lightweight Java 25 Swing Tetris clone used for learning, gameplay-rule iteration, and agent-assisted maintenance.
 
 ## Tech Stack
-- Java 17
+- Java 25 LTS
 - Swing UI
 - Maven build
 - JUnit tests
@@ -25,10 +25,10 @@ JTetris is a lightweight Java 17 Swing Tetris clone used for learning, gameplay-
 
 ## Commands
 ```bash
-./mvnw clean test
+./mvnw -Djava.awt.headless=true clean test
 ./mvnw clean package
-java -jar target/jtetris-1.0-SNAPSHOT.jar
-./mvnw -Pmac clean package
+java -jar target/jtetris-1.0.0-standalone.jar
+./mvnw -Djava.awt.headless=true -Pmac clean package
 open target/dist/JTetris.app
 ```
 
@@ -57,7 +57,7 @@ open target/dist/JTetris.app
 - Include `proposal.md`, `tasks.md`, and spec deltas under `specs/<capability>/spec.md`; add `design.md` for cross-cutting or risky changes.
 - Before editing implementation files, restate the current goal, exact file allowlist, and out-of-scope items.
 - Complete one small task at a time and keep verification evidence with the active change.
-- Run `./mvnw clean test` before marking a change complete.
+- Run `./mvnw -Djava.awt.headless=true clean test` before marking a change complete.
 
 ## Historical Notes
 The previous workflow lives in `doc/specs`. Those files remain useful project memory, especially `doc/specs/context-pack.md`, but they are no longer the starting point for new work after the OpenSpec migration.

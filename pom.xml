@@ -34,7 +34,7 @@
     </scm>
 
     <properties>
-        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jpackage.name>JTetris</jpackage.name>
         <jpackage.type>APP_IMAGE</jpackage.type>
@@ -46,8 +46,8 @@
         <flatlaf.version>3.4.1</flatlaf.version>
         <slf4j.version>2.0.18</slf4j.version>
         <logback.version>1.5.33</logback.version>
-        <spotless.version>2.44.5</spotless.version>
-        <palantir.java.format.version>2.50.0</palantir.java.format.version>
+        <spotless.version>3.7.0</spotless.version>
+        <palantir.java.format.version>2.94.0</palantir.java.format.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
         <checkstyle.version>10.21.1</checkstyle.version>
     </properties>
@@ -82,7 +82,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.15.0</version>
             </plugin>
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>

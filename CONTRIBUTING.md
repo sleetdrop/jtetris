@@ -3,7 +3,7 @@
 Thanks for contributing.
 
 ## Prerequisites
-- JDK 17
+- JDK 25 LTS
 - Use the included Maven Wrapper (`./mvnw` on macOS/Linux, `mvnw.cmd` on Windows), or install Maven 3.9+ locally.
 
 ## Project layout
@@ -22,12 +22,12 @@ Thanks for contributing.
 Run before opening a PR:
 
 ```bash
-./mvnw clean test
+./mvnw -Djava.awt.headless=true clean test
 ```
 
 ## Pull request checklist
 - Keep changes focused and small.
 - Add or update tests for behavior changes.
 - Update docs when user-facing behavior or structure changes.
-- Ensure `./mvnw clean test` passes locally.
+- Ensure `./mvnw -Djava.awt.headless=true clean test` passes locally.
 - Fill verification notes in the related OpenSpec change.

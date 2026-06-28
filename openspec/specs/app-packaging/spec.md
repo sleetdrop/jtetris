@@ -9,7 +9,7 @@ Define native app packaging assets and macOS app-image behavior for JTetris.
 JTetris SHALL provide a Maven packaging command that builds a standard macOS application image.
 
 #### Scenario: Build macOS app image
-- **Given** a macOS development machine with Java 17+ available
+- **Given** a macOS development machine with Java 25 available
 - **When** an agent runs `./mvnw -Pmac clean package`
 - **Then** the build completes successfully
 - **And** a `JTetris.app` application image is produced under the Maven target output tree

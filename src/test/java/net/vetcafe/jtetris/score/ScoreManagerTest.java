@@ -134,7 +134,8 @@ class ScoreManagerTest {
 
         assertEquals("Bob", reloaded.getLastScoreUser());
         assertEquals(List.of("alice", "bob"), reloaded.getUsers());
-        assertEquals(List.of(new ScoreManager.ScoreEntry("alice", 1200), new ScoreManager.ScoreEntry("bob", 400)),
+        assertEquals(
+                List.of(new ScoreManager.ScoreEntry("alice", 1200), new ScoreManager.ScoreEntry("bob", 400)),
                 reloaded.getLeaderboard());
     }
 

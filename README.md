@@ -3,7 +3,7 @@
 A lightweight JTetris clone for learning Java, Swing UI, and basic game loop/scoring mechanics. UI text is English-only.
 
 ## Features
-- Java 17 Swing desktop UI with light/dark theme support.
+- Java 25 Swing desktop UI with light/dark theme support.
 - Endless Marathon play that continues until top-out, with active session time shown alongside score, level, and lines.
 - Guideline-style Tetris mechanics including 7-bag randomization, hold piece, ghost piece, SRS rotation kicks, level-based gravity, fixed lock delay, five-piece Next preview, drop scoring, combo/B2B scoring, and T-spin detection.
 - Swing-native in-game Help for controls and modern Tetris scoring concepts.
@@ -17,7 +17,7 @@ A lightweight JTetris clone for learning Java, Swing UI, and basic game loop/sco
 | ![JTetris light theme](doc/images/jtetris-light.png) | ![JTetris dark theme](doc/images/jtetris-dark.png) |
 
 ## Requirements
-- JDK 17 or newer
+- JDK 25 LTS
 - Maven is optional if you use the included Maven Wrapper
 
 ## Quick start
@@ -30,10 +30,17 @@ java -jar target/jtetris-1.0.0-standalone.jar
 - Core code: `src/main/java/net/vetcafe/jtetris` (model, UI, scoring)
 - Tests: `src/test/java/net/vetcafe/jtetris`
 - Base package: `net.vetcafe.jtetris.*`
-- Build: `pom.xml` (Java 17)
+- Build: `pom.xml` (Java 25)
 - Docs: `doc/overview.md`, `doc/algorithms.md`
 
 ## Development
+JTetris targets Java 25 LTS. On macOS with Homebrew `openjdk@25`, select it for
+the current shell with:
+
+```bash
+export JAVA_HOME="$(brew --prefix openjdk@25)/libexec/openjdk.jdk/Contents/Home"
+```
+
 ```bash
 ./mvnw -Djava.awt.headless=true clean test
 ```
@@ -93,15 +100,19 @@ before gameplay-standardization work if they are more than three months old.
 ## Packaging
 Build the standalone runnable jar:
 ```bash
-./mvnw clean package
+./mvnw -Djava.awt.headless=true clean package
 java -jar target/jtetris-1.0.0-standalone.jar
 ```
 
 Build a macOS application image:
 ```bash
-./mvnw -Pmac clean package
+./mvnw -Djava.awt.headless=true -Pmac clean package
 open target/dist/JTetris.app
 ```
+
+Release automation should provision Java 25 with `actions/setup-java` and an
+OpenJDK distribution such as Eclipse Temurin for bundled-runtime app artifacts.
+Oracle JDK is not the default release runtime.
 
 App icon assets live under `art/`:
 - `art/icon.svg`: deterministic source icon.

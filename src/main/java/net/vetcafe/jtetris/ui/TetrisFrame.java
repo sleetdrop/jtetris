@@ -64,7 +64,8 @@ public class TetrisFrame extends JFrame {
     }
 
     private static void installInitialLookAndFeel() {
-        UiTheme.setActiveMode(UiTheme.startupMode(USER_PREFERENCES.loadThemeMode().orElse(null)));
+        UiTheme.setActiveMode(
+                UiTheme.startupMode(USER_PREFERENCES.loadThemeMode().orElse(null)));
         UiTheme.refreshFromSystem();
         applyFlatLafForActiveTheme(false);
     }
