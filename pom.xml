@@ -38,6 +38,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jpackage.name>JTetris</jpackage.name>
         <jpackage.type>APP_IMAGE</jpackage.type>
+        <jpackage.windowsType>EXE</jpackage.windowsType>
         <jpackage.appVersion>1.1.0</jpackage.appVersion>
         <jpackage.icon>${project.basedir}/art/icon.icns</jpackage.icon>
         <jpackage.windowsIcon>${project.basedir}/art/icon.ico</jpackage.windowsIcon>
@@ -355,7 +356,7 @@
                                     <goal>jpackage</goal>
                                 </goals>
                                 <configuration>
-                                    <type>${jpackage.type}</type>
+                                    <type>${jpackage.windowsType}</type>
                                     <input>${project.build.directory}/jpackage-input</input>
                                     <destination>${project.build.directory}/dist</destination>
                                     <removeDestination>true</removeDestination>

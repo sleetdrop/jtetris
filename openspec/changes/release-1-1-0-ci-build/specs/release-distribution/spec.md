@@ -9,10 +9,11 @@ JTetris MUST provide directly executable release artifacts for Java users and th
 - **Then** it builds `JTetris-1.1.0.jar` from the tagged commit
 - **And** the jar includes its runtime library dependencies.
 
-#### Scenario: Publish stable native app images for 1.1.0
+#### Scenario: Publish stable native artifacts for 1.1.0
 - **Given** the release tag is `v1.1.0`
 - **When** the release-build workflow runs on stable GitHub-hosted runner targets
-- **Then** it builds compressed app-image archives for macOS arm64, macOS x64, and Windows x64.
+- **Then** it builds compressed app-image archives for macOS arm64 and macOS x64
+- **And** it builds a Windows 11 x64 `.exe` installer.
 
 #### Scenario: Fall back to standalone jar for Windows arm64
 - **Given** Temurin Java 25 arm64 is unavailable on the hosted Windows arm64 runner

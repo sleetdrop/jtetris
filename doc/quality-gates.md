@@ -121,14 +121,13 @@ The repository uses two workflow levels:
 
 - `CI`: runs on pushes to `main` and pull requests. It provisions Java 25 with
   Temurin, then runs Spotless, Checkstyle, and the headless clean test suite.
-- `Release Build`: runs on release tags and manual dispatch. It uploads workflow
-  artifacts for maintainer review: standalone jar, macOS Apple Silicon app
-  image, macOS Intel app image, and Windows x64 app image. Windows arm64 users
-  should use the standalone jar for `1.1.0`.
+- `Release Build`: runs on release tags and manual dispatch. It builds the
+  standalone jar, macOS Apple Silicon app image, macOS Intel app image, and
+  Windows 11 x64 installer. On release tags, it creates a draft GitHub Release
+  and uploads those assets for maintainer review. Windows arm64 users should
+  use the standalone jar for `1.1.0`.
 
-Release build artifacts are not automatically attached to a GitHub Release.
-The maintainer should review the workflow artifacts and attach the intended
-downloads manually.
+Release builds created from manual dispatch upload workflow artifacts only.
 
 ## Java modernization policy
 

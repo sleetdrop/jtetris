@@ -110,14 +110,16 @@ Build a macOS application image:
 open target/dist/JTetris.app
 ```
 
-Build a Windows application image on Windows:
+Build a Windows 11 x64 installer on Windows:
 ```powershell
 ./mvnw -Djava.awt.headless=true -Pwindows clean package
-./target/dist/JTetris/JTetris.exe
+./target/dist/JTetris-1.1.0.exe
 ```
 
-The `release-build` GitHub Actions workflow builds versioned release artifacts
-for the standalone jar, macOS Apple Silicon, macOS Intel, and Windows x64.
+The `release-build` GitHub Actions workflow builds versioned release assets for
+the standalone jar, macOS Apple Silicon, macOS Intel, and Windows 11 x64. On
+release tags, the workflow creates a draft GitHub Release and uploads those
+assets for maintainer review.
 Windows arm64 is not built for `1.1.0` because the hosted runner did not have a
 Temurin Java 25 arm64 package available during release validation. Users on
 unsupported native platforms can run the standalone jar with Java 25.

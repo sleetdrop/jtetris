@@ -1,13 +1,13 @@
 ## ADDED Requirements
 
-### Requirement: Windows app-image packaging
-JTetris MUST support native Windows app-image packaging through Maven on Windows hosts.
+### Requirement: Windows installer packaging
+JTetris MUST support native Windows 11 x64 installer packaging through Maven on Windows hosts.
 
-#### Scenario: Build Windows app image
-- **Given** a Windows build host with Java 25 and `jpackage`
+#### Scenario: Build Windows installer
+- **Given** a Windows 11 x64 build host with Java 25, `jpackage`, and WiX
 - **When** an agent runs `./mvnw -Djava.awt.headless=true -Pwindows clean package`
 - **Then** Maven stages the application jar and runtime dependencies for `jpackage`
-- **And** `jpackage` creates a `target/dist/JTetris` app image using the Windows icon asset.
+- **And** `jpackage` creates a `target/dist/JTetris-<version>.exe` installer using the Windows icon asset.
 
 ## MODIFIED Requirements
 

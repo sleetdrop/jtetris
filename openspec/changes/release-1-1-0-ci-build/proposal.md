@@ -12,8 +12,8 @@ The initial `1.0.0` release was packaged manually and only included an Apple Sil
   - standalone runnable jar;
   - macOS Apple Silicon app image archive;
   - macOS Intel x64 app image archive;
-  - Windows x64 app image archive;
-  - Windows arm64 app image archive as a best-effort preview target.
+  - Windows 11 x64 installer.
+- Create a draft GitHub Release from release-tag workflow runs and upload release assets for maintainer review.
 - Add Windows jpackage support using the existing Windows icon asset.
 - Start `CHANGELOG.md` with `1.1.0` and prior `1.0.0` context.
 - Update release and packaging documentation, including the screenshot refresh requirement.
@@ -21,6 +21,6 @@ The initial `1.0.0` release was packaged manually and only included an Apple Sil
 
 ## Out Of Scope
 - No gameplay, scoring, replay, input, theme, or UI behavior changes.
-- No installer, signing, notarization, or automatic GitHub Release publishing.
+- No signing, notarization, ready-to-publish Release publishing, or installer support beyond Windows 11 x64.
 - No dependency upgrades unless required for Java 25 CI or existing packaging behavior.
 - No change to score or preference file formats.
