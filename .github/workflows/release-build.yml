@@ -79,6 +79,11 @@ jobs:
             profile: windows
             artifact_suffix: windows-x64
             archive_command: windows
+          - label: Windows 11 ARM64 installer
+            runner: windows-11-arm
+            profile: windows
+            artifact_suffix: windows-aarch64
+            archive_command: windows
 
     steps:
       - name: Check out repository

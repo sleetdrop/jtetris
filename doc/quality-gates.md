@@ -123,9 +123,8 @@ The repository uses two workflow levels:
   Temurin, then runs Spotless, Checkstyle, and the headless clean test suite.
 - `Release Build`: runs on release tags and manual dispatch. It builds the
   standalone jar, macOS Apple Silicon app image, macOS Intel app image, and
-  Windows 11 x64 installer. On release tags, it creates a draft GitHub Release
-  and uploads those assets for maintainer review. Windows arm64 users should
-  use the standalone jar for `1.1.0`.
+  Windows 11 x64 and Windows 11 arm64 installers. On release tags, it creates
+  a draft GitHub Release and uploads those assets for maintainer review.
 
 Release builds created from manual dispatch upload workflow artifacts only.
 
